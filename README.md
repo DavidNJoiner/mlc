@@ -1,20 +1,20 @@
 # mlc
 machine learning framework written in C for learning purpose
 
-# todo:
+### todo:
 
-## Arithmetic
+Arithmetic
 
 - [ ] arithmetic ops for all dtypes.
 - [ ] **cpu_ops** : use intrisics for differents architecture.
 - [ ] **gpu_ops** : CUDA ops.
 
-## Debug
+Debug
 
 - [ ] implement a **logger**.
 - [ ] print tensor should respect the shape of the tensor.
 
-## ML
+ML
 
 - [ ] implement simple **neuron**.
 - [ ] implement simple **layer**.
