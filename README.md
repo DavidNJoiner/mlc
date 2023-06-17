@@ -1,12 +1,12 @@
-# mlc
-machine learning framework written in C for learning purpose
+# **mlc** (project deepc)
+Machine learning framework written in C for learning purpose
 
 ### todo:
 
 Arithmetic
 
 - [ ] arithmetic ops for all dtypes.
-- [ ] **cpu_ops** : use intrisics for differents architecture.
+- [ ] **cpu_ops** : use intrinsics for differents architecture.
 - [ ] **gpu_ops** : CUDA ops.
 
 Debug
