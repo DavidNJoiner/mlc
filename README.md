@@ -5,18 +5,18 @@ machine learning framework written in C for learning purpose
 
 ##Arithmetic
 
-- [] arithmetic ops for all dtypes.
-- [] **cpu_ops** : use intrisics for differents architecture.
-- [] **gpu_ops** : CUDA ops.
+- [ ] arithmetic ops for all dtypes.
+- [ ] **cpu_ops** : use intrisics for differents architecture.
+- [ ] **gpu_ops** : CUDA ops.
 
 ##Debug
 
-- [] implement a **logger**.
-- [] print tensor should respect the shape of the tensor.
+- [ ] implement a **logger**.
+- [ ] print tensor should respect the shape of the tensor.
 
 ##ML
 
-- [] implement simple **neuron**.
-- [] implement simple **layer**.
-- [] implement simple **nn**.
-- [] autograd.
+- [ ] implement simple **neuron**.
+- [ ] implement simple **layer**.
+- [ ] implement simple **nn**.
+- [ ] autograd.
