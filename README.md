@@ -10,9 +10,9 @@ Arithmetic
 - [ ] **gpu_ops** : CUDA ops.
 
 Tensor
-- [ ] function to create tensor in place. no Data object required.
-- [x] function to create empty tensor with required shape and dimension.
+- [x] function to create empty tensor with required shape and dimension. no Data object required.
 - [x] function to create empty tensor from existing Tensor.
+- [ ] function to transpose Tensors.
 
 Debug
 
@@ -24,4 +24,6 @@ ML
 - [ ] implement simple **neuron**.
 - [ ] implement simple **layer**.
 - [ ] implement simple **nn**.
-- [ ] autograd.
+- [ ] implement activation functions and their derivatives.
+- [ ] autograd engine.
+- [ ] Adam optim.
