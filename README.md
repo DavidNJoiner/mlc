@@ -2,7 +2,7 @@
 Machine learning framework written in C for learning purpose. 
 ---
 
-![deepc_logo](https://github.com/DavidNJoiner/mlc/assets/69796012/46ec6565-f34d-43f9-a464-cb5a9a9d8218)
+![deepc_logo](https://github.com/DavidNJoiner/mlc/assets/69796012/d1d7daee-5789-4464-bcff-1b845a91ac27)
 
 ---
 ### todo:
