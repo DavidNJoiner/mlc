@@ -1,6 +1,7 @@
 # **mlc** (project deepc)
-Machine learning framework written in C for learning purpose
+Machine learning framework written in C for learning purpose. 
 
+---
 ### todo:
 
 Arithmetic
@@ -18,6 +19,7 @@ Debug
 
 - [ ] implement a **logger**.
 - [x] print tensor should respect the shape of the tensor.
+- [x] print tensor with any dtype and any dimension.
 
 ML
 
@@ -27,3 +29,9 @@ ML
 - [ ] implement activation functions and their derivatives.
 - [ ] autograd engine.
 - [ ] Adam optim.
+
+---
+### goals:
+
+- [ ] Run stable diffusion.
+- [ ] Any other fun stuff !
