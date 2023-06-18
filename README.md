@@ -12,6 +12,7 @@ Arithmetic
 Tensor
 - [ ] function to create tensor in place. no Data object required.
 - [ ] function to create empty tensor with required shape and dimension.
+- [x] function to create empty tensor from existing Tensor.
 
 Debug
 
