@@ -6,12 +6,17 @@
 //Debug
 typedef void (*PrintFunc)(void*, int);
 
+void print_float32(void* values, int index);
+void print_float64(void* values, int index);
+
 //Arithmetic
 typedef void (*MultFunc)(void*, void*, void*, int);
 typedef void (*AddFunc)(void*, void*, int);
 
 void add_float32(void* dstValues, void* AValues, int size);
 void mult_float32(void* dstValues, void* AValues, void* BValues, int size);
+void add_float64(void* dstValues, void* AValues, int size);
+void mult_float64(void* dstValues, void* AValues, void* BValues, int size);
 
 void addOp(Data* dst, Data* A);
 void multOp(Data* dst, Data* A, Data* B);
@@ -25,6 +30,10 @@ void multOp(Data* dst, Data* A, Data* B);
 void print_float32(void* values, int index) {
     float32* vals = (float32*)values;
     printf("%.2f \n", vals[index]);
+}
+void print_float64(void* values, int index) {
+    float64* vals = (float64*)values;
+    printf("%.4f \n", vals[index]);
 }
 
 //float32 Ops
@@ -45,24 +54,42 @@ void mult_float32(void* dstValues, void* AValues, void* BValues, int size) {
     }
 }
 
+//float64 Ops
+void add_float64(void* dstValues, void* AValues, int size) {
+    float64* AFloat = (float64*)AValues;
+    float64* dstFloat = (float64*)dstValues;
+    for (int i = 0; i < size; i++) {
+        dstFloat[i] += AFloat[i];
+    }
+}
+
+void mult_float64(void* dstValues, void* AValues, void* BValues, int size) {
+    float64* AFloat = (float64*)AValues;
+    float64* BFloat = (float64*)BValues;
+    float64* dstFloat = (float64*)dstValues;
+    for (int i = 0; i < size; i++) {
+        dstFloat[i] = AFloat[i] * BFloat[i];
+    }
+}
+
 //Print Ops lookup
 PrintFunc print_types[] = {
     [FLOAT32] = print_float32,
-    //[FLOAT64] = print_float64,
+    [FLOAT64] = print_float64,
     //[FLOAT16] = print_float16
 };
 //Add Ops lookup
 AddFunc addData[] = {
     [FLOAT32] = add_float32,
-    // [FLOAT64] = add_float64,
-    // [FLOAT16] = add_float16
+    [FLOAT64] = add_float64,
+    //[FLOAT16] = add_float16
 };
 
 //Mult Ops lookup
 MultFunc multData[] = {
     [FLOAT32] = mult_float32,
-    // [FLOAT64] = mult_float64,
-    // [FLOAT16] = mult_float16
+    [FLOAT64] = mult_float64,
+    //[FLOAT16] = mult_float16
 };
 
 // Add a dst and A Data objects element-wise and store the result in the res Data object.
