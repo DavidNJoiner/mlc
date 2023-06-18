@@ -9,28 +9,28 @@ Machine learning framework written in C for learning purpose.
 
 Arithmetic
 
-- [ ] arithmetic ops for all dtypes.
-- [ ] **cpu_ops** : use intrinsics for differents architecture.
-- [ ] **gpu_ops** : CUDA ops.
+- [ ] Arithmetic ops for all dtypes.
+- [ ] **CPU_OPs** : Intrinsics ops + GEMM for differents architecture (skylake coming soon).
+- [ ] **GPU_OPs** : CUDA ops / ROCm ops. Maybe OpenCL ?
 
 Tensor
-- [x] function to create empty tensor with required shape and dimension. no Data object required.
-- [x] function to create empty tensor from existing Tensor.
-- [ ] function to transpose Tensors.
+- [x] Function to create an empty *Tensor* with desired shape and dimension. No *Data* object required.
+- [x] Function to create "zero" *Tensor* from an existing Tensor.
+- [ ] Function to fully transpose a *Tensors*.
 
 Debug
 
-- [ ] implement a **logger**.
-- [x] print tensor should respect the shape of the tensor.
-- [x] print tensor with any dtype and any dimension.
+- [ ] Implement a simple extensible **logger**.
+- [x] *printTensor* should respect the shape of *Tensor*'s data..
+- [x] *printTensor* should work for any dtype and any data dimension.
 
 ML
 
-- [ ] implement simple **neuron**.
-- [ ] implement simple **layer**.
-- [ ] implement simple **nn**.
-- [ ] implement activation functions and their derivatives.
-- [ ] autograd engine.
+- [ ] Implement a simple **neuron** struct.
+- [ ] Implement simple **layer** struct.
+- [ ] Implement simple **nn** struct.
+- [ ] Implement activation functions and their derivatives.
+- [ ] Autograd engine.
 - [ ] Adam optim.
 
 ---
