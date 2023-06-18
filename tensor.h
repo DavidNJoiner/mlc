@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "dtype.h"
 #include "ops.h"
+#include "debug.h"
 
 #ifndef TENSOR_H_ 
 #define TENSOR_H_
@@ -28,6 +29,8 @@ Tensor* zerosFrom(Tensor* t);
  */
 void mult(Tensor* dst, Tensor* A, Tensor* B);
 void add(Tensor* dst, Tensor* A);
+void freeTensor(Tensor* t);
+void print2DTensor(Tensor* A);
 void printTensor(Tensor* A);
 
 #endif //TENSOR_H
@@ -116,7 +119,20 @@ Tensor* zerosFrom(Tensor* t) {
     return new_tensor;
 }
 
-
+void freeTensor(Tensor* t) {
+    if (t != NULL) {
+        if (t->gradient != NULL) {
+            free(t->gradient);
+        }
+        if (t->data != NULL) {
+            if (t->data->values != NULL) {
+                free(t->data->values);
+            }
+            free(t->data);
+        }
+        free(t);
+    }
+}
 
 /*
  * mult : Multiply two Tensors A and B. Stores the result as a third Tensor dst.
@@ -144,7 +160,10 @@ void add(Tensor* dst, Tensor* A) {
     addOp(dst->data, A->data);
 }
 
-void printTensor(Tensor* A) {
+/*
+ * printTensor : print a 2D Tensor to the console.
+ */
+void print2DTensor(Tensor* A) {
     //printf("%s %d %d", GetDType(A->data->dtype), A->shape[0], A->shape[1]);
     for (int i = 0; i < A->shape[0]; ++i) {
         for (int j = 0; j < A->shape[1]; ++j) {
@@ -159,6 +178,13 @@ void printTensor(Tensor* A) {
         printf("\n");
     }
     printf("\n");
+}
+
+void printTensor(Tensor* A){
+    if (0 < A->data->dtype <= 16) {
+        printf("let's print ! \n");
+        printOp(A->data, A->dim);
+    }
 }
 
 
