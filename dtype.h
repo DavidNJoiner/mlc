@@ -77,13 +77,16 @@ int dtypeSize(int dtype) {
     }
 }
 
-int calculateIndex(int* indices, int* strides, int dim) {
+int calculateIndex(int* indices, int* shape, int dim) {
     int index = 0;
-    for (int i = 0; i < dim; i++) {
-        index += indices[i] * strides[i];
+    int stride = 1;
+    for (int i = dim - 1; i >= 0; i--) {
+        index += indices[i] * stride;
+        stride *= shape[i];
     }
     return index;
 }
+
 
 void flattenArray(void* array, void* flattened, int* shape, int dim, int dtype){
     int* indices = (int*)malloc(dim * sizeof(int));
