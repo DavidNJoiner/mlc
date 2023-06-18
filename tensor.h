@@ -18,6 +18,7 @@ typedef struct {
 
 
 Tensor* tensor(Data* data, bool requires_grad);
+Tensor* createTensor(int* shape, int dim, int dtype, bool requires_grad);
 Tensor* zerosFrom(Tensor* t);
 
 /*
@@ -49,6 +50,34 @@ Tensor* tensor(Data* data, bool requires_grad) {
 
     return new_tensor;
 }
+
+/*
+ * tensor : create a new Tensor from scratch.
+ */
+Tensor* createTensor(int* shape, int dim, int dtype, bool requires_grad) {
+    // Create an array of zeros
+    int size = 1;
+    for (int i = 0; i < dim; i++) {
+        size *= shape[i];
+    }
+    void* array = calloc(size, dtypeSize(dtype));
+    if (array == NULL) {
+        printf("Memory allocation failed!\n");
+        return NULL;
+    }
+    
+    // Convert array to data
+    Data* data = convertToData(array, shape, dim, dtype);
+    
+    // Create tensor with data
+    Tensor* t = tensor(data, requires_grad);
+    
+    // Free the array
+    free(array);
+
+    return t;
+}
+
 
 /*
  * zerosFrom : create a new Tensor filled with zeros from an existing Tensor(template).

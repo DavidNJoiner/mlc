@@ -33,7 +33,7 @@ void print_float32(void* values, int index) {
 }
 void print_float64(void* values, int index) {
     float64* vals = (float64*)values;
-    printf("%.4f \t", vals[index]);
+    printf("%.4lf \t", vals[index]);
 }
 
 //float32 Ops
