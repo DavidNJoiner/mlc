@@ -129,6 +129,7 @@ void printTensor(Tensor* A) {
         }
         printf("\n");
     }
+    printf("\n");
 }
 
 

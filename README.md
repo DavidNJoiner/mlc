@@ -17,7 +17,7 @@ Tensor
 Debug
 
 - [ ] implement a **logger**.
-- [ ] print tensor should respect the shape of the tensor.
+- [x] print tensor should respect the shape of the tensor.
 
 ML
 

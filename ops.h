@@ -29,11 +29,11 @@ void multOp(Data* dst, Data* A, Data* B);
 //Debug
 void print_float32(void* values, int index) {
     float32* vals = (float32*)values;
-    printf("%.2f \n", vals[index]);
+    printf("%.2f \t", vals[index]);
 }
 void print_float64(void* values, int index) {
     float64* vals = (float64*)values;
-    printf("%.4f \n", vals[index]);
+    printf("%.4f \t", vals[index]);
 }
 
 //float32 Ops

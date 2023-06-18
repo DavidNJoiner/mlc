@@ -10,7 +10,7 @@ int main() {
                         {1, 0, 1},
                         {1, 1, 0}};
                         
-    float64 arr2[4][3] = {{0, 0, 5},
+    float32 arr2[4][3] = {{0, 0, 5},
                         {0, 1, 5},
                         {1, 0, 1},
                         {1, 1, 0}};
@@ -20,24 +20,22 @@ int main() {
 
     // Convert ndarray to Data object : convertToData currently only handle float32(float).
     Data* data = convertToData((void*)arr, shape, dim, FLOAT32);
+    Data* data2 = convertToData((void*)arr2, shape, dim, FLOAT32);
 
     Tensor* t1 = tensor(data, false);
     Tensor* t2 = tensor(data, false);
+    Tensor* t3 = tensor(data2, false);
     Tensor* res = zerosFrom(t2);
 
     printTensor(t1);
-    printf("----------------------------------\n");
     printTensor(t2);
-    printf("----------------------------------\n");
     printTensor(res);
-    printf("----------------------------------\n");
 
     mult(res,t1,t2);
-    //add(res1,t1);
-    //mult(res2, res1, t1);	
     printTensor(res);
-    //printf("----------------------------------\n");
-    //printTensor(res2);
+    add(res,t3);
+    printTensor(res);
+  
 
     // Deallocate memory
     free(data->values);
