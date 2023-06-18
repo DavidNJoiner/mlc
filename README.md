@@ -1,5 +1,8 @@
 # **mlc** (project deepc)
 Machine learning framework written in C for learning purpose. 
+---
+
+![deepc_logo](https://github.com/DavidNJoiner/mlc/assets/69796012/46ec6565-f34d-43f9-a464-cb5a9a9d8218)
 
 ---
 ### todo:
