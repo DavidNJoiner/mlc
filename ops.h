@@ -3,12 +3,6 @@
 #ifndef OPS_H_ 
 #define OPS_H_
 
-//Debug
-typedef void (*PrintFunc)(void*, int);
-
-void print_float32(void* values, int index);
-void print_float64(void* values, int index);
-
 //Arithmetic
 typedef void (*MultFunc)(void*, void*, void*, int);
 typedef void (*AddFunc)(void*, void*, int);
@@ -25,16 +19,6 @@ void multOp(Data* dst, Data* A, Data* B);
 
 #ifndef OPS_IMPLEMENTATION
 #define OPS_IMPLEMENTATION
-
-//Debug
-void print_float32(void* values, int index) {
-    float32* vals = (float32*)values;
-    printf("%.2f \t", vals[index]);
-}
-void print_float64(void* values, int index) {
-    float64* vals = (float64*)values;
-    printf("%.4lf \t", vals[index]);
-}
 
 //float32 Ops
 void add_float32(void* dstValues, void* AValues, int size) {
@@ -72,12 +56,6 @@ void mult_float64(void* dstValues, void* AValues, void* BValues, int size) {
     }
 }
 
-//Print Ops lookup
-PrintFunc print_types[] = {
-    [FLOAT32] = print_float32,
-    [FLOAT64] = print_float64,
-    //[FLOAT16] = print_float16
-};
 //Add Ops lookup
 AddFunc addData[] = {
     [FLOAT32] = add_float32,
