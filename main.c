@@ -15,13 +15,23 @@ int main() {
                         {1, 0, 1},
                         {1, 1, 0}};
 
+    float64 arr3[2][4][3] = {{{0, 0, 5},
+                            {0, 1, 5},
+                            {1, 0, 1},
+                            {1, 1, 0}},
+                            {{0, 0, 5},
+                            {0, 1, 5},
+                            {1, 0, 1},
+                            {1, 1, 0}}};
+
     int shape[] = {4, 3};
     int dim = 2;
+    int shape1[] = {2, 4, 3};
+    int dim1 = 3;
 
     Data* data = convertToData((void*)arr, shape, dim, FLOAT32);
     Data* data2 = convertToData((void*)arr2, shape, dim, FLOAT32);
-
-    
+    Data* data3 = convertToData((void*)arr3, shape1, dim1, FLOAT64);
 
     Tensor* t1 = tensor(data, false);
     Tensor* t2 = tensor(data, false);
@@ -29,26 +39,26 @@ int main() {
     Tensor* res = zerosFrom(t2);
     // Create a new Tensor from scratch
     Tensor* res1 = createTensor(shape, 2, FLOAT32, false);
+    Tensor* t4 = tensor(data3, false);
+    printTensor(t4);
 
-    printTensor(t1);
-    printTensor(t2);
-    printTensor(res);
-    printTensor(res1);
+    //print2DTensor(t1);
+    //print2DTensor(t2);
+    //print2DTensor(res);
+    //print2DTensor(res1);
 
-    mult(res,t1,t2);
-    printTensor(res);
-    add(res1,res);
-    printTensor(res1);
+    //mult(res,t1,t2);
+    //printTensor(res);
+    //add(res1,res);
+    //printTensor(res1);
   
 
     // Deallocate memory
-    free(data);
-    free(data2);
-    free(t1);
-    free(t2);
-    free(t3);
-    free(res1);
-    free(res);
+    freeTensor(t1);
+    freeTensor(t3);
+    freeTensor(t4);
+    freeTensor(res);
+    freeTensor(res1);
 
     return 0;
 }
