@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <stdbool.h>
 #include "dtype.h"
 #include "ops.h"
 
@@ -15,7 +16,15 @@ typedef struct {
     int stride;
 } Tensor;
 
-Tensor* createTensor(Data* data);
+
+Tensor* tensor(Data* data, bool requires_grad);
+Tensor* zerosFrom(Tensor* t);
+
+/*
+ * ===========================================================================
+ * Prototypes for arithmetic functions on Tensors
+ * ===========================================================================
+ */
 void mult(Tensor* dst, Tensor* A, Tensor* B);
 void add(Tensor* dst, Tensor* A);
 void printTensor(Tensor* A);
@@ -25,30 +34,81 @@ void printTensor(Tensor* A);
 #ifndef TENSOR_IMPLEMENTATION 
 #define TENSOR_IMPLEMENTATION
 
-Tensor* createTensor(Data* data) {
+/*
+ * tensor : create a new Tensor from a Data object.
+ */
+Tensor* tensor(Data* data, bool requires_grad) {
     Tensor* new_tensor = (Tensor*)malloc(sizeof(Tensor));
-
+    if (requires_grad) {
+        new_tensor->gradient = (float32*)calloc(data->size, sizeof(float32)); //Currently the gradient array is always of type float32
+    }
     new_tensor->data = data;
-    new_tensor->gradient = (float32*)calloc(data->size, sizeof(float32));
-    new_tensor->shape = data->shape;
+    new_tensor->shape = new_tensor->data->shape;
     new_tensor->dim = 2;  // Assuming 2 dimensions for simplicity
-    new_tensor->stride = data->stride;
+    new_tensor->stride = new_tensor->data->stride;
 
     return new_tensor;
 }
 
+/*
+ * zerosFrom : create a new Tensor filled with zeros from an existing Tensor(template).
+ */
+Tensor* zerosFrom(Tensor* t) {
+    // Allocate new Tensor
+    Tensor* new_tensor = (Tensor*)malloc(sizeof(Tensor));
+
+    // Copy properties of the original Tensor
+    new_tensor->shape = t->shape;
+    new_tensor->dim = t->dim;
+    new_tensor->stride = t->stride;
+
+    // Allocate new Data
+    Data* new_data = (Data*)malloc(sizeof(Data));
+
+    // Copy properties of the original Data
+    new_data->shape = t->data->shape;
+    new_data->stride = t->data->stride;
+    new_data->dtype = t->data->dtype;
+    new_data->size = t->data->size;
+
+    // Allocate zero values
+    new_data->values = calloc(new_data->size, sizeof(new_data->dtype));
+
+    // Set the new Data to the new Tensor
+    new_tensor->data = new_data;
+
+    // Create gradient for the new tensor if required
+    if (t->gradient != NULL) {
+        new_tensor->gradient = (float32*)calloc(new_data->size, sizeof(float32));
+    } else {
+        new_tensor->gradient = NULL;
+    }
+
+    return new_tensor;
+}
+
+
+
+/*
+ * mult : Multiply two Tensors A and B. Stores the result as a third Tensor dst.
+ */
 void mult(Tensor* dst, Tensor* A, Tensor* B) {
     // check for similars shapes of A, B, and dst
-    if (A->data->size != B->data->size || A->data->size != dst->data->size) {
+    printf("Hello, Mult!\n");
+    if (A->data->shape != B->data->shape || A->data->shape != dst->data->shape) {
         printf("Shape mismatch in tensors!\n");
         return;
     }
     multOp(dst->data, A->data, B->data);
 }
 
+/*
+ * add : Add two Tensors A and dst. Stores the result in a the Tensor dst.
+ */
 void add(Tensor* dst, Tensor* A) {
     // check for similars shapes of A and dst
-    if (A->data->size != dst->data->size) {
+    printf("Hello, Add!\n");
+    if (A->data->shape != dst->data->shape) {
         printf("Shape mismatch in tensors!\n");
         return;
     }
