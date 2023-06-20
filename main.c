@@ -5,15 +5,15 @@
 
 int main() {
 
-    float32 arr[4][3] =  {{0, 0, 2},
-                        {0, 1, 5},
-                        {1, 0, 1},
-                        {1, 1, 0}};
+    float32 arr[4][3] =  {{2, 2, 2},
+                        {3, 3, 3},
+                        {4, 4, 4},
+                        {5, 5, 5}};
                         
-    float32 arr2[4][3] = {{0, 0, 5},
-                        {0, 1, 5},
-                        {1, 0, 1},
-                        {1, 1, 0}};
+    float32 arr2[4][3] = {{2, 2, 2},
+                        {3, 3, 3},
+                        {4, 4, 4},
+                        {5, 5, 5}};
 
     float64 arr3[2][4][3] = {{{0, 0, 5},
                             {0, 1, 5},
@@ -41,14 +41,18 @@ int main() {
     Tensor* res1 = createTensor(shape, 2, FLOAT32, false);
     Tensor* t4 = tensor(data3, false);
     printTensor(t4);
+    printf("---------- \n");
+    printTensor(t1);
+    printf("---------- \n");
+    printTensor(t3);
 
     //print2DTensor(t1);
     //print2DTensor(t2);
     //print2DTensor(res);
     //print2DTensor(res1);
 
-    //mult(res,t1,t2);
-    //printTensor(res);
+    mult(res,t1,t3);
+    printTensor(res);
     //add(res1,res);
     //printTensor(res1);
   
