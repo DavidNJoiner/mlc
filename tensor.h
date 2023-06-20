@@ -23,9 +23,9 @@ Tensor* createTensor(int* shape, int dim, int dtype, bool requires_grad);
 Tensor* zerosFrom(Tensor* t);
 
 /*
- * ===========================================================================
- * Prototypes for arithmetic functions on Tensors
- * ===========================================================================
+   -------------------------------------------------------
+   Prototypes for arithmetic functions on Tensors
+   -------------------------------------------------------
  */
 void mult(Tensor* dst, Tensor* A, Tensor* B);
 void add(Tensor* dst, Tensor* A);
@@ -39,7 +39,9 @@ void printTensor(Tensor* A);
 #define TENSOR_IMPLEMENTATION
 
 /*
- * tensor : create a new Tensor from a Data object.
+   -------------------------------------------------------
+   tensor : create a new Tensor from a Data object.
+   -------------------------------------------------------
  */
 Tensor* tensor(Data* data, bool requires_grad) {
     Tensor* new_tensor = (Tensor*)malloc(sizeof(Tensor));
@@ -55,7 +57,9 @@ Tensor* tensor(Data* data, bool requires_grad) {
 }
 
 /*
- * tensor : create a new Tensor from scratch.
+   -------------------------------------------------------
+   tensor : create a new Tensor from scratch.
+   -------------------------------------------------------
  */
 Tensor* createTensor(int* shape, int dim, int dtype, bool requires_grad) {
     // Create an array of zeros
@@ -83,7 +87,9 @@ Tensor* createTensor(int* shape, int dim, int dtype, bool requires_grad) {
 
 
 /*
- * zerosFrom : create a new Tensor filled with zeros from an existing Tensor(template).
+   -------------------------------------------------------
+   zerosFrom : create a new Tensor filled with zeros from an existing Tensor(template).
+   -------------------------------------------------------
  */
 Tensor* zerosFrom(Tensor* t) {
     // Allocate new Tensor
@@ -135,7 +141,9 @@ void freeTensor(Tensor* t) {
 }
 
 /*
- * mult : Multiply two Tensors A and B. Stores the result as a third Tensor dst.
+   -------------------------------------------------------
+   mult : Multiply two Tensors A and B. Stores the result as a third Tensor dst.
+   -------------------------------------------------------
  */
 void mult(Tensor* dst, Tensor* A, Tensor* B) {
     // check for similars shapes of A, B, and dst
@@ -148,7 +156,9 @@ void mult(Tensor* dst, Tensor* A, Tensor* B) {
 }
 
 /*
- * add : Add two Tensors A and dst. Stores the result in a the Tensor dst.
+   -------------------------------------------------------
+   add : Add two Tensors A and dst. Stores the result in a the Tensor dst.
+   -------------------------------------------------------
  */
 void add(Tensor* dst, Tensor* A) {
     // check for similars shapes of A and dst
@@ -161,7 +171,9 @@ void add(Tensor* dst, Tensor* A) {
 }
 
 /*
- * printTensor : print a 2D Tensor to the console.
+   -------------------------------------------------------
+   printTensor : print a 2D Tensor to the console.
+   -------------------------------------------------------
  */
 void print2DTensor(Tensor* A) {
     //printf("%s %d %d", GetDType(A->data->dtype), A->shape[0], A->shape[1]);

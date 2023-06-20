@@ -20,7 +20,11 @@ void multOp(Data* dst, Data* A, Data* B);
 #ifndef OPS_IMPLEMENTATION
 #define OPS_IMPLEMENTATION
 
-//float32 Ops
+/*  
+    -------------------------------------------------------
+    float32 Ops
+    -------------------------------------------------------
+*/ 
 void add_float32(void* dstValues, void* AValues, int size) {
     float32* AFloat = (float32*)AValues;
     float32* dstFloat = (float32*)dstValues;
@@ -38,7 +42,11 @@ void mult_float32(void* dstValues, void* AValues, void* BValues, int size) {
     }
 }
 
-//float64 Ops
+/*  
+    -------------------------------------------------------
+    float64 Ops
+    -------------------------------------------------------
+*/ 
 void add_float64(void* dstValues, void* AValues, int size) {
     float64* AFloat = (float64*)AValues;
     float64* dstFloat = (float64*)dstValues;
@@ -56,18 +64,48 @@ void mult_float64(void* dstValues, void* AValues, void* BValues, int size) {
     }
 }
 
-//Add Ops lookup
+/*  
+    -------------------------------------------------------
+    float16 Ops
+    -------------------------------------------------------
+*/ 
+void add_float16(void* dstValues, void* AValues, int size) {
+    float16* AFloat = (float16*)AValues;
+    float16* dstFloat = (float16*)dstValues;
+    for (int i = 0; i < size; i++) {
+        dstFloat[i] += AFloat[i];
+    }
+}
+
+void mult_float16(void* dstValues, void* AValues, void* BValues, int size) {
+    float16* AFloat = (float16*)AValues;
+    float16* BFloat = (float16*)BValues;
+    float16* dstFloat = (float16*)dstValues;
+    for (int i = 0; i < size; i++) {
+        dstFloat[i] = AFloat[i] * BFloat[i];
+    }
+}
+
+/*  
+    -------------------------------------------------------
+    ADD Ops lookup
+    -------------------------------------------------------
+*/ 
 AddFunc addData[] = {
     [FLOAT32] = add_float32,
     [FLOAT64] = add_float64,
-    //[FLOAT16] = add_float16
+    [FLOAT16] = add_float16,
 };
 
-//Mult Ops lookup
+/*  
+    -------------------------------------------------------
+    MULT Ops lookup
+    -------------------------------------------------------
+*/ 
 MultFunc multData[] = {
     [FLOAT32] = mult_float32,
     [FLOAT64] = mult_float64,
-    //[FLOAT16] = mult_float16
+    [FLOAT16] = mult_float16,
 };
 
 // Add a dst and A Data objects element-wise and store the result in the res Data object.

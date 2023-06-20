@@ -154,7 +154,7 @@ Data* convertToData(void* array, int* shape, int dim, int dtype) {
     Data* data = (Data*)malloc(sizeof(Data));
     data->values = flattened;
     data->size = size;
-    data->stride = 1;  // Assuming stride of 1 for flattened array
+    data->stride = 1;  //Assuming stride of 1 for flattened array
     data->shape = shape;
     data->dtype = dtype;
 

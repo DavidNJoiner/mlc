@@ -16,7 +16,15 @@ void printOp(Data* A, int dim);
 #ifndef DEBUG_IMPLEMENTATION
 #define DEBUG_IMPLEMENTATION
 
-//Print Ops
+/*  
+    -------------------------------------------------------
+    Print Ops
+    -------------------------------------------------------
+*/ 
+void print_float16(void* values, int index) {
+    float16* vals = (float16*)values;
+    printf("%.2hu \t", vals[index]);
+}
 void print_float32(void* values, int index) {
     float32* vals = (float32*)values;
     printf("%.2f \t", vals[index]);
@@ -26,16 +34,22 @@ void print_float64(void* values, int index) {
     printf("%.4lf \t", vals[index]);
 }
 
-//Print Ops lookup
+/*  
+    -------------------------------------------------------
+    PRINT Ops lookup
+    -------------------------------------------------------
+*/
 PrintFunc print_types[] = {
     [FLOAT32] = print_float32,
     [FLOAT64] = print_float64,
-    //[FLOAT16] = print_float16
+    [FLOAT16] = print_float16,
 };
 
-/*
- * printHelper : Recursive helper function to print array pointed to by a Data struct
- */
+/*  
+    -------------------------------------------------------
+    printHelper : Recursive helper function to print array pointed to by a Data struct
+    -------------------------------------------------------
+*/
 void printHelper(Data* A, PrintFunc printFunc, int* indices, int dim, int cur_dim) {
     if (cur_dim == dim - 1) {
         for (indices[cur_dim] = 0; indices[cur_dim] < A->shape[cur_dim]; indices[cur_dim]++) {
@@ -50,9 +64,11 @@ void printHelper(Data* A, PrintFunc printFunc, int* indices, int dim, int cur_di
     }
 }
 
-/*
- * printOp : Print any dtype Tensor of any dimension to the console.
- */
+/*  
+    -------------------------------------------------------
+    printOp : Print any dtype Tensor of any dimension to the console.
+    -------------------------------------------------------
+*/
 void printOp(Data* A, int dim) {
     PrintFunc printFunc = print_types[A->dtype];
     if (printFunc) {
