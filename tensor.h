@@ -50,8 +50,8 @@ Tensor* tensor(Data* data, bool requires_grad) {
     }
     new_tensor->data = data;
     new_tensor->shape = new_tensor->data->shape;
-    new_tensor->dim = 2;  // Assuming 2 dimensions for simplicity
-    new_tensor->stride = new_tensor->data->stride;
+    new_tensor->dim = data->dim;
+    new_tensor->stride = new_tensor->data->dtype;
 
     return new_tensor;
 }
@@ -105,7 +105,6 @@ Tensor* zerosFrom(Tensor* t) {
 
     // Copy properties of the original Data
     new_data->shape = t->data->shape;
-    new_data->stride = t->data->stride;
     new_data->dtype = t->data->dtype;
     new_data->size = t->data->size;
 
@@ -194,7 +193,6 @@ void print2DTensor(Tensor* A) {
 
 void printTensor(Tensor* A){
     if (0 < A->data->dtype <= 16) {
-        printf("let's print ! \n");
         printOp(A->data, A->dim);
     }
 }
