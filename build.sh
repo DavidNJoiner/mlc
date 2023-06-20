@@ -1,5 +1,5 @@
 #!/bin/bash
 
-gcc -o mlc main.c -lm
+gcc -o deepc main.c -lm
 
-./mlc
+./deepc
