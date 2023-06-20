@@ -18,29 +18,31 @@ typedef signed char qint8;
 typedef int qint32;
 typedef signed char quint4x2;
 
-#define FLOAT32 1
-#define FLOAT64 2
-#define FLOAT16 3
-#define BFLOAT16 4
-#define COMPLEX32 5
-#define COMPLEX64 6
-#define COMPLEX128 7
-#define UINT8 8
-#define INT8 9
-#define INT16 10
-#define INT32 11
-#define INT64 12
-#define QUINT8 13
-#define QINT8 14
-#define QINT32 15
-#define QUINT4X2 16
+
+//The stride is contained within the dtype
+#define FLOAT32 sizeof(float32)
+#define FLOAT64 sizeof(float64)
+#define FLOAT16 sizeof(float16)
+#define BFLOAT16 sizeof(bfloat16)
+#define COMPLEX32 sizeof(complex32)
+#define COMPLEX64 sizeof(complex64)
+#define COMPLEX128 sizeof(complex128)
+#define UINT8 sizeof(uint8)
+#define INT8 sizeof(int8)
+#define INT16 sizeof(int16)
+#define INT32 sizeof(int32)
+#define INT64 sizeof(int64)
+#define QUINT8 sizeof(quint8)
+#define QINT8 sizeof(qint8)
+#define QINT32 sizeof(qint32)
+#define QUINT4X2 sizeof(quint4x2)
 
 
 //Data object struct
 typedef struct {
     void* values;
     int size;
-    int stride;
+    int dim;
     int* shape;
     int dtype;
 } Data;
@@ -48,7 +50,7 @@ typedef struct {
 const char* GetDType(int num);
 int dtypeSize(int dtype);
 int calculateIndex(int* indices, int* strides, int dim);
-void flattenArray(void* array, void* flattened, int* shape, int dim, int dtype);
+void flattenArray(void* array, void* flattened, int* shape, int dim, int dtype, int idx);
 Data* convertToData(void* array, int* shape, int dim, int dtype);
 
 
@@ -77,6 +79,11 @@ int dtypeSize(int dtype) {
     }
 }
 
+/*
+    -------------------------------------------------------
+    calculateIndex : convert multi-dimensional index into a linear index
+    -------------------------------------------------------
+*/
 int calculateIndex(int* indices, int* shape, int dim) {
     int index = 0;
     int stride = 1;
@@ -87,57 +94,36 @@ int calculateIndex(int* indices, int* shape, int dim) {
     return index;
 }
 
-
-void flattenArray(void* array, void* flattened, int* shape, int dim, int dtype){
-    int* indices = (int*)malloc(dim * sizeof(int));
-    int* strides = (int*)malloc(dim * sizeof(int));
-
-    // Calculate strides
-    strides[dim - 1] = 1;
-    for (int i = dim - 2; i >= 0; i--) {
-        strides[i] = strides[i + 1] * shape[i + 1];
-    }
-
-    // Flatten array
-    int flatIndex = 0;
-    for (int i = 0; i < dim; i++) {
-        indices[i] = 0;
-    }
-
-    for (int i = 0; i < shape[0]; i++) {
-        for (int j = 0; j < shape[1]; j++) {
-            // Access array using indices and strides
-            switch (dtype) {
-                case FLOAT32: 
-                    ((float32*)flattened)[flatIndex] = ((float32*)array)[calculateIndex(indices, strides, dim)];
-                    break;
-                case FLOAT64: 
-                    ((float64*)flattened)[flatIndex] = ((float64*)array)[calculateIndex(indices, strides, dim)];
-                    break;
-                case FLOAT16: 
-                    ((float16*)flattened)[flatIndex] = ((float16*)array)[calculateIndex(indices, strides, dim)];
-                    break;
-                // add other cases as needed
-                default:
-                    printf("Unknown dtype!\n");
-            }
-
-            // Update indices
-            for (int k = dim - 1; k >= 0; k--) {
-                indices[k]++;
-                if (indices[k] >= shape[k] && k > 0) {
-                    indices[k] = 0;
-                } else {
-                    break;
+void flattenArray(void* array, void* flattened, int* shape, int dim, int dtype, int idx) {
+    if (dim == 1) {
+        int elementSize = dtype;  // use dtype as element size
+        switch (dtype) {
+            case FLOAT32: {
+                float32* farray = (float32*)array;
+                float32* fflattened = (float32*)flattened;
+                for (int i = 0; i < shape[0]; i++) {
+                    fflattened[i + idx] = farray[i];
                 }
+                break;
             }
-
-            flatIndex++;
+            case FLOAT64: {
+                float64* farray = (float64*)array;
+                float64* fflattened = (float64*)flattened;
+                for (int i = 0; i < shape[0]; i++) {
+                    fflattened[i + idx] = farray[i];
+                }
+                break;
+            }
+            default:
+                printf("Unsupported dtype %d\n", dtype);
+                break;
+        }
+    } else {
+        int stride = shape[1] * dtype;  // calculate the stride for the current dimension
+        for (int i = 0; i < shape[0]; i++) {
+            flattenArray((char*)array + i * stride, flattened, shape + 1, dim - 1, dtype, idx + i * shape[1]);
         }
     }
-
-    free(indices);
-    free(strides);
 }
 
 
@@ -149,12 +135,12 @@ Data* convertToData(void* array, int* shape, int dim, int dtype) {
 
     void* flattened = malloc(size * dtypeSize(dtype));
 
-    flattenArray(array, flattened, shape, dim, dtype);
+    flattenArray(array, flattened, shape, dim, dtype, 0);
 
     Data* data = (Data*)malloc(sizeof(Data));
     data->values = flattened;
     data->size = size;
-    data->stride = 1;  //Assuming stride of 1 for flattened array
+    data->dim = dim;
     data->shape = shape;
     data->dtype = dtype;
 
