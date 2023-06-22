@@ -92,29 +92,39 @@ Tensor* createTensor(int* shape, int dim, int dtype, bool requires_grad) {
    -------------------------------------------------------
  */
 Tensor* zerosFrom(Tensor* t) {
-    // Allocate new Tensor
     Tensor* new_tensor = (Tensor*)malloc(sizeof(Tensor));
 
-    // Copy properties of the original Tensor
-    new_tensor->shape = t->shape;
+    new_tensor->shape = (int*)malloc(t->dim * sizeof(int));
+    for (int i = 0; i < t->dim; i++) {
+        new_tensor->shape[i] = t->shape[i];
+    }
     new_tensor->dim = t->dim;
     new_tensor->stride = t->stride;
 
-    // Allocate new Data
     Data* new_data = (Data*)malloc(sizeof(Data));
 
-    // Copy properties of the original Data
-    new_data->shape = t->data->shape;
-    new_data->dtype = t->data->dtype;
+    new_data->shape = (int*)malloc(t->data->dim * sizeof(int));
+    for (int i = 0; i < t->data->dim; i++) {
+        new_data->shape[i] = t->data->shape[i];
+    }
+    new_data->dim = t->data->dim;
     new_data->size = t->data->size;
+    new_data->dtype = t->data->dtype;
 
-    // Allocate zero values
-    new_data->values = calloc(new_data->size, sizeof(new_data->dtype));
+    switch (new_data->dtype) {
+        case FLOAT32:
+            new_data->values = calloc(new_data->size, sizeof(float));
+            break;
+        case FLOAT64:
+            new_data->values = calloc(new_data->size, sizeof(double));
+            break;
+        default:
+            fprintf(stderr, "Unsupported dtype: %d\n", new_data->dtype);
+            exit(EXIT_FAILURE);
+    }
 
-    // Set the new Data to the new Tensor
     new_tensor->data = new_data;
 
-    // Create gradient for the new tensor if required
     if (t->gradient != NULL) {
         new_tensor->gradient = (float32*)calloc(new_data->size, sizeof(float32));
     } else {
@@ -124,20 +134,27 @@ Tensor* zerosFrom(Tensor* t) {
     return new_tensor;
 }
 
+
 void freeTensor(Tensor* t) {
     if (t != NULL) {
         if (t->gradient != NULL) {
             free(t->gradient);
+            t->gradient = NULL;  // set to NULL after free
         }
         if (t->data != NULL) {
             if (t->data->values != NULL) {
                 free(t->data->values);
+                t->data->values = NULL;  // set to NULL after free
             }
             free(t->data);
+            t->data = NULL;  // set to NULL after free
         }
+        free(t->shape);
         free(t);
+        t = NULL;  // set to NULL after free
     }
 }
+
 
 /*
    -------------------------------------------------------
@@ -152,6 +169,21 @@ void mult(Tensor* dst, Tensor* A, Tensor* B) {
         return;
     }
     multOp(dst->data, A->data, B->data);
+}
+
+/*
+   -------------------------------------------------------
+   fastmul : Multiply two Tensors A and B. Stores the result as a third Tensor dst (only float32).
+   -------------------------------------------------------
+ */
+void fastmult(Tensor* dst, Tensor* A, Tensor* B) {
+    // check for similars shapes of A, B, and dst
+    printf("Hello, FastMult!\n");
+    if (A->data->shape != B->data->shape || A->data->shape != dst->data->shape) {
+        printf("Shape mismatch in tensors!\n");
+        return;
+    }
+    gemmOp(dst->data, A->data, B->data);
 }
 
 /*
