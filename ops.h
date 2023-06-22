@@ -1,4 +1,5 @@
 #include "dtype.h"
+#include "gemm.h"
 
 #ifndef OPS_H_ 
 #define OPS_H_
@@ -88,4 +89,10 @@ void multOp(Data* dst, Data* A, Data* B) {
         printf("Operation not supported for dtype %d\n", A->dtype);
     }
 }
+
+void gemmOp(Data* res, Data* mat1, Data* mat2){
+    int mat_size = res->size;
+    matmul(res->values, mat1->values, mat2->values, mat_size);
+}
+
 #endif //OPS_IMPLEMENTATION
