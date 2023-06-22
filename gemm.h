@@ -19,7 +19,7 @@ and use an AVX-optimized loop to perform the multiplication.
 #include <assert.h>
 #include <immintrin.h>
 
-#define BLOCK_SIZE 16
+#define BLOCK_SIZE 12
 
 uint64_t nanos();
 void matmul(float32* res, float32* mat1, float32* mat2, int mat_size);

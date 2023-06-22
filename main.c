@@ -39,7 +39,9 @@ int main() {
     //Tensor* res1 = createTensor(shape, 2, FLOAT32, false);
     //Tensor* t4 = tensor(data3, false);
 
-    mult(res,t1,t2);
+    printTensor(t1);
+    printTensor(t2);
+    fastmult(res,t1,t2);
     printTensor(res);
     add(res,t2);
     printTensor(res);
