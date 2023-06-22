@@ -47,7 +47,7 @@ Tensor* tensor(Data* data, bool requires_grad) {
     Tensor* new_tensor = (Tensor*)malloc(sizeof(Tensor));
     if (requires_grad) {
         new_tensor->gradient = (float32*)calloc(data->size, sizeof(float32)); //Currently the gradient array is always of type float32
-    }
+    }else{new_tensor->gradient = NULL;}
     new_tensor->data = data;
     new_tensor->shape = new_tensor->data->shape;
     new_tensor->dim = data->dim;
@@ -72,16 +72,8 @@ Tensor* createTensor(int* shape, int dim, int dtype, bool requires_grad) {
         printf("Memory allocation failed!\n");
         return NULL;
     }
-    
-    // Convert array to data
     Data* data = convertToData(array, shape, dim, dtype);
-    
-    // Create tensor with data
     Tensor* t = tensor(data, requires_grad);
-    
-    // Free the array
-    free(array);
-
     return t;
 }
 
@@ -139,20 +131,33 @@ void freeTensor(Tensor* t) {
     if (t != NULL) {
         if (t->gradient != NULL) {
             free(t->gradient);
-            t->gradient = NULL;  // set to NULL after free
+            t->gradient = NULL;
         }
         if (t->data != NULL) {
             if (t->data->values != NULL) {
                 free(t->data->values);
-                t->data->values = NULL;  // set to NULL after free
+                t->data->values = NULL; 
             }
             free(t->data);
-            t->data = NULL;  // set to NULL after free
+            t->data = NULL;  
         }
-        free(t->shape);
         free(t);
-        t = NULL;  // set to NULL after free
+        t = NULL;
     }
+}
+
+bool shapesAreEqual(Tensor* A, Tensor* B) {
+    if (A->dim != B->dim) {
+        return false;
+    }
+
+    for (int i = 0; i < A->dim; i++) {
+        if (A->shape[i] != B->shape[i]) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 
@@ -164,7 +169,7 @@ void freeTensor(Tensor* t) {
 void mult(Tensor* dst, Tensor* A, Tensor* B) {
     // check for similars shapes of A, B, and dst
     printf("Hello, Mult!\n");
-    if (A->data->shape != B->data->shape || A->data->shape != dst->data->shape) {
+    if (!shapesAreEqual(A, B) || !shapesAreEqual(A, dst)) {
         printf("Shape mismatch in tensors!\n");
         return;
     }
@@ -179,7 +184,7 @@ void mult(Tensor* dst, Tensor* A, Tensor* B) {
 void fastmult(Tensor* dst, Tensor* A, Tensor* B) {
     // check for similars shapes of A, B, and dst
     printf("Hello, FastMult!\n");
-    if (A->data->shape != B->data->shape || A->data->shape != dst->data->shape) {
+    if (!shapesAreEqual(A, B) || !shapesAreEqual(A, dst)) {
         printf("Shape mismatch in tensors!\n");
         return;
     }
@@ -192,9 +197,8 @@ void fastmult(Tensor* dst, Tensor* A, Tensor* B) {
    -------------------------------------------------------
  */
 void add(Tensor* dst, Tensor* A) {
-    // check for similars shapes of A and dst
     printf("Hello, Add!\n");
-    if (A->data->shape != dst->data->shape) {
+    if (!shapesAreEqual(A, dst)) {
         printf("Shape mismatch in tensors!\n");
         return;
     }
@@ -225,6 +229,16 @@ void print2DTensor(Tensor* A) {
 
 void printTensor(Tensor* A){
     if (0 < A->data->dtype <= 16) {
+        printf("------------------ \n");
+        printf("debug values_ptr : %p \n", A->data->values);
+        printf("debug dtype : %d \n", A->data->dtype);
+        printf("debug shape : ");
+        for (int i = 0; i < A->dim; i++) {
+            printf("%d ", A->shape[i]);
+        }
+        printf("\n");
+        printf("debug dim : %d \n", A->dim);
+        printf("------------------ \n");
         printOp(A->data, A->dim);
     }
 }
