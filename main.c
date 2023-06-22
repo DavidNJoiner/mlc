@@ -31,38 +31,25 @@ int main() {
 
     Data* data = convertToData((void*)arr, shape, dim, FLOAT32);
     Data* data2 = convertToData((void*)arr2, shape, dim, FLOAT32);
-    Data* data3 = convertToData((void*)arr3, shape1, dim1, FLOAT64);
 
     Tensor* t1 = tensor(data, false);
-    Tensor* t2 = tensor(data, false);
-    Tensor* t3 = tensor(data2, false);
+    Tensor* t2 = tensor(data2, false);
     Tensor* res = zerosFrom(t2);
     // Create a new Tensor from scratch
-    Tensor* res1 = createTensor(shape, 2, FLOAT32, false);
-    Tensor* t4 = tensor(data3, false);
-    printTensor(t4);
-    printf("---------- \n");
-    printTensor(t1);
-    printf("---------- \n");
-    printTensor(t3);
+    //Tensor* res1 = createTensor(shape, 2, FLOAT32, false);
+    //Tensor* t4 = tensor(data3, false);
 
-    //print2DTensor(t1);
-    //print2DTensor(t2);
-    //print2DTensor(res);
-    //print2DTensor(res1);
-
-    mult(res,t1,t3);
+    mult(res,t1,t2);
     printTensor(res);
-    //add(res1,res);
-    //printTensor(res1);
+    add(res,t2);
+    printTensor(res);
+    //add(t4, t4);
+    //printTensor(t4);
   
-
     // Deallocate memory
     freeTensor(t1);
-    freeTensor(t3);
-    freeTensor(t4);
-    freeTensor(res);
-    freeTensor(res1);
+    freeTensor(t2);
+
 
     return 0;
 }
