@@ -55,7 +55,6 @@ Tensor* tensor(Data* data, bool requires_grad) {
 
     return new_tensor;
 }
-
 /*
    -------------------------------------------------------
    tensor : create a new Tensor from scratch.
@@ -76,8 +75,6 @@ Tensor* createTensor(int* shape, int dim, int dtype, bool requires_grad) {
     Tensor* t = tensor(data, requires_grad);
     return t;
 }
-
-
 /*
    -------------------------------------------------------
    zerosFrom : create a new Tensor filled with zeros from an existing Tensor(template).
@@ -125,8 +122,11 @@ Tensor* zerosFrom(Tensor* t) {
 
     return new_tensor;
 }
-
-
+/*
+   -------------------------------------------------------
+   freeTensor : Releases the memory allocated for a given tensor,.
+   -------------------------------------------------------
+ */
 void freeTensor(Tensor* t) {
     if (t != NULL) {
         if (t->gradient != NULL) {
@@ -145,7 +145,11 @@ void freeTensor(Tensor* t) {
         t = NULL;
     }
 }
-
+/*
+   -------------------------------------------------------
+   shapesAreEqual : Check if two Tensors shapes are equals.
+   -------------------------------------------------------
+ */
 bool shapesAreEqual(Tensor* A, Tensor* B) {
     if (A->dim != B->dim) {
         return false;
@@ -159,74 +163,58 @@ bool shapesAreEqual(Tensor* A, Tensor* B) {
 
     return true;
 }
-
-
 /*
    -------------------------------------------------------
    mult : Multiply two Tensors A and B. Stores the result as a third Tensor dst.
    -------------------------------------------------------
  */
 void mult(Tensor* dst, Tensor* A, Tensor* B) {
-    // check for similars shapes of A, B, and dst
-    printf("Hello, Mult!\n");
+
     if (!shapesAreEqual(A, B) || !shapesAreEqual(A, dst)) {
         printf("Shape mismatch in tensors!\n");
         return;
     }
+
     multOp(dst->data, A->data, B->data);
 }
-
 /*
    -------------------------------------------------------
    fastmul : Multiply two Tensors A and B. Stores the result as a third Tensor dst (only float32).
    -------------------------------------------------------
  */
 void fastmult(Tensor* dst, Tensor* A, Tensor* B) {
-    // check for similars shapes of A, B, and dst
-    printf("Hello, FastMult!\n");
+
     if (!shapesAreEqual(A, B) || !shapesAreEqual(A, dst)) {
         printf("Shape mismatch in tensors!\n");
         return;
     }
-    gemmOp(dst->data, A->data, B->data);
-}
 
+    if (is_aligned(dst->data->values, 32) && is_aligned(A->data->values, 32) && is_aligned(B->data->values, 32)) {
+        printf("values are 32-byte aligned.\n");
+        gemmOp(dst->data, A->data, B->data);
+    } else {
+        printf("values are NOT 32-byte aligned.\n");
+    }
+}
 /*
    -------------------------------------------------------
    add : Add two Tensors A and dst. Stores the result in a the Tensor dst.
    -------------------------------------------------------
  */
 void add(Tensor* dst, Tensor* A) {
-    printf("Hello, Add!\n");
+
     if (!shapesAreEqual(A, dst)) {
         printf("Shape mismatch in tensors!\n");
         return;
     }
+
     addOp(dst->data, A->data);
 }
-
 /*
    -------------------------------------------------------
-   printTensor : print a 2D Tensor to the console.
+   printTensor : print a Tensor to the console.
    -------------------------------------------------------
  */
-void print2DTensor(Tensor* A) {
-    //printf("%s %d %d", GetDType(A->data->dtype), A->shape[0], A->shape[1]);
-    for (int i = 0; i < A->shape[0]; ++i) {
-        for (int j = 0; j < A->shape[1]; ++j) {
-            int index = i * A->shape[1] + j;
-            PrintFunc print_func = print_types[A->data->dtype];
-            if (print_func) {
-                print_func(A->data->values, index);
-            } else {
-                printf("Print operation not supported for dtype %d\n", A->data->dtype);
-            }
-        }
-        printf("\n");
-    }
-    printf("\n");
-}
-
 void printTensor(Tensor* A){
     if (0 < A->data->dtype <= 16) {
         printf("------------------ \n");
