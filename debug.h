@@ -1,9 +1,13 @@
 #include "dtype.h"
+#include <time.h>
 
 #ifndef DEBUG_H_ 
 #define DEBUG_H_
 
 typedef void (*PrintFunc)(void*, int);
+
+bool is_aligned(void* ptr, size_t alignment);
+uint64_t nanos();
 
 void print_float32(void* values, int index);
 void print_float64(void* values, int index);
@@ -15,6 +19,26 @@ void printOp(Data* A, int dim);
 
 #ifndef DEBUG_IMPLEMENTATION
 #define DEBUG_IMPLEMENTATION
+
+/*  
+    -------------------------------------------------------
+    Memory Alignement Check
+    -------------------------------------------------------
+*/ 
+bool is_aligned(void* ptr, size_t alignment) {
+    return ((uintptr_t)ptr % alignment) == 0;
+}
+
+/*  
+    -------------------------------------------------------
+    Monotonic Chrono
+    -------------------------------------------------------
+*/ 
+uint64_t nanos(){
+    struct timespec start;
+    clock_gettime(CLOCK_MONOTONIC, &start);
+    return (uint64_t)start.tv_sec*1000000000 + (uint64_t)start.tv_nsec;
+}
 
 /*  
     -------------------------------------------------------
