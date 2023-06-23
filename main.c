@@ -46,16 +46,16 @@ int main() {
 
 
     uint64_t start1 = nanos();
-    fastmult(t3,t1,t2);
+    fastmult(t3, t1, t2);
     uint64_t end1 = nanos();
     printTensor(t3);
-     printf("Fastmult Time: %f s\n", (double)(end1 - start1) / 1000000000.0);
+    printf("------------------ Fastmult Time: %f s\n", (double)(end1 - start1) / 1000000000.0);
     
     uint64_t start2 = nanos();
     mult(t3, t1, t2);
     uint64_t end2 = nanos();
     printTensor(t3);
-     printf("Mult Time: %f s\n", (double)(end2 - start2) / 1000000000.0);
+    printf("------------------ Mult Time: %f s\n", (double)(end2 - start2) / 1000000000.0);
     // add(t4, t4);
     // printTensor(t4);
 
