@@ -48,7 +48,7 @@ typedef struct {
 } Data;
 
 const char* GetDType(int num);
-int dtypeSize(int dtype);
+int GetDtypeSize(int dtype);
 int calculateIndex(int* indices, int* strides, int dim);
 void flattenArray(void* array, void* flattened, int* shape, int dim, int dtype, int idx);
 Data* convertToData(void* array, int* shape, int dim, int dtype);
@@ -69,7 +69,7 @@ const char* GetDType(int dtype) {
     }
 }
 
-int dtypeSize(int dtype) {
+int GetDtypeSize(int dtype) {
     switch (dtype) {
         case FLOAT32: return sizeof(float32);
         case FLOAT64: return sizeof(float64);
@@ -78,10 +78,9 @@ int dtypeSize(int dtype) {
         default: return 0;
     }
 }
-
 /*
     -------------------------------------------------------
-    calculateIndex : convert multi-dimensional index into a linear index
+    calculateIndex : convert multi-dimensional index into a linear index;
     -------------------------------------------------------
 */
 int calculateIndex(int* indices, int* shape, int dim) {
@@ -93,6 +92,11 @@ int calculateIndex(int* indices, int* shape, int dim) {
     }
     return index;
 }
+/*
+    -------------------------------------------------------
+    flattenArray : recursively flattens a multi-dimensional array into a one-dimensional array.
+    -------------------------------------------------------
+*/
 
 void flattenArray(void* array, void* flattened, int* shape, int dim, int dtype, int idx) {
     if (dim == 1) {
@@ -125,7 +129,11 @@ void flattenArray(void* array, void* flattened, int* shape, int dim, int dtype, 
         }
     }
 }
-
+/*
+   -------------------------------------------------------
+   convertToData : Converts a given multi-dimensional array into a Data structure.
+   -------------------------------------------------------
+ */
 Data* convertToData(void* array, int* shape, int dim, int dtype) {
     int size = 1;
     for (int i = 0; i < dim; i++) {
