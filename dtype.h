@@ -140,7 +140,7 @@ Data* convertToData(void* array, int* shape, int dim, int dtype) {
         size *= shape[i];
     }
     
-    void* flattened = (float32 *)aligned_alloc(32, size * dtypeSize(dtype));
+    void* flattened = (float32 *)aligned_alloc(32, size * GetDtypeSize(dtype));
 
     flattenArray(array, flattened, shape, dim, dtype, 0);
 

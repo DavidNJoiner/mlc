@@ -34,6 +34,7 @@ DEFINE_OPS(float16)
 
 void addOp(Data* dst, Data* A);
 void multOp(Data* dst, Data* A, Data* B);
+void gemmOp(Data* dst, Data* A, Data* B);
 
 #endif //OPS_H
 
@@ -51,7 +52,11 @@ MultFunc multData[] = {
     [FLOAT64] = mult_float64,
     [FLOAT16] = mult_float16,
 };
-
+/*
+   -------------------------------------------------------
+   addOp : Tensor Add Operation.
+   -------------------------------------------------------
+*/
 void addOp(Data* dst, Data* A) {
     if (A->dtype != dst->dtype) {
         printf("Data dtypes do not match!\n");
@@ -70,7 +75,11 @@ void addOp(Data* dst, Data* A) {
         printf("Operation not supported for dtype %d\n", A->dtype);
     }
 }
-
+/*
+   -------------------------------------------------------
+   multOp : Tensor Multiply Operation.
+   -------------------------------------------------------
+*/
 void multOp(Data* dst, Data* A, Data* B) {
     if (A->dtype != dst->dtype || B->dtype != dst->dtype ) {
         printf("Data dtypes do not match!\n");
@@ -89,10 +98,14 @@ void multOp(Data* dst, Data* A, Data* B) {
         printf("Operation not supported for dtype %d\n", A->dtype);
     }
 }
-
-void gemmOp(Data* res, Data* mat1, Data* mat2){
-    int mat_size = res->size;
-    vec1_avx_mul(res->values, mat1->values, mat2->values, mat_size);
+/*
+   -------------------------------------------------------
+   gemmOp : Tensor Fast Multiply Operation.
+   -------------------------------------------------------
+*/
+void gemmOp(Data* dst, Data* A, Data* B){
+    int mat_size = dst->size;
+    vec1_avx_mul(dst->values, A->values, B->values, mat_size);
 }
 
 #endif //OPS_IMPLEMENTATION

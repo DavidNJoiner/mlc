@@ -1,12 +1,3 @@
-/* gemm.h
-* a c program to multuply two matrices of size n. Optimized for Skylake-X CPU.
-
-The BLOCK_SIZE constant determines the size of the blocks that we will use to partition the matrices.
-Block multiplication done using AVX-optimized instructions.
-Within each block multiplication, we further partition the blocks into sub-blocks of size 8x8
-and use an AVX-optimized loop to perform the multiplication.
-*/
-
 #ifndef GEMM_H_ 
 #define GEMM_H_
 
@@ -27,7 +18,7 @@ void vec1_avx_mul(float32* res, float32* mat1, float32* mat2, int mat_size);
 #ifndef GEMM_IMPLEMENTATION
 #define GEMM_IMPLEMENTATION
 
-void vec1_avx_mul(float32* res, float32* mat1, float32* mat2, int mat_size)
+void vec1_avx_mul(float32* dst, float32* A, float32* B, int mat_size)
 {
     int AVX_SIZE = 8;  // AVX can process 8 floats at a time
 
@@ -39,17 +30,17 @@ void vec1_avx_mul(float32* res, float32* mat1, float32* mat2, int mat_size)
         // Calculate the starting index for the current chunk
         int ii = i * AVX_SIZE;
 
-        __m256 a = _mm256_load_ps(&mat1[ii]);
-        __m256 b = _mm256_load_ps(&mat2[ii]);
+        __m256 a = _mm256_load_ps(&A[ii]);
+        __m256 b = _mm256_load_ps(&B[ii]);
         __m256 sum = _mm256_mul_ps(a, b);
 
-        _mm256_store_ps(&res[ii], sum);
+        _mm256_store_ps(&dst[ii], sum);
     }
 
     // Handle remaining elements with simple scalar multiplication
     int remaining_start = num_avx_chunks * AVX_SIZE;
     for (int i = remaining_start; i < mat_size; i++) {
-        res[i] = mat1[i] * mat2[i];
+        dst[i] = A[i] * B[i];
     }
 }
 

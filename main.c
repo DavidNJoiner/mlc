@@ -39,7 +39,7 @@ int main() {
     Tensor* t1 = tensor(data, false);
     Tensor* t2 = tensor(data2, false);
     Tensor* t3 = tensor(data3, false);
-    //Tensor* res = zerosFrom(t2);
+    Tensor* res = zerosFrom(t2);
     // Create a new Tensor from scratch
     // Tensor* res1 = createTensor(shape, 2, FLOAT32, false);
     // Tensor* t4 = tensor(data3, false);
@@ -49,13 +49,13 @@ int main() {
     fastmult(t3, t1, t2);
     uint64_t end1 = nanos();
     printTensor(t3);
-    printf("------------------ Fastmult Time: %f s\n", (double)(end1 - start1) / 1000000000.0);
+    printf("\t \t \t Fastmult Time: %f s\n \n", (double)(end1 - start1) / 1000000000.0);
     
     uint64_t start2 = nanos();
-    mult(t3, t1, t2);
+    mult(res, t1, t2);
     uint64_t end2 = nanos();
-    printTensor(t3);
-    printf("------------------ Mult Time: %f s\n", (double)(end2 - start2) / 1000000000.0);
+    printTensor(res);
+    printf("\t \t \t  Mult Time: %f s\n \n", (double)(end2 - start2) / 1000000000.0);
     // add(t4, t4);
     // printTensor(t4);
 
@@ -63,6 +63,7 @@ int main() {
     freeTensor(t1);
     freeTensor(t2);
     freeTensor(t3);
+    freeTensor(res);
 
 
     return 0;

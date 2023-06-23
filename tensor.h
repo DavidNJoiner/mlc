@@ -66,7 +66,7 @@ Tensor* createTensor(int* shape, int dim, int dtype, bool requires_grad) {
     for (int i = 0; i < dim; i++) {
         size *= shape[i];
     }
-    void* array = calloc(size, dtypeSize(dtype));
+    void* array = calloc(size, GetDtypeSize(dtype));
     if (array == NULL) {
         printf("Memory allocation failed!\n");
         return NULL;
@@ -102,10 +102,10 @@ Tensor* zerosFrom(Tensor* t) {
 
     switch (new_data->dtype) {
         case FLOAT32:
-            new_data->values = calloc(new_data->size, sizeof(float));
+            new_data->values = (float32 *)aligned_alloc(32, sizeof(float));
             break;
         case FLOAT64:
-            new_data->values = calloc(new_data->size, sizeof(double));
+            new_data->values = (float64 *)aligned_alloc(32, sizeof(double));
             break;
         default:
             fprintf(stderr, "Unsupported dtype: %d\n", new_data->dtype);
@@ -190,7 +190,6 @@ void fastmult(Tensor* dst, Tensor* A, Tensor* B) {
     }
 
     if (is_aligned(dst->data->values, 32) && is_aligned(A->data->values, 32) && is_aligned(B->data->values, 32)) {
-        printf("values are 32-byte aligned.\n");
         gemmOp(dst->data, A->data, B->data);
     } else {
         printf("values are NOT 32-byte aligned.\n");
@@ -217,7 +216,6 @@ void add(Tensor* dst, Tensor* A) {
  */
 void printTensor(Tensor* A){
     if (0 < A->data->dtype <= 16) {
-        printf("------------------ \n");
         printf("debug values_ptr : %p \n", A->data->values);
         printf("debug dtype : %d \n", A->data->dtype);
         printf("debug shape : ");
@@ -225,8 +223,7 @@ void printTensor(Tensor* A){
             printf("%d ", A->shape[i]);
         }
         printf("\n");
-        printf("debug dim : %d \n", A->dim);
-        printf("------------------ \n");
+        printf("debug dim : %d \n \n", A->dim);
         printOp(A->data, A->dim);
     }
 }
