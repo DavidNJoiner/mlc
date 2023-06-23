@@ -92,7 +92,7 @@ void multOp(Data* dst, Data* A, Data* B) {
 
 void gemmOp(Data* res, Data* mat1, Data* mat2){
     int mat_size = res->size;
-    matmul(res->values, mat1->values, mat2->values, mat_size);
+    vec1_avx_mul(res->values, mat1->values, mat2->values, mat_size);
 }
 
 #endif //OPS_IMPLEMENTATION
