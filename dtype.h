@@ -126,14 +126,13 @@ void flattenArray(void* array, void* flattened, int* shape, int dim, int dtype, 
     }
 }
 
-
 Data* convertToData(void* array, int* shape, int dim, int dtype) {
     int size = 1;
     for (int i = 0; i < dim; i++) {
         size *= shape[i];
     }
-
-    void* flattened = malloc(size * dtypeSize(dtype));
+    
+    void* flattened = (float32 *)aligned_alloc(32, size * dtypeSize(dtype));
 
     flattenArray(array, flattened, shape, dim, dtype, 0);
 
