@@ -47,11 +47,11 @@ typedef struct {
     int dtype;
 } Data;
 
-const char* GetDType(int num);
-int GetDtypeSize(int dtype);
-int calculateIndex(int* indices, int* strides, int dim);
-void flattenArray(void* array, void* flattened, int* shape, int dim, int dtype, int idx);
-Data* convertToData(void* array, int* shape, int dim, int dtype);
+const char*     GetDType(int num);
+int             GetDtypeSize(int dtype);
+int             calculateIndex(int* indices, int* strides, int dim);
+void            flattenArray(void* array, void* flattened, int* shape, int dim, int dtype, int idx);
+Data*           convertToData(void* array, int* shape, int dim, int dtype);
 
 
 #endif //DTYPE_H
@@ -99,23 +99,19 @@ int calculateIndex(int* indices, int* shape, int dim) {
 */
 
 void flattenArray(void* array, void* flattened, int* shape, int dim, int dtype, int idx) {
-    if (dim == 1) {
+    if (dim == 0) {
         int elementSize = dtype;  // use dtype as element size
         switch (dtype) {
             case FLOAT32: {
                 float32* farray = (float32*)array;
                 float32* fflattened = (float32*)flattened;
-                for (int i = 0; i < shape[0]; i++) {
-                    fflattened[i + idx] = farray[i];
-                }
+                fflattened[idx] = *farray;
                 break;
             }
             case FLOAT64: {
                 float64* farray = (float64*)array;
                 float64* fflattened = (float64*)flattened;
-                for (int i = 0; i < shape[0]; i++) {
-                    fflattened[i + idx] = farray[i];
-                }
+                fflattened[idx] = *farray;
                 break;
             }
             default:
@@ -123,12 +119,17 @@ void flattenArray(void* array, void* flattened, int* shape, int dim, int dtype, 
                 break;
         }
     } else {
-        int stride = shape[1] * dtype;  // calculate the stride for the current dimension
+        int stride = 1;
+        for (int i = 1; i < dim; i++) {
+            stride *= shape[i];
+        }
+        stride *= dtype;  // calculate the stride for the current dimension
         for (int i = 0; i < shape[0]; i++) {
-            flattenArray((char*)array + i * stride, flattened, shape + 1, dim - 1, dtype, idx + i * shape[1]);
+            flattenArray((char*)array + i * stride, flattened, shape + 1, dim - 1, dtype, idx + i * stride / dtype);
         }
     }
 }
+
 /*
    -------------------------------------------------------
    convertToData : Converts a given multi-dimensional array into a Data structure.
@@ -140,9 +141,17 @@ Data* convertToData(void* array, int* shape, int dim, int dtype) {
         size *= shape[i];
     }
     
-    void* flattened = (float32 *)aligned_alloc(32, size * GetDtypeSize(dtype));
+    int byte_size =  size * GetDtypeSize(dtype);
+    void* flattened = (float32 *)aligned_alloc(32, byte_size);
 
     flattenArray(array, flattened, shape, dim, dtype, 0);
+
+    printf("\n");
+    float32 *arr = (float32 *)flattened;
+    for (int i = 0; i < size; i++) {
+        printf("%d ---- %f \n", i, arr[i]);
+    }
+    printf("\n");
 
     Data* data = (Data*)malloc(sizeof(Data));
     data->values = flattened;
