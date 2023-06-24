@@ -69,18 +69,33 @@ int main() {
     // Tensor* res1 = createTensor(shape, 2, FLOAT32, false);
     // Tensor* t4 = tensor(data3, false);
 
+    uint64_t start = nanos();
     fastmult(t6, t4, t5);
+    uint64_t end = nanos();
     printTensor(t6);
+
+    printf("\t \t \t FastMult Time: %f s\n", (double)(end - start) / 1000000000.0);
+
+    uint64_t start1 = nanos();
     fastadd(t6, t4);
+    uint64_t end1 = nanos();
     printTensor(t6);
     
-    //uint64_t start2 = nanos();
-    //mult(res, t1, t2);
-    //uint64_t end2 = nanos();
-    //printTensor(res);
-    //printf("\t \t \t Mult Time: %f s\n \n", (double)(end2 - start2) / 1000000000.0);
-    // add(t4, t4);
-    // printTensor(t4);
+    printf("\t \t \t FastAdd Time: %f s\n", (double)(end1 - start1) / 1000000000.0);
+    
+    uint64_t start2 = nanos();
+    mult(t6, t4, t5);
+    uint64_t end2 = nanos();
+    printTensor(t6);
+
+    printf("\t \t \t Mult Time: %f s\n", (double)(end2 - start2) / 1000000000.0);
+
+    uint64_t start3 = nanos();
+    add(t6, t4);
+    uint64_t end3 = nanos();
+    printTensor(t6);
+
+    printf("\t \t \t Add Time: %f s\n", (double)(end3 - start3) / 1000000000.0);
 
     // Deallocate memory
     freeTensor(t1);
