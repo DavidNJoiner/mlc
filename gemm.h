@@ -8,8 +8,11 @@
 #include <assert.h>
 #include <immintrin.h>
 
+void    vec1_avx_mul_float32(float32* res, float32* mat1, float32* mat2, int mat_size);
+void    vec1_avx_mul_float64(float64* res, float64* mat1, float64* mat2, int mat_size);
+void    vec1_avx_add_float32(float32* res, float32* mat1, int mat_size);
+void    vec1_avx_add_float64(float64* res, float64* mat1, int mat_size);
 
-void    vec1_avx_mul(float32* res, float32* mat1, float32* mat2, int mat_size);
 
 #endif //GEMM_H
 
@@ -18,15 +21,14 @@ void    vec1_avx_mul(float32* res, float32* mat1, float32* mat2, int mat_size);
 
 /*
     -------------------------------------------------------
-    vec1_avx_mul : Multiply two 1D vectors and store the result in an other 1D vector.
+    vec1_avx_mul_float32 : Multiply two 1D float32 vector using AVX intrinsics.
     -------------------------------------------------------
 */
-void vec1_avx_mul(float32* dst, float32* A, float32* B, int mat_size)
+void vec1_avx_mul_float32(float32* dst, float32* A, float32* B, int mat_size)
 {
     int AVX_SIZE = 8;  // AVX can process 8 floats at a time
     int num_avx_chunks = mat_size / AVX_SIZE;
 
-    // Loop over each AVX chunk of the vectors
     for (int i = 0; i < num_avx_chunks; i++) {
         // Calculate the starting index for the current chunk
         int ii = i * AVX_SIZE;
@@ -44,6 +46,88 @@ void vec1_avx_mul(float32* dst, float32* A, float32* B, int mat_size)
         dst[i] = A[i] * B[i];
     }
 }
+/*
+    -------------------------------------------------------
+    vec1_avx_mul_float32 : Multiply two 1D float64 vector using AVX intrinsics.
+    -------------------------------------------------------
+*/
+void vec1_avx_mul_float64(float64* dst, float64* A, float64* B, int mat_size)
+{
+    int AVX_SIZE = 4;  // AVX can process 4 double at a time
+    int num_avx_chunks = mat_size / AVX_SIZE;
+
+    for (int i = 0; i < num_avx_chunks; i++) {
+        // Calculate the starting index for the current chunk
+        int ii = i * AVX_SIZE;
+
+        __m256d a = _mm256_load_pd(&A[ii]);
+        __m256d b = _mm256_load_pd(&B[ii]);
+        __m256d sum = _mm256_mul_pd(a, b);
+
+        _mm256_store_pd(&dst[ii], sum);
+    }
+
+    // Handle remaining elements with simple scalar multiplication
+    int remaining_start = num_avx_chunks * AVX_SIZE;
+    for (int i = remaining_start; i < mat_size; i++) {
+        dst[i] = A[i] * B[i];
+    }
+}
+/*
+    -------------------------------------------------------
+    vec1_avx_add_float32 : Add two 1D float32 vector using AVX intrinsics.
+    -------------------------------------------------------
+*/
+void vec1_avx_add_float32(float32* dst, float32* A, int mat_size)
+{
+    int AVX_SIZE = 8;  // AVX can process 8 floats at a time
+    int num_avx_chunks = mat_size / AVX_SIZE;
+
+    for (int i = 0; i < num_avx_chunks; i++) {
+        // Calculate the starting index for the current chunk
+        int ii = i * AVX_SIZE;
+
+        __m256 a = _mm256_load_ps(&A[ii]);
+        __m256 dst_chunk = _mm256_load_ps(&dst[ii]);
+        __m256 sum = _mm256_add_ps(dst_chunk, a);
+
+        _mm256_store_ps(&dst[ii], sum);
+    }
+
+    // Handle remaining elements with simple scalar addition
+    int remaining_start = num_avx_chunks * AVX_SIZE;
+    for (int i = remaining_start; i < mat_size; i++) {
+        dst[i] += A[i];
+    }
+}
+/*
+    -------------------------------------------------------
+    vec1_avx_add_float64 : Add two 1D float64 vector using AVX intrinsics.
+    -------------------------------------------------------
+*/
+void vec1_avx_add_float64(float64* dst, float64* A, int mat_size)
+{
+    int AVX_SIZE = 4;  // AVX can process 4 double at a time
+    int num_avx_chunks = mat_size / AVX_SIZE;
+
+    for (int i = 0; i < num_avx_chunks; i++) {
+        // Calculate the starting index for the current chunk
+        int ii = i * AVX_SIZE;
+
+        __m256d a = _mm256_load_pd(&A[ii]);
+        __m256d dst_chunk = _mm256_load_pd(&dst[ii]);
+        __m256d sum = _mm256_add_pd(dst_chunk, a);
+
+        _mm256_store_pd(&dst[ii], sum);
+    }
+
+    // Handle remaining elements with simple scalar addition
+    int remaining_start = num_avx_chunks * AVX_SIZE;
+    for (int i = remaining_start; i < mat_size; i++) {
+        dst[i] += A[i];
+    }
+}
+
 
 
 #endif //GEMM_IMPLEMENTATION

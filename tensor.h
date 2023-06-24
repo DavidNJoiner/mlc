@@ -22,15 +22,20 @@ Tensor*     tensor(Data* data, bool requires_grad);
 Tensor*     createTensor(int* shape, int dim, int dtype, bool requires_grad);
 Tensor*     zerosFrom(Tensor* t);
 
-/*
-   -------------------------------------------------------
-   Prototypes for arithmetic functions on Tensors
-   -------------------------------------------------------
- */
+
+//  Tensors arithmetic
+
 void mult(Tensor* dst, Tensor* A, Tensor* B);
+void fastmult(Tensor* dst, Tensor* A, Tensor* B);
 void add(Tensor* dst, Tensor* A);
+void fastadd(Tensor* dst, Tensor* A);
+
+//  Tensors modifications.
+
 void freeTensor(Tensor* t);
-void print2DTensor(Tensor* A);
+
+
+
 void printTensor(Tensor* A);
 
 #endif //TENSOR_H
@@ -179,7 +184,7 @@ void mult(Tensor* dst, Tensor* A, Tensor* B) {
 }
 /*
    -------------------------------------------------------
-   fastmul : Multiply two Tensors A and B. Stores the result as a third Tensor dst (only float32).
+   fastmul : Multiply two Tensors A and B. Stores the result as a third Tensor dst (only float32 and float64).
    -------------------------------------------------------
  */
 void fastmult(Tensor* dst, Tensor* A, Tensor* B) {
@@ -190,9 +195,10 @@ void fastmult(Tensor* dst, Tensor* A, Tensor* B) {
     }
 
     if (is_aligned(dst->data->values, 32) && is_aligned(A->data->values, 32) && is_aligned(B->data->values, 32)) {
-        gemmOp(dst->data, A->data, B->data);
+        gemmMultOp(dst->data, A->data, B->data);
     } else {
-        printf("values are NOT 32-byte aligned.\n");
+        printf("values are NOT 32-byte aligned. Running scalar mult\n");
+        mult(dst, A, B);
     }
 }
 /*
@@ -211,22 +217,41 @@ void add(Tensor* dst, Tensor* A) {
 }
 /*
    -------------------------------------------------------
+   fastadd : Add two Tensors A and B. Stores the result as a third Tensor dst (only float32 and float64).
+   -------------------------------------------------------
+ */
+void fastadd(Tensor* dst, Tensor* A) {
+
+    if (!shapesAreEqual(A, dst)) {
+        printf("Shape mismatch in tensors!\n");
+        return;
+    }
+
+    if (is_aligned(dst->data->values, 32) && is_aligned(A->data->values, 32)) {
+        gemmAddOp(dst->data, A->data);
+    } else {
+        printf("values are NOT 32-byte aligned. Running scalar mult\n");
+        add(dst, A);
+    }
+}
+/*
+   -------------------------------------------------------
    printTensor : print a Tensor to the console.
    -------------------------------------------------------
  */
-void printTensor(Tensor* A){
+void printTensor(Tensor* A) {
     if (0 < A->data->dtype <= 16) {
-        printf("\ndebug values_ptr : %p \n", A->data->values);
-        printf("debug dtype : %d \n", A->data->dtype);
-        printf("debug shape : ");
+        printf("Tensor dtype : %4s \n", GetDType(A->data->dtype));
+        printf("Tensor shape : ");
         for (int i = 0; i < A->dim; i++) {
-            printf("%d ", A->shape[i]);
+            printf("%2d", A->shape[i]);
         }
         printf("\n");
-        printf("debug dim : %d \n \n", A->dim);
+        printf("Tensor dimension : %d \n \n", A->dim);
         printOp(A->data, A->dim);
     }
 }
+
 
 
 #endif //TENSOR_IMPLEMENTATION

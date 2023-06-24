@@ -34,7 +34,7 @@ DEFINE_OPS(float16)
 
 void addOp(Data* dst, Data* A);
 void multOp(Data* dst, Data* A, Data* B);
-void gemmOp(Data* dst, Data* A, Data* B);
+void gemmMultOp(Data* dst, Data* A, Data* B);
 
 #endif //OPS_H
 
@@ -100,12 +100,35 @@ void multOp(Data* dst, Data* A, Data* B) {
 }
 /*
    -------------------------------------------------------
-   gemmOp : Tensor Fast Multiply Operation.
+   gemmMultOp : Tensor Fast Multiply Operation.
    -------------------------------------------------------
 */
-void gemmOp(Data* dst, Data* A, Data* B){
+void gemmMultOp(Data* dst, Data* A, Data* B){
     int mat_size = dst->size;
-    vec1_avx_mul(dst->values, A->values, B->values, mat_size);
+    switch (dst->dtype) {
+        case FLOAT32: 
+            vec1_avx_mul_float32(dst->values, A->values, B->values, mat_size);
+            break;
+        case FLOAT64: 
+            vec1_avx_mul_float64(dst->values, A->values, B->values, mat_size);
+            break;
+    }
+}
+/*
+   -------------------------------------------------------
+   gemmAddOp : Tensor Fast Add Operation.
+   -------------------------------------------------------
+*/
+void gemmAddOp(Data* dst, Data* A){
+    int mat_size = dst->size;
+    switch (dst->dtype) {
+        case FLOAT32: 
+            vec1_avx_add_float32(dst->values, A->values, mat_size);
+            break;
+        case FLOAT64: 
+            vec1_avx_add_float64(dst->values, A->values, mat_size);
+            break;
+    }
 }
 
 #endif //OPS_IMPLEMENTATION

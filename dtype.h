@@ -146,13 +146,6 @@ Data* convertToData(void* array, int* shape, int dim, int dtype) {
 
     flattenArray(array, flattened, shape, dim, dtype, 0);
 
-    printf("\n");
-    float32 *arr = (float32 *)flattened;
-    for (int i = 0; i < size; i++) {
-        printf("%d ---- %f \n", i, arr[i]);
-    }
-    printf("\n");
-
     Data* data = (Data*)malloc(sizeof(Data));
     data->values = flattened;
     data->size = size;
