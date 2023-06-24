@@ -10,13 +10,17 @@ Machine learning framework written in C for learning purpose.
 Arithmetic
 
 - [ ] Arithmetic ops for all dtypes.
-- [ ] **CPU_OPs** : Intrinsics ops + GEMM for differents architecture (skylake coming soon).
-- [ ] **GPU_OPs** : CUDA ops / ROCm ops. Maybe OpenCL ?
+- [ ] **Intel AVX/AVX2 ops** : Intrinsics ops + GEMM.
+- [ ] **Nvidia CUDA ops**.
+- [ ] **AMD mroc ops**.
+- [ ] **Open CL ops**.
 
 Tensor
+
 - [x] Function to create an empty *Tensor* with desired shape and dimension. No *Data* object required.
 - [x] Function to create "zero" *Tensor* from an existing Tensor.
 - [ ] Function to fully transpose a *Tensors*.
+- [ ] Function to normalize a *Tensors*'s data.
 
 Debug
 
