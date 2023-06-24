@@ -8,21 +8,22 @@
 #include <assert.h>
 #include <immintrin.h>
 
-//#define BLOCK_SIZE 12
 
-void vec1_avx_mul(float32* res, float32* mat1, float32* mat2, int mat_size);
-
+void    vec1_avx_mul(float32* res, float32* mat1, float32* mat2, int mat_size);
 
 #endif //GEMM_H
 
 #ifndef GEMM_IMPLEMENTATION
 #define GEMM_IMPLEMENTATION
 
+/*
+    -------------------------------------------------------
+    vec1_avx_mul : Multiply two 1D vectors and store the result in an other 1D vector.
+    -------------------------------------------------------
+*/
 void vec1_avx_mul(float32* dst, float32* A, float32* B, int mat_size)
 {
     int AVX_SIZE = 8;  // AVX can process 8 floats at a time
-
-    // Calculate the number of AVX chunks in the vector
     int num_avx_chunks = mat_size / AVX_SIZE;
 
     // Loop over each AVX chunk of the vectors
