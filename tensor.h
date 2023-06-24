@@ -18,9 +18,9 @@ typedef struct {
 } Tensor;
 
 
-Tensor* tensor(Data* data, bool requires_grad);
-Tensor* createTensor(int* shape, int dim, int dtype, bool requires_grad);
-Tensor* zerosFrom(Tensor* t);
+Tensor*     tensor(Data* data, bool requires_grad);
+Tensor*     createTensor(int* shape, int dim, int dtype, bool requires_grad);
+Tensor*     zerosFrom(Tensor* t);
 
 /*
    -------------------------------------------------------
@@ -216,7 +216,7 @@ void add(Tensor* dst, Tensor* A) {
  */
 void printTensor(Tensor* A){
     if (0 < A->data->dtype <= 16) {
-        printf("debug values_ptr : %p \n", A->data->values);
+        printf("\ndebug values_ptr : %p \n", A->data->values);
         printf("debug dtype : %d \n", A->data->dtype);
         printf("debug shape : ");
         for (int i = 0; i < A->dim; i++) {
