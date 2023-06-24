@@ -7,6 +7,7 @@
 typedef void (*PrintFunc)(void*, int);
 
 bool is_aligned(void* ptr, size_t alignment);
+
 uint64_t nanos();
 
 void print_float32(void* values, int index);
@@ -39,7 +40,6 @@ uint64_t nanos(){
     clock_gettime(CLOCK_MONOTONIC, &start);
     return (uint64_t)start.tv_sec*1000000000 + (uint64_t)start.tv_nsec;
 }
-
 /*  
     -------------------------------------------------------
     Print Ops
