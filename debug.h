@@ -47,15 +47,15 @@ uint64_t nanos(){
 */ 
 void print_float16(void* values, int index) {
     float16* vals = (float16*)values;
-    printf("%.2hu \t", vals[index]);
+    printf("%.hu\t", vals[index]);
 }
 void print_float32(void* values, int index) {
     float32* vals = (float32*)values;
-    printf("%.2f \t", vals[index]);
+    printf("%2.2f\t", vals[index]);
 }
 void print_float64(void* values, int index) {
     float64* vals = (float64*)values;
-    printf("%.4lf \t", vals[index]);
+    printf("%.4lf\t", vals[index]);
 }
 
 /*  
@@ -70,9 +70,9 @@ PrintFunc print_types[] = {
 };
 
 /*  
-    -------------------------------------------------------
-    printHelper : Recursive helper function to print array pointed to by a Data struct
-    -------------------------------------------------------
+    -----------------------------------------------------------------------------------
+    printHelper : Recursive helper function to print array pointed to by a Data struct.
+    -----------------------------------------------------------------------------------
 */
 void printHelper(Data* A, PrintFunc printFunc, int* indices, int dim, int cur_dim) {
     if (cur_dim == dim - 1) {
@@ -89,9 +89,9 @@ void printHelper(Data* A, PrintFunc printFunc, int* indices, int dim, int cur_di
 }
 
 /*  
-    -------------------------------------------------------
+    -----------------------------------------------------------------
     printOp : Print any dtype Tensor of any dimension to the console.
-    -------------------------------------------------------
+    -----------------------------------------------------------------
 */
 void printOp(Data* A, int dim) {
     PrintFunc printFunc = print_types[A->dtype];
