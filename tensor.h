@@ -107,10 +107,10 @@ Tensor* zerosFrom(Tensor* t) {
 
     switch (new_data->dtype) {
         case FLOAT32:
-            new_data->values = (float32 *)aligned_alloc(32, sizeof(float));
+            new_data->values = (float32 *)aligned_alloc(32, new_data->size * sizeof(float32));
             break;
         case FLOAT64:
-            new_data->values = (float64 *)aligned_alloc(32, sizeof(double));
+            new_data->values = (float64 *)aligned_alloc(32, new_data->size * sizeof(float64));
             break;
         default:
             fprintf(stderr, "Unsupported dtype: %d\n", new_data->dtype);
@@ -134,21 +134,22 @@ Tensor* zerosFrom(Tensor* t) {
  */
 void freeTensor(Tensor* t) {
     if (t != NULL) {
-        if (t->gradient != NULL) {
-            free(t->gradient);
-            t->gradient = NULL;
+    if (t->data != NULL) {
+        if (t->data->values != NULL) {
+            free(t->data->values);
+            t->data->values = NULL;
         }
-        if (t->data != NULL) {
-            if (t->data->values != NULL) {
-                free(t->data->values);
-                t->data->values = NULL; 
-            }
-            free(t->data);
-            t->data = NULL;  
-        }
-        free(t);
-        t = NULL;
+        free(t->data);
+        t->data = NULL;
     }
+    if (t->gradient != NULL) {
+        free(t->gradient);
+        t->gradient = NULL;
+    }
+    free(t);
+    t = NULL;
+}
+
 }
 /*
    -------------------------------------------------------
@@ -157,11 +158,13 @@ void freeTensor(Tensor* t) {
  */
 bool shapesAreEqual(Tensor* A, Tensor* B) {
     if (A->dim != B->dim) {
+        printf("Dim mismatch in tensors!\n");
         return false;
     }
 
     for (int i = 0; i < A->dim; i++) {
         if (A->shape[i] != B->shape[i]) {
+            printf("Shape mismatch in tensors! ");
             return false;
         }
     }
@@ -176,7 +179,6 @@ bool shapesAreEqual(Tensor* A, Tensor* B) {
 void mult(Tensor* dst, Tensor* A, Tensor* B) {
 
     if (!shapesAreEqual(A, B) || !shapesAreEqual(A, dst)) {
-        printf("Shape mismatch in tensors!\n");
         return;
     }
 
@@ -190,7 +192,6 @@ void mult(Tensor* dst, Tensor* A, Tensor* B) {
 void fastmult(Tensor* dst, Tensor* A, Tensor* B) {
 
     if (!shapesAreEqual(A, B) || !shapesAreEqual(A, dst)) {
-        printf("Shape mismatch in tensors!\n");
         return;
     }
 
@@ -209,7 +210,6 @@ void fastmult(Tensor* dst, Tensor* A, Tensor* B) {
 void add(Tensor* dst, Tensor* A) {
 
     if (!shapesAreEqual(A, dst)) {
-        printf("Shape mismatch in tensors!\n");
         return;
     }
 
@@ -223,7 +223,6 @@ void add(Tensor* dst, Tensor* A) {
 void fastadd(Tensor* dst, Tensor* A) {
 
     if (!shapesAreEqual(A, dst)) {
-        printf("Shape mismatch in tensors!\n");
         return;
     }
 
@@ -240,18 +239,46 @@ void fastadd(Tensor* dst, Tensor* A) {
    -------------------------------------------------------
  */
 void printTensor(Tensor* A) {
-    if (0 < A->data->dtype <= 16) {
-        printf("Tensor dtype : %4s \n", GetDType(A->data->dtype));
+
+    if(A == NULL) {
+        printf("Error: Null Tensor pointer passed to printTensor function.\n");
+        return;
+    }
+
+    if(A->data == NULL) {
+        printf("Error: Null Data pointer inside the Tensor structure.\n");
+        return;
+    }
+
+    if(A->shape == NULL) {
+        printf("Error: Null Shape pointer inside the Tensor structure.\n");
+        return;
+    }
+
+    if (0 < A->data->dtype && A->data->dtype <= 16) {
+        const char* dtypeStr = GetDType(A->data->dtype);
+        if (dtypeStr == NULL) {
+            printf("Error: GetDType returned NULL.\n");
+            return;
+        }
+
+        printf("Tensor dtype : %4s \n", dtypeStr);
         printf("Tensor shape : ");
         for (int i = 0; i < A->dim; i++) {
             printf("%2d", A->shape[i]);
         }
         printf("\n");
         printf("Tensor dimension : %d \n \n", A->dim);
-        printOp(A->data, A->dim);
+
+        if (A->dim >= 0) {
+            printOp(A->data, A->dim);
+        } else {
+            printf("Error: Invalid dimension for printOp.\n");
+        }
+    } else {
+        printf("Error: Invalid dtype value.\n");
     }
 }
-
 
 
 #endif //TENSOR_IMPLEMENTATION
