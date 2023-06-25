@@ -71,18 +71,18 @@ int main() {
     // Tensor* t4 = tensor(data3, false);
 
     //uint64_t start = nanos();
-    //fastmult(t6, t4, t5);
+    //avx_mul(t6, t4, t5);
     //uint64_t end = nanos();
     //printTensor(t6);
 
-    //printf("\t \t \t FastMult Time: %f ms\n", (double)(end - start) / 1000000.0);
+    //printf("\t \t \t avx_mul Time: %f ms\n", (double)(end - start) / 1000000.0);
 
     //uint64_t start1 = nanos();
-    //fastadd(t6, t4);
+    //avx_add(t6, t4);
     //uint64_t end1 = nanos();
     //printTensor(t6);
     
-    //printf("\t \t \t FastAdd Time: %f ms\n", (double)(end1 - start1) / 1000000.0);
+    //printf("\t \t \t avx_add Time: %f ms\n", (double)(end1 - start1) / 1000000.0);
     
     //uint64_t start2 = nanos();
     //mult(t6, t4, t5);
@@ -127,11 +127,11 @@ int main() {
     printf("\t \t \t Mult Time: %f ms\n", (double)(e0 - s0) / 1000000.0);
 
     uint64_t s1 = nanos();
-    fastmult(t9, t7, t8);
+    avx_mul(t9, t7, t8);
     uint64_t e1 = nanos();
     //printTensor(t9);
 
-    printf("\t \t \t FastMult Time: %f ms\n", (double)(e1 - s1) / 1000000.0);
+    printf("\t \t \t avx_mul Time: %f ms\n", (double)(e1 - s1) / 1000000.0);
     
     freeTensor(t7);
     freeTensor(t8);

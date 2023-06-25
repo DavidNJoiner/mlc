@@ -26,9 +26,9 @@ Tensor*     zerosFrom(Tensor* t);
 //  Tensors arithmetic
 
 void mult(Tensor* dst, Tensor* A, Tensor* B);
-void fastmult(Tensor* dst, Tensor* A, Tensor* B);
+void avx_mul(Tensor* dst, Tensor* A, Tensor* B);
 void add(Tensor* dst, Tensor* A);
-void fastadd(Tensor* dst, Tensor* A);
+void avx_add(Tensor* dst, Tensor* A);
 
 //  Tensors modifications.
 
@@ -189,7 +189,7 @@ void mult(Tensor* dst, Tensor* A, Tensor* B) {
    fastmul : Multiply two Tensors A and B. Stores the result as a third Tensor dst (only float32 and float64).
    -------------------------------------------------------
  */
-void fastmult(Tensor* dst, Tensor* A, Tensor* B) {
+void avx_mul(Tensor* dst, Tensor* A, Tensor* B) {
 
     if (!shapesAreEqual(A, B) || !shapesAreEqual(A, dst)) {
         return;
@@ -217,10 +217,10 @@ void add(Tensor* dst, Tensor* A) {
 }
 /*
    -------------------------------------------------------
-   fastadd : Add two Tensors A and B. Stores the result as a third Tensor dst (only float32 and float64).
+   avx_add : Add two Tensors A and B. Stores the result as a third Tensor dst (only float32 and float64).
    -------------------------------------------------------
  */
-void fastadd(Tensor* dst, Tensor* A) {
+void avx_add(Tensor* dst, Tensor* A) {
 
     if (!shapesAreEqual(A, dst)) {
         return;
