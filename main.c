@@ -49,62 +49,95 @@ int main() {
     int shape1[] = {2, 4, 3};
     int dim1 = 3;
 
-    Data* data = convertToData((void*)arr, shape, dim, FLOAT32);
-    Data* data2 = convertToData((void*)arr2, shape, dim, FLOAT32);
-    Data* data3 = convertToData((void*)arr3, shape, dim, FLOAT32);
+    //Data* data = convertToData((void*)arr, shape, dim, FLOAT32);
+    //Data* data2 = convertToData((void*)arr2, shape, dim, FLOAT32);
+    //Data* data3 = convertToData((void*)arr3, shape, dim, FLOAT32);
 
-    Data* data4 = convertToData((void*)arr4, shape1, dim1, FLOAT64);
-    Data* data5 = convertToData((void*)arr5, shape1, dim1, FLOAT64);
-    Data* data6 = convertToData((void*)arr6, shape1, dim1, FLOAT64);
+    //Data* data4 = convertToData((void*)arr4, shape1, dim1, FLOAT64);
+    //Data* data5 = convertToData((void*)arr5, shape1, dim1, FLOAT64);
+    //Data* data6 = convertToData((void*)arr6, shape1, dim1, FLOAT64);
 
-    Tensor* t1 = tensor(data, false);
-    Tensor* t2 = tensor(data2, false);
-    Tensor* t3 = tensor(data3, false);
+    //Tensor* t1 = tensor(data, false);
+    //Tensor* t2 = tensor(data2, false);
+    //Tensor* t3 = tensor(data3, false);
 
-    Tensor* t4 = tensor(data4, false);
-    Tensor* t5 = tensor(data5, false);
-    Tensor* t6 = tensor(data6, false);
+    //Tensor* t4 = tensor(data4, false);
+    //Tensor* t5 = tensor(data5, false);
+    //Tensor* t6 = tensor(data6, false);
+    //Tensor* t6 = zerosFrom(t5);
 
     // Create a new Tensor from scratch
     // Tensor* res1 = createTensor(shape, 2, FLOAT32, false);
     // Tensor* t4 = tensor(data3, false);
 
-    uint64_t start = nanos();
-    fastmult(t6, t4, t5);
-    uint64_t end = nanos();
-    printTensor(t6);
+    //uint64_t start = nanos();
+    //fastmult(t6, t4, t5);
+    //uint64_t end = nanos();
+    //printTensor(t6);
 
-    printf("\t \t \t FastMult Time: %f s\n", (double)(end - start) / 1000000000.0);
+    //printf("\t \t \t FastMult Time: %f ms\n", (double)(end - start) / 1000000.0);
 
-    uint64_t start1 = nanos();
-    fastadd(t6, t4);
-    uint64_t end1 = nanos();
-    printTensor(t6);
+    //uint64_t start1 = nanos();
+    //fastadd(t6, t4);
+    //uint64_t end1 = nanos();
+    //printTensor(t6);
     
-    printf("\t \t \t FastAdd Time: %f s\n", (double)(end1 - start1) / 1000000000.0);
+    //printf("\t \t \t FastAdd Time: %f ms\n", (double)(end1 - start1) / 1000000.0);
     
-    uint64_t start2 = nanos();
-    mult(t6, t4, t5);
-    uint64_t end2 = nanos();
-    printTensor(t6);
+    //uint64_t start2 = nanos();
+    //mult(t6, t4, t5);
+    //uint64_t end2 = nanos();
+    //printTensor(t6);
 
-    printf("\t \t \t Mult Time: %f s\n", (double)(end2 - start2) / 1000000000.0);
+    //printf("\t \t \t Mult Time: %f ms\n", (double)(end2 - start2) / 1000000.0);
 
-    uint64_t start3 = nanos();
-    add(t6, t4);
-    uint64_t end3 = nanos();
-    printTensor(t6);
+    //uint64_t start3 = nanos();
+    //add(t6, t4);
+    //uint64_t end3 = nanos();
+    //printTensor(t6);
 
-    printf("\t \t \t Add Time: %f s\n", (double)(end3 - start3) / 1000000000.0);
+    //printf("\t \t \t Add Time: %f ms\n", (double)(end3 - start3) / 1000000.0);
+    
+    //freeTensor(t1);
+    //freeTensor(t2);
+    //freeTensor(t3);
+    //freeTensor(t4);
+    //freeTensor(t5);
+    //freeTensor(t6);
 
-    // Deallocate memory
-    freeTensor(t1);
-    freeTensor(t2);
-    freeTensor(t3);
-    freeTensor(t4);
-    freeTensor(t5);
-    freeTensor(t6);
+    //  ******************************* //
+    //   Large Matrices Multiplication  //
+    //  ******************************* //
 
+    int range[] = {0, 1};
+    int shape2[] = {8, 512};
+
+    Data* data7 = randomData(4096, range, shape2, 2, FLOAT32);
+    Data* data8 = randomData(4096, range, shape2, 2, FLOAT32);
+
+    Tensor* t7 = tensor(data7, false);
+    Tensor* t8 = tensor(data8, false);
+    Tensor* t9 = zerosFrom(t8);
+
+    printf("%d %d\n", t9->dim, t9->data->dim);
+
+    uint64_t s0 = nanos();
+    mult(t9, t7, t8);
+    uint64_t e0 = nanos();
+    printTensor(t9);
+
+    printf("\t \t \t Mult Time: %f ms\n", (double)(e0 - s0) / 1000000.0);
+
+    uint64_t s1 = nanos();
+    fastmult(t9, t7, t8);
+    uint64_t e1 = nanos();
+    printTensor(t9);
+
+    printf("\t \t \t FastMult Time: %f ms\n", (double)(e1 - s1) / 1000000.0);
+    
+    freeTensor(t7);
+    freeTensor(t8);
+    freeTensor(t9);
 
     return 0;
 }
