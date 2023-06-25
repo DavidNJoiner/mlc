@@ -12,9 +12,6 @@
 typedef struct {
     Data* data;
     float32* gradient;
-    int* shape;
-    int dim;
-    int stride;
 } Tensor;
 
 
@@ -33,7 +30,7 @@ void avx_add(Tensor* dst, Tensor* A);
 //  Tensors modifications.
 
 void freeTensor(Tensor* t);
-
+//transpose here
 
 
 void printTensor(Tensor* A);
@@ -54,10 +51,6 @@ Tensor* tensor(Data* data, bool requires_grad) {
         new_tensor->gradient = (float32*)calloc(data->size, sizeof(float32)); //Currently the gradient array is always of type float32
     }else{new_tensor->gradient = NULL;}
     new_tensor->data = data;
-    new_tensor->shape = new_tensor->data->shape;
-    new_tensor->dim = data->dim;
-    new_tensor->stride = new_tensor->data->dtype;
-
     return new_tensor;
 }
 /*
@@ -87,14 +80,6 @@ Tensor* createTensor(int* shape, int dim, int dtype, bool requires_grad) {
  */
 Tensor* zerosFrom(Tensor* t) {
     Tensor* new_tensor = (Tensor*)malloc(sizeof(Tensor));
-
-    new_tensor->shape = (int*)malloc(t->dim * sizeof(int));
-    for (int i = 0; i < t->dim; i++) {
-        new_tensor->shape[i] = t->shape[i];
-    }
-    new_tensor->dim = t->dim;
-    new_tensor->stride = t->stride;
-
     Data* new_data = (Data*)malloc(sizeof(Data));
 
     new_data->shape = (int*)malloc(t->data->dim * sizeof(int));
@@ -157,13 +142,13 @@ void freeTensor(Tensor* t) {
    -------------------------------------------------------
  */
 bool shapesAreEqual(Tensor* A, Tensor* B) {
-    if (A->dim != B->dim) {
+    if (A->data->dim != B->data->dim) {
         printf("Dim mismatch in tensors!\n");
         return false;
     }
 
-    for (int i = 0; i < A->dim; i++) {
-        if (A->shape[i] != B->shape[i]) {
+    for (int i = 0; i < A->data->dim; i++) {
+        if (A->data->shape[i] != B->data->shape[i]) {
             printf("Shape mismatch in tensors! ");
             return false;
         }
@@ -250,7 +235,7 @@ void printTensor(Tensor* A) {
         return;
     }
 
-    if(A->shape == NULL) {
+    if(A->data->shape == NULL) {
         printf("Error: Null Shape pointer inside the Tensor structure.\n");
         return;
     }
@@ -264,14 +249,14 @@ void printTensor(Tensor* A) {
 
         printf("Tensor dtype : %4s \n", dtypeStr);
         printf("Tensor shape : ");
-        for (int i = 0; i < A->dim; i++) {
-            printf("%2d", A->shape[i]);
+        for (int i = 0; i < A->data->dim; i++) {
+            printf("%2d", A->data->shape[i]);
         }
         printf("\n");
-        printf("Tensor dimension : %d \n \n", A->dim);
+        printf("Tensor dimension : %d \n \n", A->data->dim);
 
-        if (A->dim >= 0) {
-            printOp(A->data, A->dim);
+        if (A->data->dim >= 0) {
+            printOp(A->data, A->data->dim);
         } else {
             printf("Error: Invalid dimension for printOp.\n");
         }
