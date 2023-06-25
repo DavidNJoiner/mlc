@@ -1,5 +1,5 @@
 #include "dtype.h"
-#include "gemm.h"
+#include "avx.h"
 
 #ifndef OPS_H_ 
 #define OPS_H_

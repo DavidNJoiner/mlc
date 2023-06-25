@@ -1,5 +1,5 @@
-#ifndef GEMM_H_ 
-#define GEMM_H_
+#ifndef AVX_H_ 
+#define AVX_H_
 
 #include "dtype.h"
 #include <stdio.h>
@@ -14,10 +14,10 @@ void    vec1_avx_add_float32(float32* res, float32* mat1, int mat_size);
 void    vec1_avx_add_float64(float64* res, float64* mat1, int mat_size);
 
 
-#endif //GEMM_H
+#endif //AVX_H
 
-#ifndef GEMM_IMPLEMENTATION
-#define GEMM_IMPLEMENTATION
+#ifndef AVX_IMPLEMENTATION
+#define AVX_IMPLEMENTATION
 
 /*
     -------------------------------------------------------
@@ -130,4 +130,4 @@ void vec1_avx_add_float64(float64* dst, float64* A, int mat_size)
 
 
 
-#endif //GEMM_IMPLEMENTATION
+#endif //AVX_IMPLEMENTATION
