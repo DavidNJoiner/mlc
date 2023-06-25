@@ -1,6 +1,9 @@
 #ifndef DTYPE_H_ 
 #define DTYPE_H_
 
+#include <stdlib.h>
+#include <time.h>
+
 typedef float float32;
 typedef double float64;
 typedef unsigned short float16;
@@ -52,7 +55,7 @@ int             GetDtypeSize(int dtype);
 int             calculateIndex(int* indices, int* strides, int dim);
 void            flattenArray(void* array, void* flattened, int* shape, int dim, int dtype, int idx);
 Data*           convertToData(void* array, int* shape, int dim, int dtype);
-
+Data*           randomData(int size, int* range, int* shape, int dim, int dtype);
 
 #endif //DTYPE_H
 
@@ -153,7 +156,55 @@ Data* convertToData(void* array, int* shape, int dim, int dtype) {
     data->shape = shape;
     data->dtype = dtype;
 
+
+
     return data;
 }
+
+/*
+   --------------------------------------------------------------
+   randomData : Generate a Data object filled with random values.
+   --------------------------------------------------------------
+ */
+Data* randomData(int size, int* range, int* shape, int dim, int dtype) {
+    // Seed the random number generator
+    srand((unsigned int)time(NULL));
+    
+    int dtypeSize = GetDtypeSize(dtype);
+    int byte_size = size * dtypeSize;
+    int alignment = 32;
+    
+    // Making sure byte_size is a multiple of the alignment
+    if (byte_size % alignment != 0) {
+        byte_size = ((byte_size / alignment) + 1) * alignment;
+    }
+    
+    printf("size: %d, dtype: %d, byte_size: %d, alignment: %d\n", size, dtype, byte_size, alignment);
+    void* random_values = aligned_alloc(alignment, byte_size);
+
+    if(dtype == FLOAT32) {
+        float32* ptr = (float32*)random_values;
+        for(int i = 0; i < size; i++) {
+            ptr[i] = (float32)(range[0] + ((float)rand() / (float)RAND_MAX) * (range[1] - range[0]));
+        }
+    } else if(dtype == FLOAT64) {
+        float64* ptr = (float64*)random_values;
+        for(int i = 0; i < size; i++) {
+            ptr[i] = (float64)(range[0] + ((double)rand() / (double)RAND_MAX) * (range[1] - range[0]));
+        }
+    }
+    
+    Data* data = (Data*)malloc(sizeof(Data));
+    data->values = random_values;
+    data->size = size;
+    data->dim = dim;
+    data->shape = shape;
+    data->dtype = dtype;
+    
+    return data;
+}
+
+
+
 
 #endif //DTYPE_IMPLEMENTATION
