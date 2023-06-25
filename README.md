@@ -1,5 +1,5 @@
 # **mlc** (project deepc)
-Machine learning framework written in C for learning purpose. 
+## Machine learning framework written in C for learning purpose.##
 ---
 
 ![deepc_logo](https://github.com/DavidNJoiner/mlc/assets/69796012/d1d7daee-5789-4464-bcff-1b845a91ac27)
