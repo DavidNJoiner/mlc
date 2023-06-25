@@ -10,7 +10,7 @@ Machine learning framework written in C for learning purpose.
 Arithmetic
 
 - [ ] Arithmetic ops for all dtypes.
-- [ ] **Intel AVX/AVX2 ops** : Intrinsics ops + GEMM.
+- [x] **Intel AVX/AVX2 ops** : Intrinsics ops + GEMM.
 - [ ] **Nvidia CUDA ops**.
 - [ ] **AMD mroc ops**.
 - [ ] **Open CL ops**.
