@@ -119,19 +119,17 @@ int main() {
     Tensor* t8 = tensor(data8, false);
     Tensor* t9 = zerosFrom(t8);
 
-    printf("%d %d\n", t9->dim, t9->data->dim);
-
     uint64_t s0 = nanos();
     mult(t9, t7, t8);
     uint64_t e0 = nanos();
-    printTensor(t9);
+    //printTensor(t9);
 
     printf("\t \t \t Mult Time: %f ms\n", (double)(e0 - s0) / 1000000.0);
 
     uint64_t s1 = nanos();
     fastmult(t9, t7, t8);
     uint64_t e1 = nanos();
-    printTensor(t9);
+    //printTensor(t9);
 
     printf("\t \t \t FastMult Time: %f ms\n", (double)(e1 - s1) / 1000000.0);
     
