@@ -5,6 +5,7 @@
 #include "dtype.h"
 #include "ops.h"
 #include "debug.h"
+#include "device_manager.h"
 
 #ifndef TENSOR_H_ 
 #define TENSOR_H_
@@ -18,6 +19,7 @@ typedef struct {
 Tensor*     tensor(Data* data, bool requires_grad);
 Tensor*     createTensor(int* shape, int dim, int dtype, bool requires_grad);
 Tensor*     zerosFrom(Tensor* t);
+Tensor*     new_full(int* shape, int fill_value, dtype data_type, Device* device, bool requires_grad)
 
 
 //  Tensors arithmetic
@@ -112,6 +114,10 @@ Tensor* zerosFrom(Tensor* t) {
 
     return new_tensor;
 }
+
+Tensor* new_full(int* shape, int fill_value, int dtype, Device* device, bool requires_grad){
+    (void);
+} 
 /*
    -------------------------------------------------------
    freeTensor : Releases the memory allocated for a given tensor,.
