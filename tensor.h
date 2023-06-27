@@ -157,7 +157,7 @@ void mult(Tensor* dst, Tensor* A, Tensor* B) {
         return;
     }
 
-    multOp(dst->data, A->data, B->data);
+    mul_op(dst->data, A->data, B->data);
 }
 /*  --------------------------------------------------------------------------------*/
 /*  fastmul : Multiply two Tensors A and B. Stores the result as a third Tensor dst */
@@ -184,7 +184,7 @@ void add(Tensor* dst, Tensor* A) {
         return;
     }
 
-    addOp(dst->data, A->data);
+    add_op(dst->data, A->data);
 }
 /*  -----------------------------------------------------------------------------*/
 /*  avx_add : Add two Tensors A and B. Stores the result as a third Tensor dst   */
