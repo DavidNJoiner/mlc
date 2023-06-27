@@ -1,14 +1,13 @@
-#include "dtype.h"
-#include "avx.h"
-
 #ifndef OPS_H_ 
 #define OPS_H_
 
-//Arithmetic
+#include "dtype.h"
+#include "avx.h"
+
+// Arithmetic
 typedef void (*MultFunc)(void*, void*, void*, int);
 typedef void (*AddFunc)(void*, void*, int);
 
-//Basic Ops (element-wise). I'm using macro for now because its easier to maintain.
 #define DEFINE_OPS(TYPE) \
 void add_##TYPE(void* dstValues, void* AValues, int size) { \
     TYPE* AFloat = (TYPE*)AValues; \
@@ -27,14 +26,14 @@ void mult_##TYPE(void* dstValues, void* AValues, void* BValues, int size) { \
     } \
 }
 
-//Generate functions at compile-time
 DEFINE_OPS(float32)
 DEFINE_OPS(float64)
 DEFINE_OPS(float16)
 
-void addOp(Data* dst, Data* A);
-void multOp(Data* dst, Data* A, Data* B);
-void gemmMultOp(Data* dst, Data* A, Data* B);
+void add_op(Data* dst, Data* A);
+void mul_op(Data* dst, Data* A, Data* B);
+void avx_add_op(Data* dst, Data* A);
+void avx_mul_op(Data* dst, Data* A, Data* B);
 
 #endif //OPS_H
 
@@ -52,12 +51,10 @@ MultFunc multData[] = {
     [FLOAT64] = mult_float64,
     [FLOAT16] = mult_float16,
 };
-/*
-   -------------------------------------------------------
-   addOp : Tensor Add Operation.
-   -------------------------------------------------------
-*/
-void addOp(Data* dst, Data* A) {
+/*  -------------------------------------------------------*/
+/*  add_op : Tensor Add Operation.                         */
+/*  -------------------------------------------------------*/
+void add_op(Data* dst, Data* A) {
     if (A->dtype != dst->dtype) {
         printf("Data dtypes do not match!\n");
         return;
@@ -75,12 +72,10 @@ void addOp(Data* dst, Data* A) {
         printf("Operation not supported for dtype %d\n", A->dtype);
     }
 }
-/*
-   -------------------------------------------------------
-   multOp : Tensor Multiply Operation.
-   -------------------------------------------------------
-*/
-void multOp(Data* dst, Data* A, Data* B) {
+/*  -------------------------------------------------------*/
+/*  mul_op : Tensor Multiply Operation.                    */
+/*  -------------------------------------------------------*/
+void mul_op(Data* dst, Data* A, Data* B) {
     if (A->dtype != dst->dtype || B->dtype != dst->dtype ) {
         printf("Data dtypes do not match!\n");
         return;
@@ -98,12 +93,10 @@ void multOp(Data* dst, Data* A, Data* B) {
         printf("Operation not supported for dtype %d\n", A->dtype);
     }
 }
-/*
-   -------------------------------------------------------
-   gemmMultOp : Tensor Fast Multiply Operation.
-   -------------------------------------------------------
-*/
-void gemmMultOp(Data* dst, Data* A, Data* B){
+/*  -------------------------------------------------------*/
+/*  avx_mul_op : Tensor Fast Multiply Operation.           */
+/*  -------------------------------------------------------*/
+void avx_mul_op(Data* dst, Data* A, Data* B){
     int mat_size = dst->size;
     switch (dst->dtype) {
         case FLOAT32: 
@@ -114,12 +107,10 @@ void gemmMultOp(Data* dst, Data* A, Data* B){
             break;
     }
 }
-/*
-   -------------------------------------------------------
-   gemmAddOp : Tensor Fast Add Operation.
-   -------------------------------------------------------
-*/
-void gemmAddOp(Data* dst, Data* A){
+/*  -------------------------------------------------------*/
+/*  avx_add_op : Tensor Fast Add Operation.                */
+/*  -------------------------------------------------------*/
+void avx_add_op(Data* dst, Data* A){
     int mat_size = dst->size;
     switch (dst->dtype) {
         case FLOAT32: 

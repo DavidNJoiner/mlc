@@ -1,8 +1,8 @@
-#include "dtype.h"
-#include <time.h>
-
 #ifndef DEBUG_H_ 
 #define DEBUG_H_
+
+#include "dtype.h"
+#include <time.h>
 
 typedef void (*PrintFunc)(void*, int);
 
@@ -14,7 +14,7 @@ void print_float32(void* values, int index);
 void print_float64(void* values, int index);
 
 void printHelper(Data* A, PrintFunc printFunc, int* indices, int dim, int cur_dim);
-void printOp(Data* A, int dim);
+void print_op(Data* A, int dim);
 
 #endif //DEBUG_H
 
@@ -93,7 +93,7 @@ void printHelper(Data* A, PrintFunc printFunc, int* indices, int dim, int cur_di
     printOp : Print any dtype Tensor of any dimension to the console.
     -----------------------------------------------------------------
 */
-void printOp(Data* A, int dim) {
+void print_op(Data* A, int dim) {
     PrintFunc printFunc = print_types[A->dtype];
     if (printFunc) {
         int* indices = (int*)calloc(dim, sizeof(int));

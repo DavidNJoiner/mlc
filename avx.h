@@ -1,7 +1,6 @@
 #ifndef AVX_H_ 
 #define AVX_H_
 
-#include "dtype.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>

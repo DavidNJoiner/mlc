@@ -1,39 +1,36 @@
+#ifndef TENSOR_H_ 
+#define TENSOR_H_
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <stdbool.h>
-#include "dtype.h"
-#include "ops.h"
-#include "debug.h"
-#include "device_manager.h"
 
-#ifndef TENSOR_H_ 
-#define TENSOR_H_
+#include "dtype.h"
+#include "debug.h"
+#include "ops.h"
+
+//#include "device_manager.h"
 
 typedef struct {
     Data* data;
     float32* gradient;
 } Tensor;
 
-
 Tensor*     tensor(Data* data, bool requires_grad);
 Tensor*     createTensor(int* shape, int dim, int dtype, bool requires_grad);
 Tensor*     zerosFrom(Tensor* t);
-Tensor*     new_full(int* shape, int fill_value, dtype data_type, Device* device, bool requires_grad)
-
+Tensor*     new_full(int* shape, int fill_value, int dtype, bool requires_grad);
 
 //  Tensors arithmetic
-
 void mult(Tensor* dst, Tensor* A, Tensor* B);
 void avx_mul(Tensor* dst, Tensor* A, Tensor* B);
 void add(Tensor* dst, Tensor* A);
 void avx_add(Tensor* dst, Tensor* A);
 
 //  Tensors modifications.
-
 void freeTensor(Tensor* t);
 //transpose here
-
 
 void printTensor(Tensor* A);
 
@@ -42,11 +39,9 @@ void printTensor(Tensor* A);
 #ifndef TENSOR_IMPLEMENTATION 
 #define TENSOR_IMPLEMENTATION
 
-/*
-   -------------------------------------------------------
-   tensor : create a new Tensor from a Data object.
-   -------------------------------------------------------
- */
+/*  -------------------------------------------------------*/
+/*  tensor : create a new Tensor from a Data object.       */
+/*  -------------------------------------------------------*/
 Tensor* tensor(Data* data, bool requires_grad) {
     Tensor* new_tensor = (Tensor*)malloc(sizeof(Tensor));
     if (requires_grad) {
@@ -55,11 +50,9 @@ Tensor* tensor(Data* data, bool requires_grad) {
     new_tensor->data = data;
     return new_tensor;
 }
-/*
-   -------------------------------------------------------
-   tensor : create a new Tensor from scratch.
-   -------------------------------------------------------
- */
+/*  -------------------------------------------------------*/
+/*  createTensor : create a new Tensor from scratch.       */
+/*  -------------------------------------------------------*/
 Tensor* createTensor(int* shape, int dim, int dtype, bool requires_grad) {
     // Create an array of zeros
     int size = 1;
@@ -75,11 +68,9 @@ Tensor* createTensor(int* shape, int dim, int dtype, bool requires_grad) {
     Tensor* t = tensor(data, requires_grad);
     return t;
 }
-/*
-   -------------------------------------------------------
-   zerosFrom : create a new Tensor filled with zeros from an existing Tensor(template).
-   -------------------------------------------------------
- */
+/*  -------------------------------------------------------------------------------------*/
+/*  zerosFrom : create a new Tensor filled with zeros from an existing Tensor(template). */
+/*  -------------------------------------------------------------------------------------*/
 Tensor* zerosFrom(Tensor* t) {
     Tensor* new_tensor = (Tensor*)malloc(sizeof(Tensor));
     Data* new_data = (Data*)malloc(sizeof(Data));
@@ -115,14 +106,12 @@ Tensor* zerosFrom(Tensor* t) {
     return new_tensor;
 }
 
-Tensor* new_full(int* shape, int fill_value, int dtype, Device* device, bool requires_grad){
-    (void);
+Tensor* new_full(int* shape, int fill_value, int dtype, bool requires_grad){
+    
 } 
-/*
-   -------------------------------------------------------
-   freeTensor : Releases the memory allocated for a given tensor,.
-   -------------------------------------------------------
- */
+/*  ---------------------------------------------------------------*/
+/*  freeTensor : Releases the memory allocated for a given tensor. */
+/*  ---------------------------------------------------------------*/
 void freeTensor(Tensor* t) {
     if (t != NULL) {
     if (t->data != NULL) {
@@ -139,14 +128,11 @@ void freeTensor(Tensor* t) {
     }
     free(t);
     t = NULL;
+    }
 }
-
-}
-/*
-   -------------------------------------------------------
-   shapesAreEqual : Check if two Tensors shapes are equals.
-   -------------------------------------------------------
- */
+/*  ---------------------------------------------------------------*/
+/*  shapesAreEqual : Check if two Tensors shapes are equals.       */
+/*  ---------------------------------------------------------------*/
 bool shapesAreEqual(Tensor* A, Tensor* B) {
     if (A->data->dim != B->data->dim) {
         printf("Dim mismatch in tensors!\n");
@@ -162,11 +148,9 @@ bool shapesAreEqual(Tensor* A, Tensor* B) {
 
     return true;
 }
-/*
-   -------------------------------------------------------
-   mult : Multiply two Tensors A and B. Stores the result as a third Tensor dst.
-   -------------------------------------------------------
- */
+/*  -------------------------------------------------------------------------------*/
+/*  mult : Multiply two Tensors A and B. Stores the result as a third Tensor dst.  */
+/*  -------------------------------------------------------------------------------*/
 void mult(Tensor* dst, Tensor* A, Tensor* B) {
 
     if (!shapesAreEqual(A, B) || !shapesAreEqual(A, dst)) {
@@ -175,11 +159,9 @@ void mult(Tensor* dst, Tensor* A, Tensor* B) {
 
     multOp(dst->data, A->data, B->data);
 }
-/*
-   -------------------------------------------------------
-   fastmul : Multiply two Tensors A and B. Stores the result as a third Tensor dst (only float32 and float64).
-   -------------------------------------------------------
- */
+/*  --------------------------------------------------------------------------------*/
+/*  fastmul : Multiply two Tensors A and B. Stores the result as a third Tensor dst */
+/*  --------------------------------------------------------------------------------*/
 void avx_mul(Tensor* dst, Tensor* A, Tensor* B) {
 
     if (!shapesAreEqual(A, B) || !shapesAreEqual(A, dst)) {
@@ -187,17 +169,15 @@ void avx_mul(Tensor* dst, Tensor* A, Tensor* B) {
     }
 
     if (is_aligned(dst->data->values, 32) && is_aligned(A->data->values, 32) && is_aligned(B->data->values, 32)) {
-        gemmMultOp(dst->data, A->data, B->data);
+        avx_mul_op(dst->data, A->data, B->data);
     } else {
         printf("values are NOT 32-byte aligned. Running scalar mult\n");
         mult(dst, A, B);
     }
 }
-/*
-   -------------------------------------------------------
-   add : Add two Tensors A and dst. Stores the result in a the Tensor dst.
-   -------------------------------------------------------
- */
+/*  -------------------------------------------------------------------------*/
+/*   add : Add two Tensors A and dst. Stores the result in a the Tensor dst. */
+/*  -------------------------------------------------------------------------*/
 void add(Tensor* dst, Tensor* A) {
 
     if (!shapesAreEqual(A, dst)) {
@@ -206,11 +186,9 @@ void add(Tensor* dst, Tensor* A) {
 
     addOp(dst->data, A->data);
 }
-/*
-   -------------------------------------------------------
-   avx_add : Add two Tensors A and B. Stores the result as a third Tensor dst (only float32 and float64).
-   -------------------------------------------------------
- */
+/*  -----------------------------------------------------------------------------*/
+/*  avx_add : Add two Tensors A and B. Stores the result as a third Tensor dst   */
+/*  -----------------------------------------------------------------------------*/
 void avx_add(Tensor* dst, Tensor* A) {
 
     if (!shapesAreEqual(A, dst)) {
@@ -218,17 +196,15 @@ void avx_add(Tensor* dst, Tensor* A) {
     }
 
     if (is_aligned(dst->data->values, 32) && is_aligned(A->data->values, 32)) {
-        gemmAddOp(dst->data, A->data);
+        avx_add_op(dst->data, A->data);
     } else {
         printf("values are NOT 32-byte aligned. Running scalar mult\n");
         add(dst, A);
     }
 }
-/*
-   -------------------------------------------------------
-   printTensor : print a Tensor to the console.
-   -------------------------------------------------------
- */
+/*  ---------------------------------------------------------------*/
+/*   printTensor : print a Tensor to the console.                  */
+/*  ---------------------------------------------------------------*/
 void printTensor(Tensor* A) {
 
     if(A == NULL) {
@@ -247,26 +223,8 @@ void printTensor(Tensor* A) {
     }
 
     if (0 < A->data->dtype && A->data->dtype <= 16) {
-        const char* dtypeStr = GetDType(A->data->dtype);
-        if (dtypeStr == NULL) {
-            printf("Error: GetDType returned NULL.\n");
-            return;
-        }
-
-        printf("Tensor dtype : %4s \n", dtypeStr);
-        printf("Tensor shape : ");
-        for (int i = 0; i < A->data->dim; i++) {
-            printf("%2d", A->data->shape[i]);
-        }
-        printf("\n");
-        printf("Tensor dimension : %d \n \n", A->data->dim);
-
-        if (A->data->dim >= 0) {
-            printOp(A->data, A->data->dim);
-        } else {
-            printf("Error: Invalid dimension for printOp.\n");
-        }
-    } else {
+        printData(A->data);
+    }else {
         printf("Error: Invalid dtype value.\n");
     }
 }
