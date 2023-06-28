@@ -1,7 +1,7 @@
 #ifndef DEBUG_H_ 
 #define DEBUG_H_
 
-#include "dtype.h"
+#include "config.h"
 #include <stdint.h>
 #include <time.h>
 

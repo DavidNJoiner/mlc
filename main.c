@@ -33,14 +33,14 @@ int main() {
     uint64_t s0 = nanos();
     mult(t9, t7, t8);
     uint64_t e0 = nanos();
-    printTensor(t9);
+    //printTensor(t9);
 
     printf("\t \t \t Mult Time: %f ms\n", (double)(e0 - s0) / 1000000.0);
 
     uint64_t s1 = nanos();
     avx_mul(t9, t7, t8);
     uint64_t e1 = nanos();
-    printTensor(t9);
+    //printTensor(t9);
 
     printf("\t \t \t avx_mul Time: %f ms\n", (double)(e1 - s1) / 1000000.0);
     

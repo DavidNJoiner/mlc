@@ -1,11 +1,6 @@
 #ifndef DTYPE_H_ 
 #define DTYPE_H_
 
-#include <stdlib.h>
-#include <time.h>
-
-#include "config.h"
-
 //Data object struct
 typedef struct {
     void* values;
@@ -20,6 +15,10 @@ void            printData(Data* dat);
 int             calculateIndex(int* indices, int* strides, int dim);
 Data*           convertToData(void* array, int* shape, int dim, int dtype);
 Data*           randomData(int size, int* range, int* shape, int dim, int dtype);
+
+#include <stdlib.h>
+#include <time.h>
+#include "debug.h"
 
 #endif //DTYPE_H
 
