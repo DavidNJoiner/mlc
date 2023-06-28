@@ -1,4 +1,5 @@
 #include "tensor.h"
+#include "config.h"
 
 int main() {
 
@@ -23,8 +24,8 @@ int main() {
     int range2[] = {0, 1};
     int shape2[] = {8, 512};
 
-    Data* data7 = randomData(4096, range1, shape2, 2, FLOAT32);
-    Data* data8 = randomData(4096, range2, shape2, 2, FLOAT32);
+    Data* data7 = randomData(4096, range1, shape2, 2, FLOAT16);
+    Data* data8 = randomData(4096, range2, shape2, 2, FLOAT16);
 
     Tensor* t7 = tensor(data7, false);
     Tensor* t8 = tensor(data8, false);

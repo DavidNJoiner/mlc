@@ -2,6 +2,7 @@
 #define DEVICE_MANAGER_H_
 
 #include <cuda_runtime.h>
+#include <stdio.h>
 
 typedef enum { CPU, CUDA } device_type;
 
