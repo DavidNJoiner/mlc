@@ -1,7 +1,26 @@
 #ifndef DTYPE_H_ 
 #define DTYPE_H_
 
-//Data object struct
+#include <stdlib.h>
+#include <time.h> 
+
+// Dtypes
+typedef float float32;
+typedef double float64;
+
+// The stride is contained within the dtype
+#define FLOAT32 sizeof(float32)
+#define FLOAT64 sizeof(float64)
+
+// If using CUDA, include the CUDA runtime
+#ifdef __CUDACC__
+    #include <cuda_runtime.h>
+    #include "cuda.h"
+#endif
+    typedef __half float16;
+    #define FLOAT16 sizeof(float16)
+
+//  Data object struct
 typedef struct {
     void* values;
     int size;
@@ -10,20 +29,39 @@ typedef struct {
     int dtype;
 } Data;
 
+// Prototypes
 void            flattenArray(void* array, void* flattened, int* shape, int dim, int dtype, int idx);
 void            printData(Data* dat);
+int             GetDtypeSize(int dtype);
 int             calculateIndex(int* indices, int* strides, int dim);
+const char*     GetDType(int num);
 Data*           convertToData(void* array, int* shape, int dim, int dtype);
 Data*           randomData(int size, int* range, int* shape, int dim, int dtype);
-
-#include <stdlib.h>
-#include <time.h>
-#include "debug.h"
 
 #endif //DTYPE_H
 
 #ifndef DTYPE_IMPLEMENTATION
 #define DTYPE_IMPLEMENTATION
+/*  -------------------------------------------------------*/
+/*  dtypes functions                                       */
+/*  -------------------------------------------------------*/
+const char* GetDType(int dtype) {
+    switch(dtype) {
+        case FLOAT32: return "float32";
+        case FLOAT64: return "float64";
+        case FLOAT16: return "float16";
+        default: return "Unknown dtype";
+    }
+}
+
+int GetDtypeSize(int dtype) {
+    switch (dtype) {
+        case FLOAT32: return sizeof(float32);
+        case FLOAT64: return sizeof(float64);
+        case FLOAT16: return sizeof(float16);
+        default: return 0;
+    }
+}
 /*  -----------------------------------------------------------------------*/
 /*  calculateIndex : convert multi-dimensional index into a linear index;  */
 /*  -----------------------------------------------------------------------*/
@@ -41,8 +79,13 @@ int calculateIndex(int* indices, int* shape, int dim) {
 /*  ---------------------------------------------------------------------------------------------*/
 void flattenArray(void* array, void* flattened, int* shape, int dim, int dtype, int idx) {
     if (dim == 0) {
-        int elementSize = dtype;  // use dtype as element size
         switch (dtype) {
+            case FLOAT16: {
+                float16* farray = (float16*)array;
+                float16* fflattened = (float16*)flattened;
+                fflattened[idx] = *farray;
+                break;
+            }
             case FLOAT32: {
                 float32* farray = (float32*)array;
                 float32* fflattened = (float32*)flattened;
@@ -56,7 +99,7 @@ void flattenArray(void* array, void* flattened, int* shape, int dim, int dtype, 
                 break;
             }
             default:
-                printf("Unsupported dtype %d\n", dtype);
+                printf("Failed to flatten : Unsupported dtype %s\n", GetDType(dtype));
                 break;
         }
     } else {
@@ -137,6 +180,12 @@ Data* randomData(int size, int* range, int* shape, int dim, int dtype) {
     printf("size: %d, dtype: %s, byte_size: %d, alignment: %d\n", size, dtypeName, byte_size, alignment);
     void* random_values = aligned_alloc(alignment, byte_size);
 
+    if(dtype == FLOAT16) {
+        float16* ptr = (float16*)random_values;
+        for(int i = 0; i < size; i++) {
+            ptr[i] = (float16)(range[0] + ((float)rand() / (float)RAND_MAX) * (range[1] - range[0]));
+        }
+    }
     if(dtype == FLOAT32) {
         float32* ptr = (float32*)random_values;
         for(int i = 0; i < size; i++) {

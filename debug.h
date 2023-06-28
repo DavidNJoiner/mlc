@@ -1,7 +1,6 @@
 #ifndef DEBUG_H_ 
 #define DEBUG_H_
 
-#include "config.h"
 #include <stdint.h>
 #include <time.h>
 
@@ -19,36 +18,30 @@ void print_op(Data* A, int dim);
 
 #endif //DEBUG_H
 
+
+
 #ifndef DEBUG_IMPLEMENTATION
 #define DEBUG_IMPLEMENTATION
-
-/*  
-    -------------------------------------------------------
-    Memory Alignement Check
-    -------------------------------------------------------
-*/ 
+/*  -------------------------------------------------------*/ 
+/*  Memory Alignement Check                                */
+/*  -------------------------------------------------------*/ 
 bool is_aligned(void* ptr, size_t alignment) {
     return ((uintptr_t)ptr % alignment) == 0;
 }
-
-/*  
-    -------------------------------------------------------
-    Monotonic Chrono
-    -------------------------------------------------------
-*/ 
+/*  -------------------------------------------------------*/ 
+/*  Monotonic Chrono                                       */
+/*  -------------------------------------------------------*/ 
 uint64_t nanos(){
     struct timespec start;
     clock_gettime(CLOCK_MONOTONIC, &start);
     return (uint64_t)start.tv_sec * 1000000000 + (uint64_t)start.tv_nsec;
 }
-/*  
-    -------------------------------------------------------
-    Print Ops
-    -------------------------------------------------------
-*/ 
+/*  -------------------------------------------------------*/ 
+/*  Print Ops                                              */
+/*  -------------------------------------------------------*/ 
 void print_float16(void* values, int index) {
     float16* vals = (float16*)values;
-    printf("%.hu\t", vals[index]);
+    printf("%2.2d\t", vals[index]);
 }
 void print_float32(void* values, int index) {
     float32* vals = (float32*)values;
@@ -93,7 +86,7 @@ void print_op(Data* A, int dim) {
             printHelper(A, printFunc, indices, dim, 0);
             free(indices);
         } else {
-            printf("Cannot print dtype %d\n", A->dtype);
+            printf("Cannot print dtype %s\n", GetDType(A->dtype));
         }
     }else{
         printf("Data object is NULL");

@@ -4,51 +4,22 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdio.h>
 
-// Dtypes
-typedef float float32;
-typedef double float64;
-typedef unsigned short float16;
-typedef unsigned short bfloat16;
-typedef struct { float real; float imag; } complex32;
-typedef struct { double real; double imag; } complex64;
-typedef struct { long double real; long double imag; } complex128;
-typedef unsigned char uint8;
-typedef signed char int8;
-typedef short int16;
-typedef int int32;
-typedef long long int int64;
-typedef unsigned char quint8;
-typedef signed char qint8;
-typedef int qint32;
-typedef signed char quint4x2;
+#include "dtype.h"
 
-//  The stride is contained within the dtype
-#define FLOAT32 sizeof(float32)
-#define FLOAT64 sizeof(float64)
-#define FLOAT16 sizeof(float16)
-#define BFLOAT16 sizeof(bfloat16)
-#define COMPLEX32 sizeof(complex32)
-#define COMPLEX64 sizeof(complex64)
-#define COMPLEX128 sizeof(complex128)
-#define UINT8 sizeof(uint8)
-#define INT8 sizeof(int8)
-#define INT16 sizeof(int16)
-#define INT32 sizeof(int32)
-#define INT64 sizeof(int64)
-#define QUINT8 sizeof(quint8)
-#define QINT8 sizeof(qint8)
-#define QINT32 sizeof(qint32)
-#define QUINT4X2 sizeof(quint4x2)
+// If using AVX, include the AVX/AVX2 runtime
+#if defined(__AVX__) || defined(__AVX2__)
+    #include <immintrin.h>
+    #include "avx.h"
+#endif
 
-// Common Prototypes
-int             GetDtypeSize(int dtype);
-const char*     GetDType(int num);
+#include "debug.h"
+#include "ops.h"
 
 /*  -------------------------------------------------------*/ 
 /*  OS check / Specific Prototypes                         */
 /*  -------------------------------------------------------*/
-
 #ifdef __unix__
 
 #include <unistd.h>
@@ -76,7 +47,7 @@ void get_cpu_info();
 /*  -------------------------------------------------------*/
 
 #if defined(__AVX__) || defined(__AVX2__)
-
+    #include <immintrin.h>
     #if defined(__i386__) || defined(i386) || defined(_M_IX86)
         /* CPUs that support AVX/AVX2 instructions on x86 architecture */
         #define DEEPC_CPU_X86
@@ -109,39 +80,12 @@ void get_cpu_info();
     #endif
 #endif
 
-
 #endif //CONFIG_H_ 
-
-
-
 
 
 
 #ifndef CONFIG_IMPLEMENTATION
 #define CONFIG_IMPLEMENTATION
-
-/*  -------------------------------------------------------*/
-/*  dtypes functions                                       */
-/*  -------------------------------------------------------*/
-
-const char* GetDType(int dtype) {
-    switch(dtype) {
-        case FLOAT32: return "float32";
-        case FLOAT64: return "float64";
-        case FLOAT16: return "float16";
-        default: return "Unknown dtype";
-    }
-}
-
-int GetDtypeSize(int dtype) {
-    switch (dtype) {
-        case FLOAT32: return sizeof(float32);
-        case FLOAT64: return sizeof(float64);
-        case FLOAT16: return sizeof(float16);
-        // add other cases as needed
-        default: return 0;
-    }
-}
 
 /*  -------------------------------------------------------*/
 /*  Unix-like functions                                    */
