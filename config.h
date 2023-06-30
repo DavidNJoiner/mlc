@@ -3,19 +3,13 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>  
 #include <string.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <time.h>
 
-#include "dtype.h"
-
-// If using AVX, include the AVX/AVX2 runtime
-#if defined(__AVX__) || defined(__AVX2__)
-    #include <immintrin.h>
-    #include "avx.h"
-#endif
-
-#include "debug.h"
-#include "ops.h"
+#define DEEPC_CUDA true
 
 /*  -------------------------------------------------------*/ 
 /*  OS check / Specific Prototypes                         */
@@ -24,8 +18,8 @@
 
 #include <unistd.h>
 
-uint32_t get_num_cores();
-void get_cpu_info();
+//uint32_t get_num_cores();
+//void get_cpu_info();
 
 /*-----------------------------------------------------*/
 #elif defined(_WIN32) || defined(_WIN64)
@@ -41,45 +35,6 @@ void get_cpu_info();
 #error "OS not supported!"
 
 #endif // OS check
-
-/*  -------------------------------------------------------*/ 
-/* Define the system architecture for compilation          */
-/*  -------------------------------------------------------*/
-
-#if defined(__AVX__) || defined(__AVX2__)
-    #include <immintrin.h>
-    #if defined(__i386__) || defined(i386) || defined(_M_IX86)
-        /* CPUs that support AVX/AVX2 instructions on x86 architecture */
-        #define DEEPC_CPU_X86
-    #elif defined(__x86_64__) || defined(__amd64__) || defined(__x86_64) || defined(_M_AMD64)
-        #define DEEPC_CPU_AMD64
-    #endif
-
-#elif defined(__ARM_NEON__)
-    #if defined(__arm__) && defined(__ARMEL__)
-        /* CPUs that support NEON instructions on little-endian ARM architecture */
-        #define DEEPC_CPU_NEON_LE
-    #elif defined(__aarch64__)
-        /* CPUs that support NEON instructions on AArch64 architecture */
-        #define DEEPC_CPU_NEON_AARCH64
-    #endif
-
-#elif defined(__riscv) && (__riscv_xlen == 64)
-    /* CPUs that support the Vector V instructions extension (RVV) on RISC-V architecture */
-    #define DEEPC_CPU_RISCV
-
-#endif
-
-/*  -------------------------------------------------------*/
-/* Check if you are running C11 or above                   */
-/*  -------------------------------------------------------*/
-
-#ifdef __STDC_VERSION__
-    #if __STDC_VERSION__ >= 201112L
-        #define HAS_C11
-    #endif
-#endif
-
 #endif //CONFIG_H_ 
 
 
@@ -90,7 +45,7 @@ void get_cpu_info();
 /*  -------------------------------------------------------*/
 /*  Unix-like functions                                    */
 /*  -------------------------------------------------------*/
-
+/* 
 uint32_t get_num_cores() {
     return (uint32_t) sysconf(_SC_NPROCESSORS_ONLN);
 }
@@ -117,7 +72,7 @@ void get_cpu_info() {
     }
 
     fclose(fp);
-}
+} */
 
 /*  -------------------------------------------------------*/
 /*  Windows functions                                      */

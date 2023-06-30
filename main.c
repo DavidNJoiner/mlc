@@ -1,5 +1,6 @@
-#include "tensor.h"
 #include "config.h"
+#include "data.h"
+#include "tensor.h"
 
 int main() {
 
@@ -24,14 +25,16 @@ int main() {
     int range2[] = {0, 1};
     int shape2[] = {8, 512};
 
-    Data* data7 = randomData(4096, range1, shape2, 2, FLOAT16);
-    Data* data8 = randomData(4096, range2, shape2, 2, FLOAT16);
+    Data* data7 = randomData(4096, range1, shape2, 2, FLOAT32);
+    Data* data8 = randomData(4096, range2, shape2, 2, FLOAT32);
 
-    Tensor* t7 = tensor(data7, false);
-    Tensor* t8 = tensor(data8, false);
+    Device* deepc_cpu =  init_device(CPU, -1);
+
+    Tensor* t7 = tensor(data7, deepc_cpu, false);
+    Tensor* t8 = tensor(data8, deepc_cpu, false);
     Tensor* t9 = zerosFrom(t8);
 
-    uint64_t s0 = nanos();
+    /* uint64_t s0 = nanos();
     mult(t9, t7, t8);
     uint64_t e0 = nanos();
     //printTensor(t9);
@@ -43,7 +46,7 @@ int main() {
     uint64_t e1 = nanos();
     //printTensor(t9);
 
-    printf("\t \t \t avx_mul Time: %f ms\n", (double)(e1 - s1) / 1000000.0);
+    printf("\t \t \t avx_mul Time: %f ms\n", (double)(e1 - s1) / 1000000.0); */
     
     freeTensor(t7);
     freeTensor(t8);
