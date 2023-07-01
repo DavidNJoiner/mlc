@@ -1,8 +1,8 @@
 #ifndef OPS_H_ 
 #define OPS_H_
 
-#include "config.h"
 #include "data.h"
+#include "config.h"
 #include "cuda.h"
 #include "avx.h"
 

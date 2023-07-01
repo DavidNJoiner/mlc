@@ -1,4 +1,3 @@
-
 #include "cuda.h"
 
 /*  ---------------------------------------------------------------------------------*/
@@ -16,7 +15,7 @@ __global__ void vec1_kernel_mul_float16(float16* dst, float16* A, float16* B, in
 __global__ void vec1_kernel_mul_float32(float32* dst, float32* A, float32* B, int mat_size) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i < mat_size) {
-        dst[i] = __hmul(A[i], B[i]);
+        dst[i] = A[i] * B[i];
     }
 }
 /*  -----------------------------------------------------------------------------------*/
@@ -25,7 +24,7 @@ __global__ void vec1_kernel_mul_float32(float32* dst, float32* A, float32* B, in
 __global__ void vec1_kernel_mul_float64(float64* dst, float64* A, float64* B, int mat_size) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i < mat_size) {
-        dst[i] = __hmul(A[i], B[i]);
+        dst[i] = A[i] * B[i];
     }
 }
 /*  -----------------------------------------------------------------------------------*/
@@ -43,7 +42,7 @@ __global__ void vec1_kernel_add_float16(float16* dst, float16* A, int mat_size) 
 __global__ void vec1_kernel_add_float32(float32* dst, float32* A, int mat_size) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i < mat_size) {
-        dst[i] = __hadd(dst[i], A[i]);
+        dst[i] = dst[i] + A[i];
     }
 }
 /*  -----------------------------------------------------------------------------------*/
@@ -53,7 +52,7 @@ __global__ void vec1_kernel_add_float64(float64* dst, float64* A, int mat_size)
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i < mat_size) {
-        dst[i] = __hadd(dst[i], A[i]);
+        dst[i] = dst[i] + A[i];
     }
 }
 
