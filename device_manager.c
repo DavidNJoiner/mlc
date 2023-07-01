@@ -1,4 +1,5 @@
 #include "device_manager.h"
+#include "cuda.h"
 
 Device* current_device = NULL; // Global variable to store the current device
 
@@ -26,7 +27,7 @@ void init_dm() {
     }
 }
 
-/* Device* get_current_device() {
+Device* get_current_device() {
     // Return the current device
     return current_device;
 }
@@ -47,4 +48,3 @@ int choose_cuda_device(int* num_devices) {
     }
     return best_device;
 }
- */

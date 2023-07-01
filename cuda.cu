@@ -56,44 +56,50 @@ __global__ void vec1_kernel_add_float64(float64* dst, float64* A, int mat_size)
     }
 }
 
-void vec1_cuda_mul_float16(float16* dst, float16* A, float16* B, int mat_size) {
-    int threads = 256;
-    int blocks = (mat_size + threads - 1) / threads;
-    vec1_kernel_mul_float16<<<blocks, threads>>>(dst, A, B, mat_size);
-    cudaDeviceSynchronize();
-}
+#ifdef __cplusplus
+extern "C" {
+#endif
+    void vec1_cuda_mul_float16(float16* dst, float16* A, float16* B, int mat_size) {
+        int threads = 256;
+        int blocks = (mat_size + threads - 1) / threads;
+        vec1_kernel_mul_float16<<<blocks, threads>>>(dst, A, B, mat_size);
+        cudaDeviceSynchronize();
+    }
 
-void vec1_cuda_mul_float32(float32* dst, float32* A, float32* B, int mat_size) {
-    int threads = 256;
-    int blocks = (mat_size + threads - 1) / threads;
-    vec1_kernel_mul_float32<<<blocks, threads>>>(dst, A, B, mat_size);
-    cudaDeviceSynchronize();
-}
+    void vec1_cuda_mul_float32(float32* dst, float32* A, float32* B, int mat_size) {
+        int threads = 256;
+        int blocks = (mat_size + threads - 1) / threads;
+        vec1_kernel_mul_float32<<<blocks, threads>>>(dst, A, B, mat_size);
+        cudaDeviceSynchronize();
+    }
 
-void vec1_cuda_mul_float64(float64* dst, float64* A, float64* B, int mat_size) {
-    int threads = 256;
-    int blocks = (mat_size + threads - 1) / threads;
-    vec1_kernel_mul_float64<<<blocks, threads>>>(dst, A, B, mat_size);
-    cudaDeviceSynchronize();
-}
+    void vec1_cuda_mul_float64(float64* dst, float64* A, float64* B, int mat_size) {
+        int threads = 256;
+        int blocks = (mat_size + threads - 1) / threads;
+        vec1_kernel_mul_float64<<<blocks, threads>>>(dst, A, B, mat_size);
+        cudaDeviceSynchronize();
+    }
 
-void vec1_cuda_add_float16(float16* dst, float16* A, int mat_size) {
-    int threads = 256;
-    int blocks = (mat_size + threads - 1) / threads;
-    vec1_kernel_add_float16<<<blocks, threads>>>(dst, A, mat_size);
-    cudaDeviceSynchronize();
-}
+    void vec1_cuda_add_float16(float16* dst, float16* A, int mat_size) {
+        int threads = 256;
+        int blocks = (mat_size + threads - 1) / threads;
+        vec1_kernel_add_float16<<<blocks, threads>>>(dst, A, mat_size);
+        cudaDeviceSynchronize();
+    }
 
-void vec1_cuda_add_float32(float32* dst, float32* A, int mat_size) {
-    int threads = 256;
-    int blocks = (mat_size + threads - 1) / threads;
-    vec1_kernel_add_float32<<<blocks, threads>>>(dst, A, mat_size);
-    cudaDeviceSynchronize();
-}
+    void vec1_cuda_add_float32(float32* dst, float32* A, int mat_size) {
+        int threads = 256;
+        int blocks = (mat_size + threads - 1) / threads;
+        vec1_kernel_add_float32<<<blocks, threads>>>(dst, A, mat_size);
+        cudaDeviceSynchronize();
+    }
 
-void vec1_cuda_add_float64(float64* dst, float64* A, int mat_size) {
-    int threads = 256;
-    int blocks = (mat_size + threads - 1) / threads;
-    vec1_kernel_add_float64<<<blocks, threads>>>(dst, A, mat_size);
-    cudaDeviceSynchronize();
+    void vec1_cuda_add_float64(float64* dst, float64* A, int mat_size) {
+        int threads = 256;
+        int blocks = (mat_size + threads - 1) / threads;
+        vec1_kernel_add_float64<<<blocks, threads>>>(dst, A, mat_size);
+        cudaDeviceSynchronize();
+    }
+#ifdef __cplusplus
 }
+#endif

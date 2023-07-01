@@ -136,7 +136,7 @@ Data* randomData(int size, int* range, int* shape, int dim, int dtype) {
         byte_size = ((byte_size / alignment) + 1) * alignment;
     }
     
-    printf("size: %d, dtype: %s, byte_size: %d, alignment: %d\n", size, dtypeName, byte_size, alignment);
+    printf("size: %d, byte_size: %d, alignment: %d, dtype: %s\n", size, byte_size, alignment, dtypeName);
     void* random_values = aligned_alloc(alignment, byte_size);
 
     if(dtype == FLOAT16) {
