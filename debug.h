@@ -17,6 +17,6 @@ void print_float32(void* values, int index);
 void print_float64(void* values, int index);
 
 void printHelper(Data* A, PrintFunc printFunc, int* indices, int dim, int cur_dim);
-void print_op(Data* A, int dim);
+void PrintOp(Data* A, int dim);
 
 #endif //DEBUG_H
