@@ -31,18 +31,19 @@ int main() {
     uint64_t e0 = nanos();
     //printTensor(t9);
 
+    freeTensor(t7);
+    freeTensor(t8);
+    freeTensor(t9);
+
     printf("\t \t \t CUDA Time: %f ms\n", (double)(e0 - s0) / 1000000.0);
 
     uint64_t s1 = nanos();
     mul(t12, t10, t11);
     uint64_t e1 = nanos();
-    //printTensor(t9);
+    //printTensor(t12);
 
     printf("\t \t \t AVX Time: %f ms\n", (double)(e1 - s1) / 1000000.0);
     
-    freeTensor(t7);
-    freeTensor(t8);
-    freeTensor(t9);
     freeTensor(t10);
     freeTensor(t11);
     freeTensor(t12);
