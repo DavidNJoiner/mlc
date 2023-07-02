@@ -27,8 +27,8 @@ typedef struct {
 } NN;
 
 typedef struct {
-    Tensor* tensor_weights;
-    Tensor* bias;
+    Tensor* w;
+    Tensor* b;
 } Parameters;
 
 Parameters train(Data* data);

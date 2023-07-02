@@ -1,4 +1,4 @@
-#include "avx.h"
+#include "avx_ops.h"
 
 /*  ----------------------------------------------------------------------------*/
 /*  vec1_avx_mul_float16 : Multiply two 1D float16 vector using AVX intrinsics. */

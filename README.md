@@ -12,6 +12,7 @@ Arithmetic
 - [ ] Arithmetic ops for all dtypes.
 - [x] **Intel AVX/AVX2 ops** : Intrinsics ops + GEMM for fp32 and fp64.
 - [x] **Nvidia CUDA ops** : For fp16.
+- [ ] **cuBLAS ops**
 - [ ] **Open CL ops**.
 
 Tensor

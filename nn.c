@@ -8,18 +8,17 @@ float sigmoid_derivative(float x) {
     return x * (1 - x);
 }
 
-Parameters train(Data* data) {
+Parameters train(Model* model, Tensor* X_train, Tensor* Y_train, Optim* optim, int steps, int BS, LossF* loss_function) {
     Parameters params;
-    int tw_size = params.tensor_weights->data->size = data->size;
-    params.tensor_weights->data->dtype = data->dtype;
-    // Randomly initialize the weights.
+    int tw_size = params.w->data->size = data->size;
+    params.w->data->dtype = data->dtype;
+    // Randomly initialize weights and biases.
     for (int i = 0; i < tw_size; i++) {
-        params.tensor_weights[i] = ()rand() / ()RAND_MAX;
+        params.w[i] = ()rand() / ()RAND_MAX;
+        params.b[i] = ()rand() / ()RAND_MAX;
     }
-    // Randomly initialize the biases.
 
     
-    params.bias = (float)rand() / (float)RAND_MAX;
 
     for (int epoch = 0; epoch < EPOCHS; ++epoch) {
         for (int i = 0; i < size; ++i) {

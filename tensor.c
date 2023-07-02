@@ -3,6 +3,7 @@
 /*  -------------------------------------------------------*/
 /*  tensor : create a new Tensor from a Data object.       */
 /*  -------------------------------------------------------*/
+// TODO : check if device is available on the system 
 Tensor* tensor(Data* data, Device* device, bool requires_grad) {
     Tensor* new_tensor = (Tensor*)malloc(sizeof(Tensor));
     if (requires_grad) {
@@ -23,6 +24,7 @@ Tensor* tensor(Data* data, Device* device, bool requires_grad) {
 /*  -------------------------------------------------------*/
 /*  createTensor : create a new Tensor from scratch.       */
 /*  -------------------------------------------------------*/
+// TODO : check if device is available on the system 
 Tensor* createTensor(int* shape, int dim, int dtype, Device* device, bool requires_grad) {
     int size = 1;
     for (int i = 0; i < dim; i++) {
@@ -131,17 +133,44 @@ bool shapesAreEqual(Tensor* A, Tensor* B) {
 
     return true;
 }
+/*  ---------------------------------------------------------------*/
+/*  SameDevice : Check if n-Tensors are on the same device.        */
+/*  ---------------------------------------------------------------*/
+bool SameDevice(int num_tensors, ...){
+    va_list args;
+    va_start(args, num_tensors);
+
+    Tensor* first_tensor = va_arg(args, Tensor*);
+    Device* reference_device = first_tensor->device;
+    
+    for (int i = 1; i < num_tensors; i++){
+        Tensor* tensor = va_arg(args, Tensor*);
+        if(tensor->device != reference_device){
+            va_end(args);
+            return false;
+        }
+    }
+
+    va_end(args);
+    return true;
+}
 /*  --------------------------------------------------------------------------------*/
 /*  mul : Multiply two Tensors A and B. Stores the result as a third Tensor dst */
 /*  --------------------------------------------------------------------------------*/
 void mul(Tensor* dst, Tensor* A, Tensor* B) {
 
     if (!shapesAreEqual(A, B) || !shapesAreEqual(A, dst)) {
+        printf("Shape mismatch.\n");
+        return;
+    }
+
+    if(!SameDevice(3, dst, A, B)){
+        printf("Device mismatch.\n");
         return;
     }
 
     if (is_aligned(dst->data->values, 32) && is_aligned(A->data->values, 32) && is_aligned(B->data->values, 32)) {
-        speed_mul_op(dst->data, A->data, B->data);
+        speed_mul_op(dst->data, A->data, B->data, dst->device);
     } else {
         printf("values are NOT 32-byte aligned.\n");
     }
@@ -155,8 +184,13 @@ void add(Tensor* dst, Tensor* A) {
         return;
     }
 
+    if(!SameDevice(3, dst, A)){
+        printf("Device mismatch.\n");
+        return;
+    }
+
     if (is_aligned(dst->data->values, 32) && is_aligned(A->data->values, 32)) {
-        speed_add_op(dst->data, A->data);
+        speed_add_op(dst->data, A->data, dst->device);
     } else {
         printf("values are NOT 32-byte aligned.\n");
     }

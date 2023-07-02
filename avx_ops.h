@@ -1,5 +1,5 @@
-#ifndef AVX_H_ 
-#define AVX_H_
+#ifndef AVX_OPS_H_ 
+#define AVX_OPS_H_ 
 
 #include <immintrin.h>
 #include "dtype.h"
@@ -13,4 +13,4 @@ void    vec1_avx_add_float16(float16* dst, float16* mat1, int mat_size);
 void    vec1_avx_add_float32(float32* res, float32* mat1, int mat_size);
 void    vec1_avx_add_float64(float64* res, float64* mat1, int mat_size);
 
-#endif //AVX_H
+#endif //AVX_OPS_H_ 
