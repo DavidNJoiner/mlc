@@ -1,11 +1,15 @@
 #include "tensor.h"
 
+// Setting requires_grad=True for a tensor means that the operations involving this tensor are tracked
+// so that the gradient computations can be automatically done during backpropagation.
+
 /*  -------------------------------------------------------*/
 /*  tensor : create a new Tensor from a Data object.       */
 /*  -------------------------------------------------------*/
 // TODO : check if device is available on the system 
 Tensor* tensor(Data* data, Device* device, bool requires_grad) {
     Tensor* new_tensor = (Tensor*)malloc(sizeof(Tensor));
+    new_tensor->require_grad = requires_grad;
     if (requires_grad) {
         float32* gradient;
         if (device->type == CUDA) {
@@ -32,15 +36,15 @@ Tensor* createTensor(int* shape, int dim, int dtype, Device* device, bool requir
     }
     void* array;
     if (device->type == CUDA) {
-        cudaMalloc(&array, size * GetDtypeSize(dtype));  
+        cudaMalloc(&array, size * GetDTypeSize(dtype));  
     } else {
-        array = calloc(size, GetDtypeSize(dtype)); 
+        array = calloc(size, GetDTypeSize(dtype)); 
     }
     if (array == NULL) {
         printf("Memory allocation failed!\n");
         return NULL;
     }
-    Data* data = makeData(array, shape, dim, dtype);
+    Data* data = MakeData(array, shape, dim, dtype);
     Tensor* t = tensor(data, device, requires_grad);
     return t;
 }
@@ -60,13 +64,14 @@ Tensor* zerosFrom(Tensor* t) {
     new_data->dtype = t->data->dtype;
 
     if (t->device->type == CUDA) {
-        cudaMalloc(&(new_data->values), new_data->size * GetDtypeSize(new_data->dtype));  
+        cudaMalloc(&(new_data->values), new_data->size * GetDTypeSize(new_data->dtype));  
     } else {
-        new_data->values = (float32 *)aligned_alloc(32, new_data->size * GetDtypeSize(new_data->dtype));  
+        new_data->values = (float32 *)aligned_alloc(32, new_data->size * GetDTypeSize(new_data->dtype));  
     }
 
     new_tensor->data = new_data;
     new_tensor->device = t->device;
+    new_tensor->require_grad = t->require_grad;
 
     if (t->gradient != NULL) {
         float32* gradient;
@@ -206,18 +211,18 @@ void printTensor(Tensor* A) {
     }
 
     if(A->data == NULL) {
-        printf("Error: Null Data pointer inside the Tensor structure.\n");
+        printf("Error: Null Data pointer inside Tensor structure.\n");
         return;
     }
 
     if(A->data->shape == NULL) {
-        printf("Error: Null Shape pointer inside the Tensor structure.\n");
+        printf("Error: Null Shape pointer inside Tensor structure.\n");
         return;
     }
 
     if (0 < A->data->dtype && A->data->dtype <= 16) {
-        printData(A->data);
+        PrintData(A->data);
     }else {
-        printf("Error: Invalid dtype value.\n");
+        printf("Error: Invalid dtype.\n");
     }
 }
