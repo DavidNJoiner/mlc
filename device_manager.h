@@ -5,9 +5,9 @@
 #include <stdio.h>
 #include "device.h"
 
-void            init_dm();
-void            set_device(Device* device);
-int             choose_cuda_device(int* num_devices);
-Device*         get_current_device();
+void            InitDM();
+void            SetDevice(Device* device);
+int             SelectCudaDevice(int* num_devices);
+Device*         GetCurrentDevice();
 
 #endif //DEVICE_MANAGER_H_

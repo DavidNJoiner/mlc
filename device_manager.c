@@ -3,13 +3,12 @@
 
 Device* current_device = NULL; // Global variable to store the current device
 
-void set_device(Device* device) {
+void SetDevice(Device* device) {
     // Store the device in the global variable
     current_device = device;
 }
 
-void init_dm() {
-
+void InitDM() {
     /*  -------------------------------------------------------*/
     /*  Init CUDA                                              */
     /*  -------------------------------------------------------*/
@@ -18,21 +17,21 @@ void init_dm() {
 
     if (err != cudaSuccess) {
         printf("Failed to detect CUDA devices: %s", cudaGetErrorString(err));
-        set_device(init_device(CPU, -1));
+        SetDevice(init_device(CPU, -1));
     } else {
         printf("Found %d CUDA capable device(s)", num_devices);
-        int best_device = choose_cuda_device(&num_devices);
+        int best_device = SelectCudaDevice(&num_devices);
         cudaSetDevice(best_device);
-        set_device(init_device(CUDA, best_device));
+        SetDevice(init_device(CUDA, best_device));
     }
 }
 
-Device* get_current_device() {
+Device* GetCurrentDevice() {
     // Return the current device
     return current_device;
 }
 
-int choose_cuda_device(int* num_devices) {
+int SelectCudaDevice(int* num_devices) {
     cudaDeviceProp best_prop;
     int best_device = 0;
 
