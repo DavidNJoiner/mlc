@@ -108,7 +108,7 @@ void PrintData(Data* dat) {
     printf("dtype : %4s \n", dtypeStr);
     printf("shape : ");
     for (int i = 0; i < dat->dim; i++) {
-        printf("%2d ", dat->shape[i]);
+        printf("[%2d] ", dat->shape[i]);
     }
     printf("\n");
     printf("dimension : %d \n \n", dat->dim);
@@ -122,14 +122,14 @@ void PrintData(Data* dat) {
 /*  -----------------------------------------------------------------------------*/
 /*  RandomData : Generate a Data object filled with random values.               */
 /*  -----------------------------------------------------------------------------*/
-Data* RandomData(int size, int* range, int* shape, int dim, int dtype) {
+Data* RandomData(int size, int min_range, int max_range, int* shape, int dim, int dtype) {
     // Seed the random number generator
     srand((unsigned int)time(NULL));
     
     int dtypeSize = GetDTypeSize(dtype);
-    const char* dtypeName = GetDType(dtype);
     int byte_size = size * dtypeSize;
-    int alignment = 32;
+    int alignment = 32; // Was 32 by default
+    const char* dtypeName = GetDType(dtype);
     
     // Making sure byte_size is a multiple of the alignment
     if (byte_size % alignment != 0) {
@@ -142,21 +142,21 @@ Data* RandomData(int size, int* range, int* shape, int dim, int dtype) {
     if(dtype == FLOAT16) {
         float16* ptr = (float16*)random_values;
         for(int i = 0; i < size; i++) {
-            ptr[i] = (float16)(range[0] + ((float16)rand() / (float16)RAND_MAX) * (range[1] - range[0]));
+            ptr[i] = (float16)(min_range + ((float16)rand() / (float16)RAND_MAX) * (max_range - min_range));
         }
     }
     if(dtype == FLOAT32) {
         float32* ptr = (float32*)random_values;
         for(int i = 0; i < size; i++) {
-            ptr[i] = (float32)(range[0] + ((float32)rand() / (float32)RAND_MAX) * (range[1] - range[0]));
+            ptr[i] = (float32)(min_range + ((float32)rand() / (float32)RAND_MAX) * (max_range - min_range));
         }
     } else if(dtype == FLOAT64) {
         float64* ptr = (float64*)random_values;
         for(int i = 0; i < size; i++) {
-            ptr[i] = (float64)(range[0] + ((float64)rand() / (float64)RAND_MAX) * (range[1] - range[0]));
+            ptr[i] = (float64)(min_range + ((float64)rand() / (float64)RAND_MAX) * (max_range - min_range));
         }
     }
-    
+
     Data* data = (Data*)malloc(sizeof(Data));
     data->values = random_values;
     data->size = size;

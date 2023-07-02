@@ -22,7 +22,7 @@ int             GetDTypeSize(int dtype);
 int             CalculateIndex(int* indices, int* strides, int dim);
 const char*     GetDType(int num);
 Data*           MakeData(void* array, int* shape, int dim, int dtype);
-Data*           RandomData(int size, int* range, int* shape, int dim, int dtype);
+Data*           RandomData(int size, int min_range, int max_range, int* shape, int dim, int dtype);
 void*           AccessElement(Data* data, int* indices);
 void            SetElement(Data* data, int* indices, void* value);
 
