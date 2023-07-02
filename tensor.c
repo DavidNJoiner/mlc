@@ -152,6 +152,7 @@ bool SameDevice(int num_tensors, ...){
         Tensor* tensor = va_arg(args, Tensor*);
         if(tensor->device != reference_device){
             va_end(args);
+            printf("Device mismatch.\n");
             return false;
         }
     }
@@ -165,12 +166,10 @@ bool SameDevice(int num_tensors, ...){
 void mul(Tensor* dst, Tensor* A, Tensor* B) {
 
     if (!shapesAreEqual(A, B) || !shapesAreEqual(A, dst)) {
-        printf("Shape mismatch.\n");
         return;
     }
 
     if(!SameDevice(3, dst, A, B)){
-        printf("Device mismatch.\n");
         return;
     }
 
@@ -190,7 +189,6 @@ void add(Tensor* dst, Tensor* A) {
     }
 
     if(!SameDevice(3, dst, A)){
-        printf("Device mismatch.\n");
         return;
     }
 
