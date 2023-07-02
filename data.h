@@ -16,12 +16,14 @@ typedef struct {
 } Data;
 
 // Data functions Prototypes
-void            flattenArray(void* array, void* flattened, int* shape, int dim, int dtype, int idx);
-void            printData(Data* dat);
-int             GetDtypeSize(int dtype);
-int             calculateIndex(int* indices, int* strides, int dim);
+void            FlattenArray(void* array, void* flattened, int* shape, int dim, int dtype, int idx);
+void            PrintData(Data* dat);
+int             GetDTypeSize(int dtype);
+int             CalculateIndex(int* indices, int* strides, int dim);
 const char*     GetDType(int num);
-Data*           makeData(void* array, int* shape, int dim, int dtype);
-Data*           randomData(int size, int* range, int* shape, int dim, int dtype);
+Data*           MakeData(void* array, int* shape, int dim, int dtype);
+Data*           RandomData(int size, int* range, int* shape, int dim, int dtype);
+void*           AccessElement(Data* data, int* indices);
+void            SetElement(Data* data, int* indices, void* value);
 
 #endif // DATA_H

@@ -13,7 +13,7 @@ const char* GetDType(int dtype) {
     }
 }
 
-int GetDtypeSize(int dtype) {
+int GetDTypeSize(int dtype) {
     switch (dtype) {
         case FLOAT16: return sizeof(float16);
         case FLOAT32: return sizeof(float32);
@@ -22,9 +22,9 @@ int GetDtypeSize(int dtype) {
     }
 }
 /*  -----------------------------------------------------------------------*/
-/*  calculateIndex : convert multi-dimensional index into a linear index;  */
+/*  CalculateIndex : convert multi-dimensional index into a linear index;  */
 /*  -----------------------------------------------------------------------*/
-int calculateIndex(int* indices, int* shape, int dim) {
+int CalculateIndex(int* indices, int* shape, int dim) {
     int index = 0;
     int stride = 1;
     for (int i = dim - 1; i >= 0; i--) {
@@ -34,9 +34,9 @@ int calculateIndex(int* indices, int* shape, int dim) {
     return index;
 }
 /*  ---------------------------------------------------------------------------------------------*/
-/*  flattenArray : recursively flattens a multi-dimensional array into a one-dimensional array.  */
+/*  FlattenArray : recursively flattens a multi-dimensional array into a one-dimensional array.  */
 /*  ---------------------------------------------------------------------------------------------*/
-void flattenArray(void* array, void* flattened, int* shape, int dim, int dtype, int idx) {
+void FlattenArray(void* array, void* flattened, int* shape, int dim, int dtype, int idx) {
     if (dim == 0) {
         switch (dtype) {
             case FLOAT16: {
@@ -68,23 +68,23 @@ void flattenArray(void* array, void* flattened, int* shape, int dim, int dtype, 
         }
         stride *= dtype;  // calculate the stride for the current dimension
         for (int i = 0; i < shape[0]; i++) {
-            flattenArray((char*)array + i * stride, flattened, shape + 1, dim - 1, dtype, idx + i * stride / dtype);
+            FlattenArray((char*)array + i * stride, flattened, shape + 1, dim - 1, dtype, idx + i * stride / dtype);
         }
     }
 }
 /*  --------------------------------------------------------------------------------*/
-/*  makeData : Converts a given multi-dimensional array into a Data structure. */
+/*  MakeData : Converts a given multi-dimensional array into a Data structure. */
 /*  --------------------------------------------------------------------------------*/
-Data* makeData(void* array, int* shape, int dim, int dtype) {
+Data* MakeData(void* array, int* shape, int dim, int dtype) {
     int size = 1;
     for (int i = 0; i < dim; i++) {
         size *= shape[i];
     }
     
-    int byte_size =  size * GetDtypeSize(dtype);
+    int byte_size =  size * GetDTypeSize(dtype);
     void* flattened = (float32 *)aligned_alloc(32, byte_size);
 
-    flattenArray(array, flattened, shape, dim, dtype, 0);
+    FlattenArray(array, flattened, shape, dim, dtype, 0);
 
     Data* dat = (Data*)malloc(sizeof(Data));
     dat->values = flattened;
@@ -96,9 +96,9 @@ Data* makeData(void* array, int* shape, int dim, int dtype) {
     return dat;
 }
 /*  -----------------------------------------------------------------------------*/
-/*  printData : Converts a given multi-dimensional array into a Data structure.  */
+/*  PrintData : Converts a given multi-dimensional array into a Data structure.  */
 /*  -----------------------------------------------------------------------------*/
-void printData(Data* dat) {
+void PrintData(Data* dat) {
     const char* dtypeStr = GetDType(dat->dtype);
     if (dtypeStr == NULL) {
         printf("Error: GetDType returned NULL.\n");
@@ -120,13 +120,13 @@ void printData(Data* dat) {
     }
 }
 /*  -----------------------------------------------------------------------------*/
-/*  randomData : Generate a Data object filled with random values.               */
+/*  RandomData : Generate a Data object filled with random values.               */
 /*  -----------------------------------------------------------------------------*/
-Data* randomData(int size, int* range, int* shape, int dim, int dtype) {
+Data* RandomData(int size, int* range, int* shape, int dim, int dtype) {
     // Seed the random number generator
     srand((unsigned int)time(NULL));
     
-    int dtypeSize = GetDtypeSize(dtype);
+    int dtypeSize = GetDTypeSize(dtype);
     const char* dtypeName = GetDType(dtype);
     int byte_size = size * dtypeSize;
     int alignment = 32;
@@ -165,4 +165,59 @@ Data* randomData(int size, int* range, int* shape, int dim, int dtype) {
     data->dtype = dtype;
     
     return data;
+}
+/*  -----------------------------------------------------------------------------*/
+/*  AccessElement : Access an element in the Data object                         */
+/*  -----------------------------------------------------------------------------*/
+void* AccessElement(Data* data, int* indices) {
+    int linear_index = CalculateIndex(indices, data->shape, data->dim);
+    int dtype_size = GetDTypeSize(data->dtype);
+
+    // Cast the data values to the correct type and return the address of the element
+    switch (data->dtype) {
+        case FLOAT16: {
+            float16* values = (float16*)data->values;
+            return (void*)&values[linear_index];
+        }
+        case FLOAT32: {
+            float32* values = (float32*)data->values;
+            return (void*)&values[linear_index];
+        }
+        case FLOAT64: {
+            float64* values = (float64*)data->values;
+            return (void*)&values[linear_index];
+        }
+        default:
+            printf("Unsupported dtype %s\n", GetDType(data->dtype));
+            return NULL;
+    }
+}
+
+/*  -----------------------------------------------------------------------------*/
+/*  SetElement : Set the value of an element in the Data object                  */
+/*  -----------------------------------------------------------------------------*/
+void SetElement(Data* data, int* indices, void* value) {
+    void* element_ptr = AccessElement(data, indices);
+
+    // Set the value of the element
+    switch (data->dtype) {
+        case FLOAT16: {
+            float16* element = (float16*)element_ptr;
+            *element = *(float16*)value;
+            break;
+        }
+        case FLOAT32: {
+            float32* element = (float32*)element_ptr;
+            *element = *(float32*)value;
+            break;
+        }
+        case FLOAT64: {
+            float64* element = (float64*)element_ptr;
+            *element = *(float64*)value;
+            break;
+        }
+        default:
+            printf("Failed to set element: Unsupported dtype %s\n", GetDType(data->dtype));
+            break;
+    }
 }
