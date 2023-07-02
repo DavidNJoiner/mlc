@@ -6,6 +6,7 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <math.h>
+
 #include "data.h"
 #include "debug.h"
 #include "ops.h"
@@ -14,9 +15,11 @@
 #include "device.h"
 
 typedef struct {
+    bool require_grad;
     Data* data;
     Device* device;
     float32* gradient;
+    //Data *lazydata;
 } Tensor;
 
 //  Tensors creation
