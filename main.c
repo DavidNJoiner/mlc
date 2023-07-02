@@ -11,12 +11,12 @@ int main() {
     print_cuda_v();
 
     int range[] = {0, 1};
-    int shape[] = {8, 512};
+    int shape[] = {16, 512};
 
-    Data* data7 = randomData(4096, range, shape, 2, FLOAT16);
-    Data* data8 = randomData(4096, range, shape, 2, FLOAT16);
-    Data* data10 = randomData(4096, range, shape, 2, FLOAT32);
-    Data* data11 = randomData(4096, range, shape, 2, FLOAT32);
+    Data* data7 = RandomData(8192, range, shape, 2, FLOAT32);
+    Data* data8 = RandomData(8192, range, shape, 2, FLOAT32);
+    Data* data10 = RandomData(8192, range, shape, 2, FLOAT32);
+    Data* data11 = RandomData(8192, range, shape, 2, FLOAT32);
 
     Tensor* t7 = tensor(data7, gpu, false);
     Tensor* t8 = tensor(data8, gpu, false);
