@@ -108,13 +108,13 @@ void PrintData(Data* dat) {
     printf("dtype : %4s \n", dtypeStr);
     printf("shape : ");
     for (int i = 0; i < dat->dim; i++) {
-        printf("%2d", dat->shape[i]);
+        printf("%2d ", dat->shape[i]);
     }
     printf("\n");
     printf("dimension : %d \n \n", dat->dim);
 
     if (dat->dim >= 0) {
-        print_op(dat, dat->dim);
+        PrintOp(dat, dat->dim);
     } else {
         printf("Error: Invalid dimension for printOp.\n");
     }
