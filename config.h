@@ -11,6 +11,18 @@
 #include "device.h"
 #include "cuda_ops.h"
 
+typedef enum {
+    TENSOR,
+    DEVICE,
+    DATA,
+    FUNCTION,
+    NEURON,
+    LAYER,
+    NN,
+    PARAMETERS,
+    LAST_FUNCTION_SUBCLASS = PARAMETERS,
+} ObjectType;
+
 /*  -------------------------------------------------------*/ 
 /*  OS check / Specific Prototypes                         */
 /*  -------------------------------------------------------*/
@@ -18,7 +30,7 @@
 
 #include <unistd.h>
 
-void print_cuda_v();
+void cuda_version();
 //uint32_t get_num_cores();
 //void get_cpu_info();
 
