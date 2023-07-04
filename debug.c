@@ -1,12 +1,6 @@
 #include "debug.h"
 
 /*  -------------------------------------------------------*/ 
-/*  Memory Alignement Check                                */
-/*  -------------------------------------------------------*/ 
-bool is_aligned(void* ptr, size_t alignment) {
-    return ((uintptr_t)ptr % alignment) == 0;
-}
-/*  -------------------------------------------------------*/ 
 /*  Monotonic Chrono                                       */
 /*  -------------------------------------------------------*/ 
 uint64_t nanos(){
@@ -23,7 +17,7 @@ void print_float16(void* values, int index) {
 }
 void print_float32(void* values, int index) {
     float32* vals = (float32*)values;
-     printf("%2.2f\t", vals[index]);
+    printf("%2.2f\t", vals[index]);
 }
 void print_float64(void* values, int index) {
     float64* vals = (float64*)values;
@@ -56,14 +50,11 @@ PrintFunc print_types[] = {
 } */
 // TODO : solve segfault for Tensor created with GPU as Device. No clue yet why that happens.
 void PrintArray(void* array, PrintFunc printFunc, int* shape, int dim, int dtype, int idx) {
-    if (dim == 0) {
+    int stride = dtype;
+    printf("Stride : %d \n", stride);
+    if (dim == 1) {
         printFunc(array, idx);
     } else {
-        int stride = 1;
-        for (int i = 1; i < dim; i++) {
-            stride *= shape[i];
-        }
-        stride *= dtype;  // calculate the stride for the current dimension
         for (int i = 0; i < shape[0]; i++) {
             PrintArray((char*)array + i * stride, printFunc, shape + 1, dim - 1, dtype, idx + i * stride / dtype);
         }
@@ -77,6 +68,7 @@ void PrintOp(Data* A, int dim) {
         PrintFunc printFunc = print_types[A->dtype];
         if (printFunc) {
             int* indices = (int*)calloc(dim, sizeof(int));
+            printf("Running : PrintArray function !\n");
             PrintArray(A->values, printFunc, A->shape, dim, A->dtype, 0);
             free(indices);
         } else {
