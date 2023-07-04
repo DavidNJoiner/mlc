@@ -94,30 +94,30 @@ Tensor* newFull(int* shape, int fill_value, int dtype, Device* device, bool requ
 /*  ---------------------------------------------------------------*/
 /*  freeTensor : Releases the memory allocated for a given tensor. */
 /*  ---------------------------------------------------------------*/
-void freeTensor(Tensor* t) {
-    if (t != NULL) {
-        if (t->data != NULL) {
-            if (t->data->values != NULL) {
-                if (t->device->type == CUDA) {
-                    cudaFree(t->data->values); 
+void freeTensor(Tensor** t) {
+    if (*t != NULL) {
+        if ((*t)->data != NULL) {
+            if ((*t)->data->values != NULL) {
+                if ((*t)->device->type == CUDA) {
+                    cudaFree((*t)->data->values); 
                 } else {
-                    free(t->data->values);  
+                    free((*t)->data->values);  
                 }
-                t->data->values = NULL;
+                (*t)->data->values = NULL;
             }
-            free(t->data);
-            t->data = NULL;
+            free((*t)->data);
+            (*t)->data = NULL;
         }
-        if (t->gradient != NULL) {
-            if (t->device->type == CUDA) {
-                cudaFree(t->gradient); 
+        if ((*t)->gradient != NULL) {
+            if ((*t)->device->type == CUDA) {
+                cudaFree((*t)->gradient); 
             } else {
-                free(t->gradient); 
+                free((*t)->gradient); 
             }
-            t->gradient = NULL;
+            (*t)->gradient = NULL;
         }
-        free(t);
-        t = NULL;
+        free(*t);
+        *t = NULL;
     }
 }
 /*  ---------------------------------------------------------------*/
@@ -223,4 +223,11 @@ void printTensor(Tensor* A) {
     }else {
         printf("Error: Invalid dtype.\n");
     }
+}
+
+/*  -------------------------------------------------------*/ 
+/*  Memory Alignement Check                                */
+/*  -------------------------------------------------------*/ 
+bool is_aligned(void* ptr, size_t alignment) {
+    return ((uintptr_t)ptr % alignment) == 0;
 }
