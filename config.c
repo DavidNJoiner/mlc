@@ -1,6 +1,6 @@
 #include "config.h"
 
-void print_cuda_v() {
+void cuda_version() {
     if (deepc_cuda){
         int cudaVersion = CUDART_VERSION;
         printf("CUDA version: %d.%d detected.\n", cudaVersion / 1000, (cudaVersion % 100) / 10);
@@ -11,7 +11,7 @@ void print_cuda_v() {
 void getDevices(){
     Device* gpu =  init_device(CUDA, 0);
     Device* cpu =  init_device(CPU, -1);
-    print_cuda_v();
+    cuda_version();
 }
 /*  -------------------------------------------------------*/
 /*  Unix-like functions                                    */
