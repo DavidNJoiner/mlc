@@ -7,7 +7,7 @@
 // If the tensor requires_grad and no_grad mode is not active, the context is stored in ret._ctx,
 // which can be used later for gradient computations.
 
-Function* InitFunction(Device* device, Data* tensors) {
+Function* InitFunction(Device* device, Data* tensors, Tensor* (*ForwardFunc)(Function *self, Data *args), void (*BackwardFunc)(Function *self, Data *args)) {
     Function *self = (Function *)malloc(sizeof(Function));
     self->device = device;
     self->parents = tensors;
@@ -26,11 +26,17 @@ Function* InitFunction(Device* device, Data* tensors) {
             break;
         }
     }
+
+    // Assign the function pointers
+    self->Forward = ForwardFunc;
+    self->Backward = BackwardFunc;
+
     return self;
 }
 
+
 /*  ---------------------------------------------------------------*/
-/*   Forward / Backward for autograd                               */
+/*   Forward / Backward for autograd - Function member functions   */
 /*  ---------------------------------------------------------------*/
 
 Tensor* Forward(Function* self, Data* args) {

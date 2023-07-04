@@ -4,7 +4,7 @@
 #include "device.h"
 #include "tensor.h" // Data and Data are included in Tensor
 
-// New Datatype needed :  Data -> A GLib GArray wrapper in Data struct instead of standard C array.
+// Initialize a new Function example : Function* sin_function = InitFunction(device, tensors, Sin_Forward, Sin_Backward);
 
 // needs_input_grad :
 /*---------------------------------------------------------------------------------------------------------------------------
@@ -27,12 +27,13 @@ typedef struct  {
     Data* parents;
     bool *needs_input_grad;
     bool requires_grad;
-    Tensor* (*Forward)(Data *args);
-    void (*Backward)(Data *args);
-} Function ;
+    Tensor* (*Forward)(struct Function *self, Data *args);
+    void (*Backward)(struct Function *self, Data *args);
+} Function;
 
-Function *InitFunction(Device *device, Data *tensors);
+Function* InitFunction(Device* device, Data* tensors, Tensor* (*ForwardFunc)(Function *self, Data *args), void (*BackwardFunc)(Function *self, Data *args));
 Tensor *Forward(Function *self, Data *args);
 void Backward(Function *self, Data *args);
 
 #endif //FUNCTION_H_
+
