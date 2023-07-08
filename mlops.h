@@ -23,7 +23,8 @@ void ReluBackward(Relu* self, Data* args);
 
 #endif //MLOPS_H_
 
-#ifdef IMPLEMENTATION_MLOPS_
+#ifdef IMPLEMENTATION_MLOPS
+#define IMPLEMENTATION_MLOPS
 
 Sin* InitSin(Device* device, Data* tensors) {
     Sin* self = malloc(sizeof(Sin));
@@ -65,4 +66,4 @@ Relu* InitRelu(Device* device, Data* tensors) {
     return self;
 }
 
-#endif //IMPLEMENTATION_MLOPS_
+#endif //IMPLEMENTATION_MLOPS
