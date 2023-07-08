@@ -11,6 +11,8 @@
 #include "device.h"
 #include "cuda_ops.h"
 
+#define DEEPC_NO_CUDA_MEMORY_CACHING 1
+
 typedef enum {
     TENSOR,
     DEVICE,
