@@ -1,4 +1,5 @@
 #include "tensor.h"
+#include "memory_pool.h"
 
 // Setting requires_grad=True for a tensor means that the operations involving this tensor are tracked
 // so that the gradient computations can be automatically done during backpropagation.
@@ -8,12 +9,15 @@
 /*  -------------------------------------------------------*/
 // TODO : check if device is available on the system 
 Tensor* tensor(Data* data, Device* device, bool requires_grad) {
-    Tensor* new_tensor = (Tensor*)malloc(sizeof(Tensor));
+    // Use the custom memory allocator to allocate memory for the new tensor
+    Pool* tensorPool = GetPool(TENSOR);
+    Tensor* new_tensor = (Tensor*)PoolMalloc(tensorPool);
+
     new_tensor->require_grad = requires_grad;
     if (requires_grad) {
         float32* gradient;
         if (device->type == CUDA) {
-            cudaMalloc((void*)gradient, data->size * sizeof(float32));  
+            cudaMalloc((void**)&gradient, data->size * sizeof(float32));  
         } else {
             gradient = (float32*)calloc(data->size, sizeof(float32)); 
         }
@@ -25,6 +29,7 @@ Tensor* tensor(Data* data, Device* device, bool requires_grad) {
     new_tensor->device = device;
     return new_tensor;
 }
+
 /*  -------------------------------------------------------*/
 /*  createTensor : create a new Tensor from scratch.       */
 /*  -------------------------------------------------------*/
@@ -45,15 +50,21 @@ Tensor* createTensor(int* shape, int dim, int dtype, Device* device, bool requir
         return NULL;
     }
     Data* data = MakeData(array, shape, dim, dtype);
-    Tensor* t = tensor(data, device, requires_grad);
+    Pool* tensorPool = GetPool(TENSOR);
+    Tensor* t = (Tensor*)PoolMalloc(tensorPool);
+    t->data = data;
+    t->device = device;
+    t->require_grad = requires_grad;
     return t;
 }
 /*  -------------------------------------------------------------------------------------*/
 /*  zerosFrom : create a new Tensor filled with zeros from an existing Tensor(template). */
 /*  -------------------------------------------------------------------------------------*/
 Tensor* zerosFrom(Tensor* t) {
-    Tensor* new_tensor = (Tensor*)malloc(sizeof(Tensor));
-    Data* new_data = (Data*)malloc(sizeof(Data));
+    Pool* tensorPool = GetPool(TENSOR);
+    Pool* dataPool = GetPool(DATA);
+    Tensor* new_tensor = (Tensor*)PoolMalloc(tensorPool);
+    Data* new_data = (Data*)PoolMalloc(dataPool);
 
     new_data->shape = (int*)malloc(t->data->dim * sizeof(int));
     for (int i = 0; i < t->data->dim; i++) {
@@ -76,7 +87,7 @@ Tensor* zerosFrom(Tensor* t) {
     if (t->gradient != NULL) {
         float32* gradient;
         if (t->device->type == CUDA) {
-            cudaMalloc((void*)gradient, new_data->size * sizeof(float32));  
+            cudaMalloc((void**)&gradient, new_data->size * sizeof(float32));  
         } else {
             gradient = (float32*)calloc(new_data->size, sizeof(float32));  
         }
@@ -89,36 +100,8 @@ Tensor* zerosFrom(Tensor* t) {
 }
 
 Tensor* newFull(int* shape, int fill_value, int dtype, Device* device, bool requires_grad){
-    
-} 
-/*  ---------------------------------------------------------------*/
-/*  freeTensor : Releases the memory allocated for a given tensor. */
-/*  ---------------------------------------------------------------*/
-void freeTensor(Tensor** t) {
-    if (*t != NULL) {
-        if ((*t)->data != NULL) {
-            if ((*t)->data->values != NULL) {
-                if ((*t)->device->type == CUDA) {
-                    cudaFree((*t)->data->values); 
-                } else {
-                    free((*t)->data->values);  
-                }
-                (*t)->data->values = NULL;
-            }
-            free((*t)->data);
-            (*t)->data = NULL;
-        }
-        if ((*t)->gradient != NULL) {
-            if ((*t)->device->type == CUDA) {
-                cudaFree((*t)->gradient); 
-            } else {
-                free((*t)->gradient); 
-            }
-            (*t)->gradient = NULL;
-        }
-        free(*t);
-        *t = NULL;
-    }
+    // TODO: Implement this function
+    return NULL;
 }
 /*  ---------------------------------------------------------------*/
 /*  shapesAreEqual : Check if two Tensors shapes are equals.       */
