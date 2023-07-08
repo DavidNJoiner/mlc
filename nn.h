@@ -13,6 +13,11 @@
 #define EPOCHS 1000
 
 typedef struct {
+    Tensor* w;
+    Tensor* b;
+} Parameters;
+
+typedef struct {
     Parameters* params;
     float (*Function)(float); //Pointer to the a activation function.
 } Neuron;
@@ -26,11 +31,6 @@ typedef struct {
     Layer* layers;
     int num_layers;
 } NeuralNet;
-
-typedef struct {
-    Tensor* w;
-    Tensor* b;
-} Parameters;
 
 Parameters train(Data* data);
 float sigmoid(float x);
