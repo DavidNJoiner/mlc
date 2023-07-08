@@ -1,6 +1,7 @@
 #include "config.h"
-#include "data.h"
+#include "memory_pool.h"
 #include "tensor.h"
+#include "nn.h"
 
 int main() {
 
@@ -10,42 +11,39 @@ int main() {
 
     cuda_version();
 
+    // Initialize the global memory pool
+    InitializeGlobalPool();
+
+    // Create a tensor
     int shape[] = {16, 512};
-
-    Data* data7 = RandomData(8192, 0, 1, shape, 2, FLOAT32);
-    Data* data8 = RandomData(8192, 0, 1, shape, 2, FLOAT32);
-    Data* data10 = RandomData(8192, 0, 1, shape, 2, FLOAT32);
-    Data* data11 = RandomData(8192, 0, 1, shape, 2, FLOAT32);
-
-    Tensor* t7 = tensor(data7, gpu, false);
-    Tensor* t8 = tensor(data8, gpu, false);
-    Tensor* t9 = zerosFrom(t8);
-
-    Tensor* t10 = tensor(data10, cpu, false);
-    Tensor* t11 = tensor(data11, cpu, false);
-    Tensor* t12 = zerosFrom(t11);
+    Data* data001 = RandomData(8192, 0, 1, shape, 2, FLOAT32);
+    Data* data002 = RandomData(8192, 0, 1, shape, 2, FLOAT32);
+    Tensor* t001 = tensor(data001, gpu, false);
+    Tensor* t002 = tensor(data002, gpu, false);
+    Tensor* t003 = tensor(data001, cpu, false);
+    Tensor* t004 = tensor(data002, cpu, false);
+    Tensor* res = zerosFrom(t002);
 
     uint64_t s0 = nanos();
-    mul(t9, t7, t8);
+    mul(res, t001, t002);
     uint64_t e0 = nanos();
     //printTensor(t9);
-
-    freeTensor(&t7);
-    freeTensor(&t8);
-    freeTensor(&t9);
 
     printf("\t \t \t \t CUDA Time: %f ms\n", (double)(e0 - s0) / 1000000.0);
 
     uint64_t s1 = nanos();
-    mul(t12, t10, t11);
+    mul(res, t003, t004);
     uint64_t e1 = nanos();
     //printTensor(t12);
 
     printf("\t \t \t \t AVX Time: %f ms\n", (double)(e1 - s1) / 1000000.0);
     
-    freeTensor(&t10);
-    freeTensor(&t11);
-    freeTensor(&t12);
+    // Free the tensors
+    Pool* tensorPool = GetPool(TENSOR);
+    PoolDeepFree(tensorPool);
+
+    // Free the global memory pool
+    FreeGlobalPool();
 
     return 0;
 }
