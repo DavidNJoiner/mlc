@@ -7,7 +7,6 @@
 #include <stdbool.h>
 #include <math.h>
 
-//#include "memory_pool.h"
 #include "data.h"
 #include "debug.h"
 #include "ops.h"
@@ -30,6 +29,8 @@
 // These strategies can significantly improve performance by reducing memory overhead,
 // but they also introduce greater complexity in memory management.
 
+struct Pool;
+
 typedef struct {
     bool require_grad;
     Data* data;
@@ -49,9 +50,6 @@ Tensor*     newFull(int* shape, int fill_value, int dtype, Device* device, bool 
 void mul(Tensor* dst, Tensor* A, Tensor* B);
 void add(Tensor* dst, Tensor* A);
 
-
-//  Tensors modifications.
-void freeTensor(Tensor** t);
 //transpose here
 
 void printTensor(Tensor* A);
