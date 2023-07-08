@@ -5,11 +5,11 @@
 ![deepc_logo](https://github.com/DavidNJoiner/mlc/assets/69796012/d1d7daee-5789-4464-bcff-1b845a91ac27)
 
 ---
-### todo:
+### TODO:
 
 Arithmetic
 
-- [ ] Arithmetic ops for all dtypes.
+- [ ] Arithmetic ops for all usual datatypes.
 - [x] **Intel AVX/AVX2 ops** : Intrinsics ops + GEMM for fp32 and fp64.
 - [x] **Nvidia CUDA ops** : For fp16.
 - [ ] **cuBLAS ops**
@@ -30,15 +30,60 @@ Debug
 
 ML
 
-- [ ] Implement a simple **neuron** struct.
-- [ ] Implement simple **layer** struct.
-- [ ] Implement simple **nn** struct.
-- [ ] Implement activation functions and their derivatives.
-- [ ] Autograd engine.
-- [ ] Adam optim.
+- [ ] Implement a **neuron** class.
+- [ ] Implement a **layer** class.
+- [ ] Implement a **nn** class.
+- [ ] Implement a **Function** class.
+- [ ] Implement an Automatic differentiation engine (Autograd).
+- [ ] Implement an **Optimizer** class + SGD, AdamW.
 
 ---
-### goals:
+### Memory Managment:
 
-- [ ] Run stable diffusion.
-- [ ] Any other fun stuff !
+/*---------------------------------------------------------------------------------------------------------------------*/
+/*                                             Caching allocators                                                      */
+/*---------------------------------------------------------------------------------------------------------------------*/
+
+    When a tensor is allocated, the allocator looks in the Pool for a free block that is closest in size
+    to the requested size. If it can't find one, it will allocate a new block.
+    When a tensor is de-allocated in PyTorch, the memory isn't returned to the system directly. 
+    Instead, the space is kept in a pool of available memory blocks for future use. 
+    This is because the allocation and de-allocation of memory are expensive operations in terms of time.              
+
++-----------------------+
+|      Memory Pool      |
++-----------------------+
+|                       |
+|         Blocks        |
+|                       |
++-----------------------+
+|       |         |     |
+| Block |  Block  | ... |
+|   0   |    1    |     |
+|       |         |     |
++-------+---------+-----+
+|                       |
+|        Objects        |
+|                       |
++-----------------------+
+| Object | Object | ... |
+|   0    |   1    |     |
+|        |        |     |
++--------+--------+-----+
+
+- Memory Pool: The overall memory pool structure.
+- Blocks: Blocks within the memory pool.
+- Objects: Allocated objects within the blocks.
+
+Explanation:
+- A memory pool consists of multiple blocks, each of which is a contiguous section of memory.
+- Each block is divided into smaller elements, and all elements have the same size.
+- The objects are allocated from the elements within the blocks.
+- An allocated object occupies one element within a block.
+- When an object is deallocated, the element becomes available for reuse.
+- The memory pool manages the allocation and deallocation of objects within the blocks.
+- The `used` field in the `Pool` struct keeps track of the number of used elements within the current block.
+- When the current block is fully utilized (i.e., `used == blockSize`), a new block is allocated.
+- The memory pool may grow dynamically by adding more blocks as needed.
+- The `blocks` array holds the pointers to the allocated blocks.
+- Each block can be represented as an array of elements, where each element can store an object.
