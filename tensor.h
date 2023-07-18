@@ -36,8 +36,8 @@ typedef struct {
     Data* data;
     Device* device;
     float32* gradient;
-    //LazyBuffer* lazydata;
-    //Function* creator; // Points to the Function that created this Tensor.
+    void* lazy;//LazyBuffer* lazydata;
+    void* creator; // Function* creator; Points to the Function that created this Tensor.
 } Tensor;
 
 //  Tensors creation
