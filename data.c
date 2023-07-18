@@ -1,6 +1,8 @@
 #include "data.h"
 #include "debug.h"
 
+DataPtrArray* global_data_ptr_array = NULL;
+
 /*  -------------------------------------------------------*/
 /*  dtypes functions                                       */
 /*  -------------------------------------------------------*/
@@ -93,6 +95,8 @@ Data* MakeData(void* array, int* shape, int dim, int dtype) {
     dat->shape = shape;
     dat->dtype = dtype;
 
+    AddDataPtr(dat); // Store pointer to that Data object 
+
     return dat;
 }
 /*  -----------------------------------------------------------------------------*/
@@ -136,7 +140,7 @@ Data* RandomData(int size, int min_range, int max_range, int* shape, int dim, in
         byte_size = ((byte_size / alignment) + 1) * alignment;
     }
     
-    printf("size: %d, byte_size: %d, alignment: %d, dtype: %s\n", size, byte_size, alignment, dtypeName);
+    printf("[New Random Data] ------- size: %d, byte_size: %d, alignment: %d, dtype: %s\n", size, byte_size, alignment, dtypeName);
     void* random_values = aligned_alloc(alignment, byte_size);
 
     if(dtype == FLOAT16) {
@@ -219,5 +223,51 @@ void SetElement(Data* data, int* indices, void* value) {
         default:
             printf("Failed to set element: Unsupported dtype %s\n", GetDType(data->dtype));
             break;
+    }
+}
+
+
+/*  -----------------------------------------------------------------------------*/
+/*  Memory Managment                                                             */
+/*  -----------------------------------------------------------------------------*/
+void InitializeGlobalDataPtrArray(int initial_capacity) {
+    global_data_ptr_array = (DataPtrArray*)malloc(sizeof(DataPtrArray));
+    global_data_ptr_array->data_ptrs = (Data**)malloc(sizeof(Data*) * initial_capacity);
+    global_data_ptr_array->count = 0;
+    global_data_ptr_array->capacity = initial_capacity;
+}
+
+void AddDataPtr(Data* data_ptr) {
+    if (global_data_ptr_array->count == global_data_ptr_array->capacity) {
+        global_data_ptr_array->capacity *= 2;
+        global_data_ptr_array->data_ptrs = (Data**)realloc(global_data_ptr_array->data_ptrs, sizeof(Data*) * global_data_ptr_array->capacity);
+    }
+    global_data_ptr_array->data_ptrs[global_data_ptr_array->count++] = data_ptr;
+}
+void FreeAllDatas() {
+    if (global_data_ptr_array != NULL) {
+        for (int i = 0; i < global_data_ptr_array->count; i++) {
+            if (global_data_ptr_array->data_ptrs[i] != NULL) {
+                // Free the memory allocated for the 'values' field
+                if (global_data_ptr_array->data_ptrs[i]->values != NULL) {
+                    free(global_data_ptr_array->data_ptrs[i]->values);
+                    global_data_ptr_array->data_ptrs[i]->values = NULL;
+                }
+                // Free the memory allocated for the 'shape' field
+                if (global_data_ptr_array->data_ptrs[i]->shape != NULL) {
+                    free(global_data_ptr_array->data_ptrs[i]->shape);
+                    global_data_ptr_array->data_ptrs[i]->shape = NULL;
+                }
+                // Free the memory allocated for the Data object itself
+                free(global_data_ptr_array->data_ptrs[i]);
+                global_data_ptr_array->data_ptrs[i] = NULL;
+            }
+        }
+        // Free the memory allocated for the array of Data pointers
+        free(global_data_ptr_array->data_ptrs);
+        global_data_ptr_array->data_ptrs = NULL;
+        // Free the memory allocated for the DataPtrArray object itself
+        free(global_data_ptr_array);
+        global_data_ptr_array = NULL;
     }
 }
