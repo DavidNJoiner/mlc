@@ -12,6 +12,8 @@
 #include "cuda_ops.h"
 
 #define DEEPC_NO_CUDA_MEMORY_CACHING 1
+#define MAX_OBJ_PER_BLOCK 2 
+#define DEEPC_SIZE_OF_VOID_POINTER sizeof(void*)
 
 typedef enum {
     TENSOR,
