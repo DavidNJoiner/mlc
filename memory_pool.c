@@ -4,13 +4,12 @@ static GlobalPool global_pool_instance = {0};
 
 void PoolTotalAllocated(Pool *p, size_t* total_allocated, size_t* total_pool_size) {
     // Total pool size
+    printf("[PoolTotalAllocated]\n\tp->blockCount = %d\n\tp->blockSize = %d\n\tp->BlocksInUse = %d\n\tp->elementSize = %d\n\tp->totalBlockFreed = %d\n\n", p->blockCount, p->blockSize, p->BlocksInUse, p->elementSize, p->totalBlockFreed);
     *total_pool_size = p->blockCount * p->blockSize;
-    // Add the size of the blocks array itself
-    //*total_pool_size += p->blockCount* sizeof(DEEPC_SIZE_OF_VOID_POINTER);
 
     // Total memory allocated by all blocks. Subtract memory that has been deallocated.
     // Assuming that each allocation/deallocation is for a single element, not a whole block
-    *total_allocated = p->totalObjAllocated * p->elementSize;
+    *total_allocated = p->BlocksInUse * p->elementSize;
     *total_allocated -= p->totalBlockFreed * p->elementSize;
 }
 /* ------------------------------------------------------------------------------------------------ */
@@ -21,14 +20,16 @@ void PoolTotalAllocated(Pool *p, size_t* total_allocated, size_t* total_pool_siz
 /* ------------------------------------------------------------------------------------------------ */
 void PoolReportStats(Pool *p)
 {   
-    size_t total_allocated, total_pool_size;
-    PoolTotalAllocated(p, &total_allocated, &total_pool_size);
-    double percentage = 100.0 * total_allocated / total_pool_size;
+    size_t num_allocated_block, total_pool_size;
+    PoolTotalAllocated(p, &num_allocated_block, &total_pool_size);
+
+    printf("num_allocated_block = %ld, total_pool_size = %zu\n", num_allocated_block, total_pool_size);
+    double percentage = total_pool_size == 0 ? 0 : (100.0 * num_allocated_block) / total_pool_size;
 
     printf("----------------------------------------------------\n");
     printf("Pool type:                          %10d\n", p->type);
-    printf("Pool (Available / Max):             %10zu / %zu\n", (total_pool_size - total_allocated), total_pool_size);
-    printf("Taken from pool:                    %10zu / %.1lf%%\n", total_allocated, percentage);
+    printf("Pool (Available / Max):             %10zu / %ld\n", total_pool_size == 0 ? 0 : (total_pool_size - num_allocated_block), total_pool_size);
+    printf("Taken from pool:                    %10ld / %.1lf%%\n", num_allocated_block, percentage);
     printf("Allocated objects:                  %10u\n", p->totalObjAllocated);
     printf("Block freed:                        %10u\n", p->totalBlockFreed);
     printf("New Block allocations:              %10u\n", p->newBlockAllocations);
@@ -139,6 +140,7 @@ void FreePool(Pool *p)
 
     p->newBlockAllocations = 0;
     p->totalObjAllocated = 0;
+    p->blockCount = 0;
 
     printf("\nafter call : FreeTensorPool -> FreePool\n");
     PoolReportStats(p);
@@ -179,7 +181,7 @@ MemoryBlock* PoolMalloc(Pool *p)
         return recycle;
     }
 
-    printf("blockCount is currently %d\n", p->blockCount);
+    printf("| blockCount is currently %d\n", p->blockCount);
 
     // If blockcount is more than 0 all blocks are in use, allocate a new block
     if (p->blockCount != 0 && p->BlocksInUse == p->blockCount) {
@@ -201,11 +203,11 @@ MemoryBlock* PoolMalloc(Pool *p)
         // Allocate a new block at address available in the pool (p->blocks pointers array)
         if (p->blocks[p->block] == NULL){
             p->blocks[p->block] = malloc(p->elementSize * p->blockSize);
-            printf("Allocated memory for block %d at %p at p->blocks %p \n", p->block, p->blocks[p->block], p->blocks);
+            printf("| allocated memory for block %d at %p at p->blocks %p \n", p->block, p->blocks[p->block], p->blocks);
             new_block = makeBlock(p, p->blocks[p->block]);
         }else{
             void* new_block_address = p->blocks[p->block] + (p->BlocksInUse * p->elementSize);
-            printf("Allocated memory for block %d at %p at p->blocks %p \n", p->block, new_block_address, p->blocks);
+            printf("| allocated memory for block %d at %p at p->blocks %p \n", p->block, new_block_address, p->blocks);
             new_block = makeBlock(p, new_block_address);
         }
 
@@ -228,7 +230,7 @@ MemoryBlock* PoolMalloc(Pool *p)
             FreeTensorPool();
             exit(1);
         }
-        if (sizeof(p->block)/p->blockSize != p->BlocksInUse) {
+        if (p->totalObjAllocated/p->blockSize != p->BlocksInUse) {
             printf("\nError: p->block (%d) is out of bounds (p->blockInUse: %d)\n", p->block, p->BlocksInUse);
             FreeTensorPool();
             exit(1);
@@ -246,7 +248,7 @@ MemoryBlock* PoolMalloc(Pool *p)
 
 MemoryBlock* makeBlock(Pool* p, void* blockAddress){
 
-    printf("making new block at address : %p\n", blockAddress);
+    printf("| making new block at address : %p\n\n", blockAddress);
 
     blockAddress = malloc(p->elementSize * p->blockSize);
     if (blockAddress == NULL) {
@@ -298,7 +300,12 @@ void PoolFreeBlock(Pool *p, void *ptr)
         p->freedLast = freedBlock;
     }
     p->freedLast->nextFree = NULL;
+
+    // Decrement the number of blocks in use and the total block count
+    p->BlocksInUse--;
+    p->blockCount--;
 }
+
 
 #endif //DISABLE_MEMORY_POOLING
 /* ------------------------------------------------------------------------------------------------ */
