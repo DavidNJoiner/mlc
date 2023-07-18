@@ -9,6 +9,7 @@
 /*  -------------------------------------------------------*/
 // TODO : check if device is available on the system 
 Tensor* tensor(Data* data, Device* device, bool requires_grad) {
+    
     // Use the custom memory allocator to allocate memory for the new tensor
     Pool* tensorPool = GetPool(TENSOR);
     Tensor* new_tensor = (Tensor*)PoolMalloc(tensorPool);
@@ -57,9 +58,9 @@ Tensor* createTensor(int* shape, int dim, int dtype, Device* device, bool requir
     t->require_grad = requires_grad;
     return t;
 }
-/*  -------------------------------------------------------------------------------------*/
-/*  zerosFrom : create a new Tensor filled with zeros from an existing Tensor(template). */
-/*  -------------------------------------------------------------------------------------*/
+/*  -------------------------------------------------------------------------------------/
+  zerosFrom : create a new Tensor filled with zeros from an existing Tensor(template). 
+/  -------------------------------------------------------------------------------------*/
 Tensor* zerosFrom(Tensor* t) {
     Pool* tensorPool = GetPool(TENSOR);
     Pool* dataPool = GetPool(DATA);
@@ -67,6 +68,10 @@ Tensor* zerosFrom(Tensor* t) {
     Data* new_data = (Data*)PoolMalloc(dataPool);
 
     new_data->shape = (int*)malloc(t->data->dim * sizeof(int));
+    if (new_data->shape == NULL) {
+        printf("Error: Failed to allocate memory for new_data->shape\n");
+        exit(1);
+    }
     for (int i = 0; i < t->data->dim; i++) {
         new_data->shape[i] = t->data->shape[i];
     }
@@ -75,9 +80,16 @@ Tensor* zerosFrom(Tensor* t) {
     new_data->dtype = t->data->dtype;
 
     if (t->device->type == CUDA) {
-        cudaMalloc(&(new_data->values), new_data->size * GetDTypeSize(new_data->dtype));  
+        if (cudaMalloc(&(new_data->values), new_data->size * GetDTypeSize(new_data->dtype)) != cudaSuccess) {
+            printf("Error: Failed to allocate GPU memory for new_data->values\n");
+            exit(1);
+        }
     } else {
-        new_data->values = (float32 *)aligned_alloc(32, new_data->size * GetDTypeSize(new_data->dtype));  
+        new_data->values = (float32 *)aligned_alloc(32, new_data->size * GetDTypeSize(new_data->dtype));
+        if (new_data->values == NULL) {
+            printf("Error: Failed to allocate memory for new_data->values\n");
+            exit(1);
+        }
     }
 
     new_tensor->data = new_data;
@@ -87,9 +99,16 @@ Tensor* zerosFrom(Tensor* t) {
     if (t->gradient != NULL) {
         float32* gradient;
         if (t->device->type == CUDA) {
-            cudaMalloc((void**)&gradient, new_data->size * sizeof(float32));  
+            if (cudaMalloc((void**)&gradient, new_data->size * sizeof(float32)) != cudaSuccess) {
+                printf("Error: Failed to allocate GPU memory for gradient\n");
+                exit(1);
+            }
         } else {
-            gradient = (float32*)calloc(new_data->size, sizeof(float32));  
+            gradient = (float32*)calloc(new_data->size, sizeof(float32));
+            if (gradient == NULL) {
+                printf("Error: Failed to allocate memory for gradient\n");
+                exit(1);
+            }
         }
         new_tensor->gradient = gradient;
     } else {
@@ -98,6 +117,7 @@ Tensor* zerosFrom(Tensor* t) {
 
     return new_tensor;
 }
+
 
 Tensor* newFull(int* shape, int fill_value, int dtype, Device* device, bool requires_grad){
     // TODO: Implement this function
