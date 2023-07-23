@@ -78,15 +78,15 @@ void destroyTensorPool() {
  * blockSize: The number of object instances that can fit in one block.
  */
 /* ---------------------------------------------------------------------------------------------- */
-void initializePool(ObjectType type, Pool *p, const uint32_t obj_size, const uint32_t num_obj, const uint32_t max_obj_per_block)
+void initializePool(ObjectType type, Pool *p, const uint32_t obj_size, const uint32_t num_obj, const uint32_t obj_per_block)
 {
     p->type = type;
     p->elementSize = max(obj_size, sizeof(PoolFreed));
 
     freeAllBlocks(p);
 
-    p->blockSize = obj_size * MAX_OBJ_PER_BLOCK;                        // Set the individual block size.
-    p->blockCount= ceil((float)num_obj / MAX_OBJ_PER_BLOCK);            // Set the block count in the pool.
+    p->blockSize = obj_size * obj_per_block;                        // Set the individual block size.
+    p->blockCount= ceil((float)num_obj / obj_per_block);            // Set the block count in the pool.
     p->blocks = malloc(p->blockCount * DEEPC_SIZE_OF_VOID_POINTER);     // Allocate memory from the heap for blocks pointers.
 
     total_allocated += p->blockCount * DEEPC_SIZE_OF_VOID_POINTER;
