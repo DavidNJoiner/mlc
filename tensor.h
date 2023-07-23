@@ -7,7 +7,7 @@
 #include <stdbool.h>
 #include <math.h>
 
-#include "data.h"
+#include "data/dataset.h"
 #include "debug.h"
 #include "ops.h"
 
