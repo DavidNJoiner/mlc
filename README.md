@@ -63,7 +63,7 @@ Explanation:
 - When an object is deallocated, the element becomes available for reuse.
 - The memory pool manages the allocation and deallocation of objects within the blocks.
 - The `used` field in the `Pool` struct keeps track of the number of used elements within the current block.
-- When the current block is fully utilized (i.e., `used == blockSize`), a new block is allocated.
+- When the current block is fully utilized (i.e., `used == block_size`), a new block is allocated.
 - The memory pool may grow dynamically by adding more blocks as needed.
 - The `blocks` array holds the pointers to the allocated blocks.
 - Each block can be represented as an array of elements, where each element can store an object.
