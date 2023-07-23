@@ -25,15 +25,15 @@ typedef struct {
 extern DataPtrArray* global_data_ptr_array;
 
 // Data functions Prototypes
-void            FlattenArray(void* array, void* flattened, int* shape, int dim, int dtype, int idx);
-void            PrintData(Data* dat);
-int             GetDTypeSize(int dtype);
-int             CalculateIndex(int* indices, int* strides, int dim);
-const char*     GetDType(int num);
-Data*           MakeData(void* array, int* shape, int dim, int dtype);
-Data*           RandomData(int size, int min_range, int max_range, int* shape, int dim, int dtype);
-void*           AccessElement(Data* data, int* indices);
-void            SetElement(Data* data, int* indices, void* value);
+void            flattenArray(void* array, void* flattened, int* shape, int dim, int dtype, int idx);
+void            displayData(Data* dat);
+int             getDTypeSize(int dtype);
+int             calculateIndex(int* indices, int* strides, int dim);
+const char*     getDType(int num);
+Data*           createData(void* array, int* shape, int dim, int dtype);
+Data*           randomData(int size, int min_range, int max_range, int* shape, int dim, int dtype);
+void*           accessDataElement(Data* data, int* indices);
+void            setDataElement(Data* data, int* indices, void* value);
 
 
 // Memory managment

@@ -1,5 +1,5 @@
 #include "config.h"
-#include "memory_pool.h"
+#include "mempool.h"
 #include "tensor.h"
 #include "nn.h"
 
@@ -12,14 +12,14 @@ int main() {
     cuda_version();
 
     // Initialize the global memory pool
-    InitializeTensorPool(1);
-    InitializeGlobalDataPtrArray(1);
+    setupTensorPool(1);
+    setupGlobalDataPtrArray(1);
 
     // Create a tensor
     int shape[] = {16, 512};
 
-    Data* data001 = RandomData(8192, 0, 1, shape, 2, FLOAT32);
-    //Data* data002 = RandomData(8192, 0, 1, shape, 2, FLOAT32);
+    Data* data001 = randomData(8192, 0, 1, shape, 2, FLOAT32);
+    //Data* data002 = randomData(8192, 0, 1, shape, 2, FLOAT32);
 
     //Tensor* t001 = tensor(data001, gpu, false);
     //Tensor* t002 = tensor(data002, gpu, false);
@@ -32,23 +32,25 @@ int main() {
     //uint64_t s0 = nanos();
     //mul(gpures, t001, t002);
     //uint64_t e0 = nanos();
-    //printTensor(t9);
+    //displayTensor(t9);
 
     //printf("\t \t \t \t CUDA Time: %f ms\n", (double)(e0 - s0) / 1000000.0);
 
     //uint64_t s1 = nanos();
     //mul(cpures, t003, t004);
     //uint64_t e1 = nanos();
-    //printTensor(t12);
+    //displayTensor(t12);
 
     //printf("\t \t \t \t AVX Time: %f ms\n", (double)(e1 - s1) / 1000000.0);
     
     // Free the tensors
-    Pool* tensorPool = GetPool(TENSOR);
-    DeepFreeTensors(tensorPool);
+    Pool* tensorPool = fetchPool(TENSOR);
+    freeAllTensors(tensorPool);
+
+    // Free Pool
+    destroyPool(tensorPool);
 
     // Free the global memory pool
-    FreeTensorPool();
     free_device(gpu);
     free_device(cpu);
 

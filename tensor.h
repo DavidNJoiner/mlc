@@ -52,7 +52,7 @@ void add(Tensor* dst, Tensor* A);
 
 //transpose here
 
-void printTensor(Tensor* A);
+void displayTensor(Tensor* A);
 bool is_aligned(void* ptr, size_t alignment);
 
 #endif //TENSOR_H

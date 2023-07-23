@@ -1,5 +1,5 @@
-#ifndef MEMORY_POOL_H_ 
-#define MEMORY_POOL_H_
+#ifndef MEMPOOL_H_ 
+#define MEMPOOL_H_
 
 #include <string.h>
 #include <stdlib.h>
@@ -48,7 +48,6 @@ newBlockAllocations :   Monitoring field that keeps track of the total number of
 / ---------------------------------------------------------------------------------------------- */
 typedef struct {
     ObjectType type;
-    size_t size;
     uint32_t elementSize;
     uint32_t blockSize;
     uint32_t BlocksInUse;
@@ -68,21 +67,28 @@ typedef struct {
     bool is_initialized;
 } GlobalPool;
 
-Pool* GetPool(ObjectType type);
+Pool* fetchPool(ObjectType type);
 
-void InitPool(ObjectType type, Pool *p, const uint32_t obj_size, const uint32_t num_obj, const uint32_t obj_per_block);
-void InitializeTensorPool(int nb_tensors);
-void FreeTensorPool();
-void FreePool(Pool *p);
+void initializePool(ObjectType type, Pool *p, const uint32_t obj_size, const uint32_t num_obj, const uint32_t obj_per_block);
+void setupTensorPool(int nb_tensors);
+void destroyTensorPool();
+void destroyPool(Pool *p);
 void freeTensor(Tensor* t);
-void DeepFreeTensors(Pool *p);
-void PoolTotalAllocated(Pool *p, size_t* total_allocated, size_t* total_pool_siz);
+void freeAllTensors(Pool *p);
+void calculatePoolStats(Pool *p, size_t* total_allocated, size_t* total_pool_siz);
+void displayPoolStats(Pool *p);
+void freeAllBlocks(Pool *p);
+
+//Data
+void setupGlobalDataPtrArray(int initial_capacity);
+void addDataPtr(Data* data_ptr);
+void freeAllData();
 
 #ifndef DISABLE_MEMORY_POOLING
 
-MemoryBlock* makeBlock(Pool* p, void* blockAddress);
-MemoryBlock* PoolMalloc(Pool *p);
-void PoolFreeBlock(Pool *p, void *ptr);
+MemoryBlock* createBlock(Pool* p, void* blockAddress);
+MemoryBlock* allocateBlock(Pool *p);
+void freeBlock(Pool *p, void *ptr);
 
 #else
 
@@ -92,7 +98,7 @@ void PoolFreeBlock(Pool *p, void *ptr);
 
 #endif
 
-void PoolFreeAllBlocks(Pool *p);
+void freeAllBlocks(Pool *p);
 
 
-#endif //MEMORY_POOL_H_
+#endif //MEMPOOL_H_

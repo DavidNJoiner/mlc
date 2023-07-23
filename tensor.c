@@ -1,5 +1,5 @@
 #include "tensor.h"
-#include "memory_pool.h"
+#include "mempool.h"
 
 // Setting requires_grad=True for a tensor means that the operations involving this tensor are tracked
 // so that the gradient computations can be automatically done during backpropagation.
@@ -11,8 +11,8 @@
 Tensor* tensor(Data* data, Device* device, bool requires_grad) {
     
     // Use the custom memory allocator to allocate memory for the new tensor
-    Pool* tensorPool = GetPool(TENSOR);
-    Tensor* new_tensor = (Tensor*)PoolMalloc(tensorPool);
+    Pool* tensorPool = fetchPool(TENSOR);
+    Tensor* new_tensor = (Tensor*)allocateBlock(tensorPool);
 
     new_tensor->require_grad = requires_grad;
     if (requires_grad) {
@@ -42,17 +42,17 @@ Tensor* createTensor(int* shape, int dim, int dtype, Device* device, bool requir
     }
     void* array;
     if (device->type == CUDA) {
-        cudaMalloc(&array, size * GetDTypeSize(dtype));  
+        cudaMalloc(&array, size * getDTypeSize(dtype));  
     } else {
-        array = calloc(size, GetDTypeSize(dtype)); 
+        array = calloc(size, getDTypeSize(dtype)); 
     }
     if (array == NULL) {
         printf("Memory allocation failed!\n");
         return NULL;
     }
-    Data* data = MakeData(array, shape, dim, dtype);
-    Pool* tensorPool = GetPool(TENSOR);
-    Tensor* t = (Tensor*)PoolMalloc(tensorPool);
+    Data* data = createData(array, shape, dim, dtype);
+    Pool* tensorPool = fetchPool(TENSOR);
+    Tensor* t = (Tensor*)allocateBlock(tensorPool);
     t->data = data;
     t->device = device;
     t->require_grad = requires_grad;
@@ -62,10 +62,10 @@ Tensor* createTensor(int* shape, int dim, int dtype, Device* device, bool requir
   zerosFrom : create a new Tensor filled with zeros from an existing Tensor(template). 
 /  -------------------------------------------------------------------------------------*/
 Tensor* zerosFrom(Tensor* t) {
-    Pool* tensorPool = GetPool(TENSOR);
-    Pool* dataPool = GetPool(DATA);
-    Tensor* new_tensor = (Tensor*)PoolMalloc(tensorPool);
-    Data* new_data = (Data*)PoolMalloc(dataPool);
+    Pool* tensorPool = fetchPool(TENSOR);
+    Pool* dataPool = fetchPool(DATA);
+    Tensor* new_tensor = (Tensor*)allocateBlock(tensorPool);
+    Data* new_data = (Data*)allocateBlock(dataPool);
 
     new_data->shape = (int*)malloc(t->data->dim * sizeof(int));
     if (new_data->shape == NULL) {
@@ -80,12 +80,12 @@ Tensor* zerosFrom(Tensor* t) {
     new_data->dtype = t->data->dtype;
 
     if (t->device->type == CUDA) {
-        if (cudaMalloc(&(new_data->values), new_data->size * GetDTypeSize(new_data->dtype)) != cudaSuccess) {
+        if (cudaMalloc(&(new_data->values), new_data->size * getDTypeSize(new_data->dtype)) != cudaSuccess) {
             printf("Error: Failed to allocate GPU memory for new_data->values\n");
             exit(1);
         }
     } else {
-        new_data->values = (float32 *)aligned_alloc(32, new_data->size * GetDTypeSize(new_data->dtype));
+        new_data->values = (float32 *)aligned_alloc(32, new_data->size * getDTypeSize(new_data->dtype));
         if (new_data->values == NULL) {
             printf("Error: Failed to allocate memory for new_data->values\n");
             exit(1);
@@ -142,9 +142,9 @@ bool shapesAreEqual(Tensor* A, Tensor* B) {
     return true;
 }
 /*  ---------------------------------------------------------------*/
-/*  SameDevice : Check if n-Tensors are on the same device.        */
+/*  sameDevice : Check if n-Tensors are on the same device.        */
 /*  ---------------------------------------------------------------*/
-bool SameDevice(int num_tensors, ...){
+bool sameDevice(int num_tensors, ...){
     va_list args;
     va_start(args, num_tensors);
 
@@ -172,7 +172,7 @@ void mul(Tensor* dst, Tensor* A, Tensor* B) {
         return;
     }
 
-    if(!SameDevice(3, dst, A, B)){
+    if(!sameDevice(3, dst, A, B)){
         return;
     }
 
@@ -191,7 +191,7 @@ void add(Tensor* dst, Tensor* A) {
         return;
     }
 
-    if(!SameDevice(3, dst, A)){
+    if(!sameDevice(3, dst, A)){
         return;
     }
 
@@ -202,12 +202,12 @@ void add(Tensor* dst, Tensor* A) {
     }
 }
 /*  ---------------------------------------------------------------*/
-/*   printTensor : print a Tensor to the console.                  */
+/*   displayTensor : print a Tensor to the console.                  */
 /*  ---------------------------------------------------------------*/
-void printTensor(Tensor* A) {
+void displayTensor(Tensor* A) {
 
     if(A == NULL) {
-        printf("Error: Null Tensor pointer passed to printTensor function.\n");
+        printf("Error: Null Tensor pointer passed to displayTensor function.\n");
         return;
     }
 
@@ -222,7 +222,7 @@ void printTensor(Tensor* A) {
     }
 
     if (0 < A->data->dtype && A->data->dtype <= 16) {
-        PrintData(A->data);
+        displayData(A->data);
     }else {
         printf("Error: Invalid dtype.\n");
     }
