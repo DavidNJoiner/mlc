@@ -1,7 +1,7 @@
 #ifndef OPS_H_ 
 #define OPS_H_
 
-#include "data.h"
+#include "data/dataset.h"
 #include "config.h"
 #include "device.h"
 #include "cuda_ops.h"
