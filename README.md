@@ -25,8 +25,8 @@ Tensor
 Debug
 
 - [ ] Implement a simple extensible **logger**.
-- [x] *printTensor* should respect the shape of *Tensor*'s data..
-- [x] *printTensor* should work for any dtype and any data dimension.
+- [x] *displayTensor* should respect the shape of *Tensor*'s data..
+- [x] *displayTensor* should work for any dtype and any data dimension.
 
 ML
 
@@ -40,38 +40,16 @@ ML
 ---
 ### Memory Managment:
 
-/*---------------------------------------------------------------------------------------------------------------------*/
-/*                                             Caching allocators                                                      */
-/*---------------------------------------------------------------------------------------------------------------------*/
 
-    EXPECTED BEHAVIOR 
+
+EXPECTED BEHAVIOR 
     
-    When a tensor is allocated, the allocator looks in the Pool for a free block that is closest in size
-    to the requested size. If it can't find one, it will allocate a new block.
-    When a tensor is de-allocated, the memory isn't returned to the system directly. 
-    Instead, the space is kept in a pool of available memory blocks for future use. 
-    This is because the allocation and de-allocation of memory are expensive operations in terms of time.              
+When a tensor is allocated, the allocator looks in the Pool for a free block that is closest in size
+to the requested size. If it can't find one, it will allocate a new block.
+When a tensor is de-allocated, the memory isn't returned to the system directly. 
+Instead, the space is kept in a pool of available memory blocks for future use. 
+This is because the allocation and de-allocation of memory are expensive operations in terms of time.              
 
-+-----------------------+
-|      Memory Pool      |
-+-----------------------+
-|                       |
-|         Blocks        |
-|                       |
-+-----------------------+
-|       |         |     |
-| Block |  Block  | ... |
-|   0   |    1    |     |
-|       |         |     |
-+-------+---------+-----+
-|                       |
-|        Objects        |
-|                       |
-+-----------------------+
-| Object | Object | ... |
-|   0    |   1    |     |
-|        |        |     |
-+--------+--------+-----+
 
 - Memory Pool: The overall memory pool structure.
 - Blocks: Blocks within the memory pool.
