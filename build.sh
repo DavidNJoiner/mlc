@@ -16,14 +16,16 @@ gcc -g -c mempool.c -o mempool.o ${GCC_FLAGS}
 gcc -g -c main.c -o main.o ${GCC_FLAGS}
 gcc -g -c device.c -o device.o ${GCC_FLAGS}
 gcc -g -c avx_ops.c -o avx_ops.o ${GCC_FLAGS}
-gcc -g -c data.c -o data.o ${GCC_FLAGS}
+gcc -g -c dtype.c -o dtype.o ${GCC_FLAGS}
+gcc -g -c data/data.c -o data.o ${GCC_FLAGS}
+gcc -g -c data/dataset.c -o dataset.o ${GCC_FLAGS}
 gcc -g -c debug.c -o debug.o ${GCC_FLAGS}
 gcc -g -c ops.c -o ops.o ${GCC_FLAGS}
 #gcc -c function.c -o function.o ${GCC_FLAGS}
 gcc -g -c tensor.c -o tensor.o ${GCC_FLAGS}
 
 # Link all the object files, including cuda.o
-gcc config.o mempool.o cuda_ops.o main.o device.o avx_ops.o data.o debug.o ops.o tensor.o -L${CUDA_PATH}/lib64 -lcudart -o deepc
+gcc config.o mempool.o cuda_ops.o main.o device.o avx_ops.o dtype.o data.o dataset.o debug.o ops.o tensor.o -L${CUDA_PATH}/lib64 -lcudart -o deepc
 
 # Clean up object files
 rm *.o
