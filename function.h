@@ -2,7 +2,7 @@
 #define FUNCTION_H_
 
 #include "device.h"
-#include "tensor.h" // Data and Data are included in Tensor
+#include "tensor.h"
 
 // Initialize a new Function example : Function* sin_function = InitFunction(device, tensors, Sin_Forward, Sin_Backward);
 
@@ -21,6 +21,9 @@
 /* In other words, if the function uses any tensor that needs a gradient, then the function itself will need to participate
 /* in gradient computations.
 ---------------------------------------------------------------------------------------------------------------------------*/
+
+// Forward declaration for Function
+struct Function;
 
 typedef struct  {
     Device* device;

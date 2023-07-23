@@ -3,8 +3,8 @@
 void cuda_version() {
     if (deepc_cuda){
         int cudaVersion = CUDART_VERSION;
-        printf("CUDA version: %d.%d detected.\n", cudaVersion / 1000, (cudaVersion % 100) / 10);
-    }else{printf("CUDA is not installed.\n");}
+        printf("CUDA version: %d.%d.\n\n", cudaVersion / 1000, (cudaVersion % 100) / 10);
+    }else{printf("CUDA is not installed.\n\n");}
 }
 
 // getDevices will detect the available hardware and create a Device object for each of them.

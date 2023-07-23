@@ -7,7 +7,6 @@
 #include <stdbool.h>
 #include <math.h>
 
-//#include "memory_pool.h"
 #include "data.h"
 #include "debug.h"
 #include "ops.h"
@@ -30,13 +29,15 @@
 // These strategies can significantly improve performance by reducing memory overhead,
 // but they also introduce greater complexity in memory management.
 
+struct Pool;
+
 typedef struct {
     bool require_grad;
     Data* data;
     Device* device;
     float32* gradient;
-    //LazyBuffer* lazydata;
-    //Function* creator; // Points to the Function that created this Tensor.
+    void* lazy;//LazyBuffer* lazydata;
+    void* creator; // Function* creator; Points to the Function that created this Tensor.
 } Tensor;
 
 //  Tensors creation
@@ -49,12 +50,9 @@ Tensor*     newFull(int* shape, int fill_value, int dtype, Device* device, bool 
 void mul(Tensor* dst, Tensor* A, Tensor* B);
 void add(Tensor* dst, Tensor* A);
 
-
-//  Tensors modifications.
-void freeTensor(Tensor** t);
 //transpose here
 
-void printTensor(Tensor* A);
+void displayTensor(Tensor* A);
 bool is_aligned(void* ptr, size_t alignment);
 
 #endif //TENSOR_H

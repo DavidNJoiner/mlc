@@ -1,4 +1,5 @@
 #include "tensor.h"
+#include "mempool.h"
 
 // Setting requires_grad=True for a tensor means that the operations involving this tensor are tracked
 // so that the gradient computations can be automatically done during backpropagation.
@@ -8,12 +9,16 @@
 /*  -------------------------------------------------------*/
 // TODO : check if device is available on the system 
 Tensor* tensor(Data* data, Device* device, bool requires_grad) {
-    Tensor* new_tensor = (Tensor*)malloc(sizeof(Tensor));
+    
+    // Use the custom memory allocator to allocate memory for the new tensor
+    Pool* tensorPool = fetchPool(TENSOR);
+    Tensor* new_tensor = (Tensor*)allocateBlock(tensorPool);
+
     new_tensor->require_grad = requires_grad;
     if (requires_grad) {
         float32* gradient;
         if (device->type == CUDA) {
-            cudaMalloc((void*)gradient, data->size * sizeof(float32));  
+            cudaMalloc((void**)&gradient, data->size * sizeof(float32));  
         } else {
             gradient = (float32*)calloc(data->size, sizeof(float32)); 
         }
@@ -25,6 +30,7 @@ Tensor* tensor(Data* data, Device* device, bool requires_grad) {
     new_tensor->device = device;
     return new_tensor;
 }
+
 /*  -------------------------------------------------------*/
 /*  createTensor : create a new Tensor from scratch.       */
 /*  -------------------------------------------------------*/
@@ -36,26 +42,36 @@ Tensor* createTensor(int* shape, int dim, int dtype, Device* device, bool requir
     }
     void* array;
     if (device->type == CUDA) {
-        cudaMalloc(&array, size * GetDTypeSize(dtype));  
+        cudaMalloc(&array, size * getDTypeSize(dtype));  
     } else {
-        array = calloc(size, GetDTypeSize(dtype)); 
+        array = calloc(size, getDTypeSize(dtype)); 
     }
     if (array == NULL) {
         printf("Memory allocation failed!\n");
         return NULL;
     }
-    Data* data = MakeData(array, shape, dim, dtype);
-    Tensor* t = tensor(data, device, requires_grad);
+    Data* data = createData(array, shape, dim, dtype);
+    Pool* tensorPool = fetchPool(TENSOR);
+    Tensor* t = (Tensor*)allocateBlock(tensorPool);
+    t->data = data;
+    t->device = device;
+    t->require_grad = requires_grad;
     return t;
 }
-/*  -------------------------------------------------------------------------------------*/
-/*  zerosFrom : create a new Tensor filled with zeros from an existing Tensor(template). */
-/*  -------------------------------------------------------------------------------------*/
+/*  -------------------------------------------------------------------------------------/
+  zerosFrom : create a new Tensor filled with zeros from an existing Tensor(template). 
+/  -------------------------------------------------------------------------------------*/
 Tensor* zerosFrom(Tensor* t) {
-    Tensor* new_tensor = (Tensor*)malloc(sizeof(Tensor));
-    Data* new_data = (Data*)malloc(sizeof(Data));
+    Pool* tensorPool = fetchPool(TENSOR);
+    Pool* dataPool = fetchPool(DATA);
+    Tensor* new_tensor = (Tensor*)allocateBlock(tensorPool);
+    Data* new_data = (Data*)allocateBlock(dataPool);
 
     new_data->shape = (int*)malloc(t->data->dim * sizeof(int));
+    if (new_data->shape == NULL) {
+        printf("Error: Failed to allocate memory for new_data->shape\n");
+        exit(1);
+    }
     for (int i = 0; i < t->data->dim; i++) {
         new_data->shape[i] = t->data->shape[i];
     }
@@ -64,9 +80,16 @@ Tensor* zerosFrom(Tensor* t) {
     new_data->dtype = t->data->dtype;
 
     if (t->device->type == CUDA) {
-        cudaMalloc(&(new_data->values), new_data->size * GetDTypeSize(new_data->dtype));  
+        if (cudaMalloc(&(new_data->values), new_data->size * getDTypeSize(new_data->dtype)) != cudaSuccess) {
+            printf("Error: Failed to allocate GPU memory for new_data->values\n");
+            exit(1);
+        }
     } else {
-        new_data->values = (float32 *)aligned_alloc(32, new_data->size * GetDTypeSize(new_data->dtype));  
+        new_data->values = (float32 *)aligned_alloc(32, new_data->size * getDTypeSize(new_data->dtype));
+        if (new_data->values == NULL) {
+            printf("Error: Failed to allocate memory for new_data->values\n");
+            exit(1);
+        }
     }
 
     new_tensor->data = new_data;
@@ -76,9 +99,16 @@ Tensor* zerosFrom(Tensor* t) {
     if (t->gradient != NULL) {
         float32* gradient;
         if (t->device->type == CUDA) {
-            cudaMalloc((void*)gradient, new_data->size * sizeof(float32));  
+            if (cudaMalloc((void**)&gradient, new_data->size * sizeof(float32)) != cudaSuccess) {
+                printf("Error: Failed to allocate GPU memory for gradient\n");
+                exit(1);
+            }
         } else {
-            gradient = (float32*)calloc(new_data->size, sizeof(float32));  
+            gradient = (float32*)calloc(new_data->size, sizeof(float32));
+            if (gradient == NULL) {
+                printf("Error: Failed to allocate memory for gradient\n");
+                exit(1);
+            }
         }
         new_tensor->gradient = gradient;
     } else {
@@ -88,37 +118,10 @@ Tensor* zerosFrom(Tensor* t) {
     return new_tensor;
 }
 
+
 Tensor* newFull(int* shape, int fill_value, int dtype, Device* device, bool requires_grad){
-    
-} 
-/*  ---------------------------------------------------------------*/
-/*  freeTensor : Releases the memory allocated for a given tensor. */
-/*  ---------------------------------------------------------------*/
-void freeTensor(Tensor** t) {
-    if (*t != NULL) {
-        if ((*t)->data != NULL) {
-            if ((*t)->data->values != NULL) {
-                if ((*t)->device->type == CUDA) {
-                    cudaFree((*t)->data->values); 
-                } else {
-                    free((*t)->data->values);  
-                }
-                (*t)->data->values = NULL;
-            }
-            free((*t)->data);
-            (*t)->data = NULL;
-        }
-        if ((*t)->gradient != NULL) {
-            if ((*t)->device->type == CUDA) {
-                cudaFree((*t)->gradient); 
-            } else {
-                free((*t)->gradient); 
-            }
-            (*t)->gradient = NULL;
-        }
-        free(*t);
-        *t = NULL;
-    }
+    // TODO: Implement this function
+    return NULL;
 }
 /*  ---------------------------------------------------------------*/
 /*  shapesAreEqual : Check if two Tensors shapes are equals.       */
@@ -139,9 +142,9 @@ bool shapesAreEqual(Tensor* A, Tensor* B) {
     return true;
 }
 /*  ---------------------------------------------------------------*/
-/*  SameDevice : Check if n-Tensors are on the same device.        */
+/*  sameDevice : Check if n-Tensors are on the same device.        */
 /*  ---------------------------------------------------------------*/
-bool SameDevice(int num_tensors, ...){
+bool sameDevice(int num_tensors, ...){
     va_list args;
     va_start(args, num_tensors);
 
@@ -169,7 +172,7 @@ void mul(Tensor* dst, Tensor* A, Tensor* B) {
         return;
     }
 
-    if(!SameDevice(3, dst, A, B)){
+    if(!sameDevice(3, dst, A, B)){
         return;
     }
 
@@ -188,7 +191,7 @@ void add(Tensor* dst, Tensor* A) {
         return;
     }
 
-    if(!SameDevice(3, dst, A)){
+    if(!sameDevice(3, dst, A)){
         return;
     }
 
@@ -199,12 +202,12 @@ void add(Tensor* dst, Tensor* A) {
     }
 }
 /*  ---------------------------------------------------------------*/
-/*   printTensor : print a Tensor to the console.                  */
+/*   displayTensor : print a Tensor to the console.                  */
 /*  ---------------------------------------------------------------*/
-void printTensor(Tensor* A) {
+void displayTensor(Tensor* A) {
 
     if(A == NULL) {
-        printf("Error: Null Tensor pointer passed to printTensor function.\n");
+        printf("Error: Null Tensor pointer passed to displayTensor function.\n");
         return;
     }
 
@@ -219,7 +222,7 @@ void printTensor(Tensor* A) {
     }
 
     if (0 < A->data->dtype && A->data->dtype <= 16) {
-        PrintData(A->data);
+        displayData(A->data);
     }else {
         printf("Error: Invalid dtype.\n");
     }

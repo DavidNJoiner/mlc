@@ -1,6 +1,7 @@
 #include "config.h"
-#include "data.h"
+#include "mempool.h"
 #include "tensor.h"
+#include "nn.h"
 
 int main() {
 
@@ -10,42 +11,48 @@ int main() {
 
     cuda_version();
 
+    // Initialize the global memory pool
+    setupTensorPool(1);
+    setupGlobalDataPtrArray(1);
+
+    // Create a tensor
     int shape[] = {16, 512};
 
-    Data* data7 = RandomData(8192, 0, 1, shape, 2, FLOAT32);
-    Data* data8 = RandomData(8192, 0, 1, shape, 2, FLOAT32);
-    Data* data10 = RandomData(8192, 0, 1, shape, 2, FLOAT32);
-    Data* data11 = RandomData(8192, 0, 1, shape, 2, FLOAT32);
+    Data* data001 = randomData(8192, 0, 1, shape, 2, FLOAT32);
+    //Data* data002 = randomData(8192, 0, 1, shape, 2, FLOAT32);
 
-    Tensor* t7 = tensor(data7, gpu, false);
-    Tensor* t8 = tensor(data8, gpu, false);
-    Tensor* t9 = zerosFrom(t8);
+    //Tensor* t001 = tensor(data001, gpu, false);
+    //Tensor* t002 = tensor(data002, gpu, false);
+    Tensor* t003 = tensor(data001, cpu, false);
+    //Tensor* t004 = tensor(data001, cpu, false);
+    //Tensor* t004 = tensor(data002, cpu, false);
+    //Tensor* gpures = zerosFrom(t002);
+    //Tensor* cpures = zerosFrom(t004);
 
-    Tensor* t10 = tensor(data10, cpu, false);
-    Tensor* t11 = tensor(data11, cpu, false);
-    Tensor* t12 = zerosFrom(t11);
+    //uint64_t s0 = nanos();
+    //mul(gpures, t001, t002);
+    //uint64_t e0 = nanos();
+    //displayTensor(t9);
 
-    uint64_t s0 = nanos();
-    mul(t9, t7, t8);
-    uint64_t e0 = nanos();
-    //printTensor(t9);
+    //printf("\t \t \t \t CUDA Time: %f ms\n", (double)(e0 - s0) / 1000000.0);
 
-    freeTensor(&t7);
-    freeTensor(&t8);
-    freeTensor(&t9);
+    //uint64_t s1 = nanos();
+    //mul(cpures, t003, t004);
+    //uint64_t e1 = nanos();
+    //displayTensor(t12);
 
-    printf("\t \t \t \t CUDA Time: %f ms\n", (double)(e0 - s0) / 1000000.0);
-
-    uint64_t s1 = nanos();
-    mul(t12, t10, t11);
-    uint64_t e1 = nanos();
-    //printTensor(t12);
-
-    printf("\t \t \t \t AVX Time: %f ms\n", (double)(e1 - s1) / 1000000.0);
+    //printf("\t \t \t \t AVX Time: %f ms\n", (double)(e1 - s1) / 1000000.0);
     
-    freeTensor(&t10);
-    freeTensor(&t11);
-    freeTensor(&t12);
+    // Free the tensors
+    Pool* tensorPool = fetchPool(TENSOR);
+    freeAllTensors(tensorPool);
+
+    // Free Pool
+    destroyPool(tensorPool);
+
+    // Free the global memory pool
+    free_device(gpu);
+    free_device(cpu);
 
     return 0;
 }

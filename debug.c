@@ -38,7 +38,7 @@ PrintFunc print_types[] = {
 /* void printHelper(Data* A, PrintFunc printFunc, int* indices, int dim, int cur_dim) {
     if (cur_dim == dim - 1) {
         for (indices[cur_dim] = 0; indices[cur_dim] < A->shape[cur_dim]; indices[cur_dim]++) {
-            int index = CalculateIndex(indices, A->shape, dim);
+            int index = calculateIndex(indices, A->shape, dim);
             printFunc(A->values, index);
         }
         printf("\n");
@@ -72,7 +72,7 @@ void PrintOp(Data* A, int dim) {
             PrintArray(A->values, printFunc, A->shape, dim, A->dtype, 0);
             free(indices);
         } else {
-            printf("Cannot print dtype %s\n", GetDType(A->dtype));
+            printf("Cannot print dtype %s\n", getDType(A->dtype));
         }
     }else{
         printf("Data object is NULL");

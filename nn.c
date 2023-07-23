@@ -43,7 +43,7 @@ Parameters train(Model* model, Tensor* X_train, Tensor* Y_train, Optim* optim, i
     //Tensor* res = createTensor(dat, 4, 1, 2);
     //mult(res,t2,t1);
     //add(res,t2);	
-    //printTensor(res);
+    //displayTensor(res);
 
     Data  dat2[2][4] = {{{1.f, 2.f, 3.f}, {0.f, 6.f, 1.f}, {2.f, 0.f, 8.f}, {1.f, 4.f, 0.f}}, {{0.f, 2.f, 3.f}, {0.f, 6.f, 1.f}, {2.f, 0.f, 8.f}, {1.f, 4.f, 0.f}}};
     Data* data_p = &dat2[0][0];//Flatten the Data array
@@ -53,7 +53,7 @@ Parameters train(Model* model, Tensor* X_train, Tensor* Y_train, Optim* optim, i
     Tensor* res1 = createTensor(data_p, 4, 2, 2);
     mult(res1,t4,t3);
     add(res1,t4);	
-    printTensor(res1);
+    displayTensor(res1);
     //printf("Tensor size = %zu\n", sizeof(res)); 
     //	Parameters params = train(data, 4);
 
