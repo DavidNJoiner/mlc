@@ -12,7 +12,7 @@ nvcc -g -c cuda_ops.cu -o cuda_ops.o ${NVCC_FLAGS}
 
 # Compile the C source files with gcc
 gcc -g -c config.c -o config.o ${GCC_FLAGS}
-gcc -g -c memory_pool.c -o memory_pool.o ${GCC_FLAGS}
+gcc -g -c mempool.c -o mempool.o ${GCC_FLAGS}
 gcc -g -c main.c -o main.o ${GCC_FLAGS}
 gcc -g -c device.c -o device.o ${GCC_FLAGS}
 gcc -g -c avx_ops.c -o avx_ops.o ${GCC_FLAGS}
@@ -23,7 +23,7 @@ gcc -g -c ops.c -o ops.o ${GCC_FLAGS}
 gcc -g -c tensor.c -o tensor.o ${GCC_FLAGS}
 
 # Link all the object files, including cuda.o
-gcc config.o memory_pool.o cuda_ops.o main.o device.o avx_ops.o data.o debug.o ops.o tensor.o -L${CUDA_PATH}/lib64 -lcudart -o deepc
+gcc config.o mempool.o cuda_ops.o main.o device.o avx_ops.o data.o debug.o ops.o tensor.o -L${CUDA_PATH}/lib64 -lcudart -o deepc
 
 # Clean up object files
 rm *.o
