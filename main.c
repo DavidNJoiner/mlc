@@ -12,14 +12,14 @@ int main() {
     cuda_version();
 
     // Initialize the global memory pool
-    setupTensorPool(1);
-    setupGlobalDataPtrArray(1);
+    setup_tensor_pool(1);
+    setup_global_data_ptr_array(1);
 
     // Create a tensor
     int shape[] = {16, 512};
 
-    Data* data001 = randomData(8192, 0, 1, shape, 2, FLOAT32);
-    //Data* data002 = randomData(8192, 0, 1, shape, 2, FLOAT32);
+    Data* data001 = random_data(8192, 0, 1, shape, 2, FLOAT32);
+    //Data* data002 = random_data(8192, 0, 1, shape, 2, FLOAT32);
 
     //Tensor* t001 = tensor(data001, gpu, false);
     //Tensor* t002 = tensor(data002, gpu, false);
@@ -44,11 +44,11 @@ int main() {
     //printf("\t \t \t \t AVX Time: %f ms\n", (double)(e1 - s1) / 1000000.0);
     
     // Free the tensors
-    Pool* tensorPool = fetchPool(TENSOR);
-    freeAllTensors(tensorPool);
+    printf("\nStarting cleaning...\n");
+    free_all_tensors();
 
     // Free Pool
-    destroyPool(tensorPool);
+    destroy_tensor_pool();
 
     // Free the global memory pool
     free_device(gpu);

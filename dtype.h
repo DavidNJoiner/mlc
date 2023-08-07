@@ -16,6 +16,7 @@ typedef double float64;
 #define FLOAT32 sizeof(float32)
 #define FLOAT64 sizeof(float64)
 
-
+const char* get_data_type(int dtype);
+int get_data_size(int dtype);
 
 #endif // DTYPE_H

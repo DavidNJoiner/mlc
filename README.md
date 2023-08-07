@@ -2,8 +2,10 @@
 
 ### Memory Managment:
 
+## MLC : A deep learning framework written in C
+
 Expected Behavior:
-    
+
 A `Tensor` is allocated -> The allocator looks in the TensorPool's `blocks` for free `MemoryBlock`.
 
 The number `Tensor` that can be held by a single `MemoryBlock`is controled by the constant @@MAX_OBJ_PER_BLOCK.
@@ -22,6 +24,6 @@ Explanation:
 - When an object is deallocated, the element becomes available for reuse.
 - The memory pool manages the allocation and deallocation of objects within the blocks.
 - The `used` field in the `Pool` struct keeps track of the number of used elements within the current block.
-- When the current `MemoryBlock` is fully utilized a new block is allocated.
+- When the current `MemoryBlock` is fully utilized (i.e., `used == block_size`) a new block is allocated.
 - The memory pool may grow dynamically by adding more blocks as needed.
 - The `blocks` array holds the pointers to the allocated `MemoryBlock`.

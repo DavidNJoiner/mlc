@@ -11,8 +11,12 @@
 Tensor* tensor(Data* data, Device* device, bool requires_grad) {
     
     // Use the custom memory allocator to allocate memory for the new tensor
-    Pool* tensorPool = fetchPool(TENSOR);
-    Tensor* new_tensor = (Tensor*)allocateBlock(tensorPool);
+    Pool* tensorPool = fetch_pool(TENSOR);
+
+    printf("\ncall tensor : Allocating memory block for new tensor...\n");
+    Tensor* new_tensor = (Tensor*)allocate_block(tensorPool);
+
+    printf("\t[DEBUG] Tensor created at address %p\n", (void*)new_tensor);
 
     new_tensor->require_grad = requires_grad;
     if (requires_grad) {
@@ -28,6 +32,7 @@ Tensor* tensor(Data* data, Device* device, bool requires_grad) {
     }
     new_tensor->data = data;
     new_tensor->device = device;
+
     return new_tensor;
 }
 
@@ -42,17 +47,17 @@ Tensor* createTensor(int* shape, int dim, int dtype, Device* device, bool requir
     }
     void* array;
     if (device->type == CUDA) {
-        cudaMalloc(&array, size * getDTypeSize(dtype));  
+        cudaMalloc(&array, size * get_data_size(dtype));  
     } else {
-        array = calloc(size, getDTypeSize(dtype)); 
+        array = calloc(size, get_data_size(dtype)); 
     }
     if (array == NULL) {
         printf("Memory allocation failed!\n");
         return NULL;
     }
-    Data* data = createData(array, shape, dim, dtype);
-    Pool* tensorPool = fetchPool(TENSOR);
-    Tensor* t = (Tensor*)allocateBlock(tensorPool);
+    Data* data = create_data(array, shape, dim, dtype);
+    Pool* tensorPool = fetch_pool(TENSOR);
+    Tensor* t = (Tensor*)allocate_block(tensorPool);
     t->data = data;
     t->device = device;
     t->require_grad = requires_grad;
@@ -62,10 +67,10 @@ Tensor* createTensor(int* shape, int dim, int dtype, Device* device, bool requir
   zerosFrom : create a new Tensor filled with zeros from an existing Tensor(template). 
 /  -------------------------------------------------------------------------------------*/
 Tensor* zerosFrom(Tensor* t) {
-    Pool* tensorPool = fetchPool(TENSOR);
-    Pool* dataPool = fetchPool(DATA);
-    Tensor* new_tensor = (Tensor*)allocateBlock(tensorPool);
-    Data* new_data = (Data*)allocateBlock(dataPool);
+    Pool* tensorPool = fetch_pool(TENSOR);
+    Pool* dataPool = fetch_pool(DATA);
+    Tensor* new_tensor = (Tensor*)allocate_block(tensorPool);
+    Data* new_data = (Data*)allocate_block(dataPool);
 
     new_data->shape = (int*)malloc(t->data->dim * sizeof(int));
     if (new_data->shape == NULL) {
@@ -80,12 +85,12 @@ Tensor* zerosFrom(Tensor* t) {
     new_data->dtype = t->data->dtype;
 
     if (t->device->type == CUDA) {
-        if (cudaMalloc(&(new_data->values), new_data->size * getDTypeSize(new_data->dtype)) != cudaSuccess) {
+        if (cudaMalloc(&(new_data->values), new_data->size * get_data_size(new_data->dtype)) != cudaSuccess) {
             printf("Error: Failed to allocate GPU memory for new_data->values\n");
             exit(1);
         }
     } else {
-        new_data->values = (float32 *)aligned_alloc(32, new_data->size * getDTypeSize(new_data->dtype));
+        new_data->values = (float32 *)aligned_alloc(32, new_data->size * get_data_size(new_data->dtype));
         if (new_data->values == NULL) {
             printf("Error: Failed to allocate memory for new_data->values\n");
             exit(1);
@@ -222,7 +227,7 @@ void displayTensor(Tensor* A) {
     }
 
     if (0 < A->data->dtype && A->data->dtype <= 16) {
-        displayData(A->data);
+        display_data(A->data);
     }else {
         printf("Error: Invalid dtype.\n");
     }
