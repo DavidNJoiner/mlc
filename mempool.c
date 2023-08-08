@@ -4,10 +4,6 @@ static GlobalPool global_pool_instance = {0};
 int total_allocated = 0;
 int total_deallocated = 0;
 
-void calculate_pool_stats(Pool *p, size_t* total_allocated, size_t* total_pool_size) {
-    *total_pool_size = p->block_count * p->block_size;
-    *total_allocated = p->blocks_in_use * p->element_size;
-}
 /* ------------------------------------------------------------------------------------------------ */
 /* display_pool_stats: Print statistics about the pool to the console.
  *
@@ -16,14 +12,17 @@ void calculate_pool_stats(Pool *p, size_t* total_allocated, size_t* total_pool_s
 /* ------------------------------------------------------------------------------------------------ */
 void display_pool_stats(Pool *p)
 {   
-    size_t num_allocated_block, total_pool_size;
-    calculate_pool_stats(p, &num_allocated_block, &total_pool_size);
+    size_t total_allocated_block_size, total_pool_filled;
+    size_t poolmaxsize = MAX_OBJ_PER_BLOCK * p->element_size;
 
-    double percentage = total_pool_size == 0 ? 0 : (100.0 * num_allocated_block) / total_pool_size;
+    total_pool_filled = p->block_count * p->block_size;
+    total_allocated_block_size = p->blocks_in_use * p->element_size;
+
+    double percentage = total_pool_filled == 0 ? 0 : (100.0 * total_allocated_block_size) / total_pool_filled;
 
     printf("\n\t[Info] Pool type:                          %10d\n", p->type);
-    printf("\t[Info] Pool (Available / Max):             %10zu / %ld\n", total_pool_size == 0 ? 0 : (total_pool_size - num_allocated_block), total_pool_size);
-    printf("\t[Info] Taken from pool:                    %10ld / %.1lf%%\n", num_allocated_block, percentage);
+    printf("\t[Info] Pool (Available / Max):             %10zu / %ld\n", (poolmaxsize - total_allocated_block_size), poolmaxsize);
+    printf("\t[Info] Taken from pool:                    %.1lf%%\n", percentage);
     printf("\t[Info] Allocated objects:                  %10u\n", p->total_obj_allocated);
     printf("\t[Info] Block freed:                        %10u\n", p->total_block_freed);
     printf("\t[Info] New Block allocations:              %10u\n", p->new_block_allocations);
@@ -116,9 +115,6 @@ void initialize_pool(ObjectType type, Pool *p, const uint32_t obj_size, const ui
 /* ------------------------------------------------------------------------------------------------ */
 void destroy_pool(Pool *p)
 {
-    printf("\nbefore call : destroy_tensor_pool -> destroy_pool\n");
-    display_pool_stats(p);
-
     // free all memoryBlock present in the pool
     for (uint32_t i = 0; i < p->block_count; ++i) {
         if (p->blocks[i] == NULL)
@@ -134,7 +130,7 @@ void destroy_pool(Pool *p)
         total_deallocated += DEEPC_SIZE_OF_VOID_POINTER;
     }
 
-    p->block_count = 0;
+    free_all_blocks(p);
 
     printf("\nafter call : destroy_tensor_pool -> destroy_pool\n");
     display_pool_stats(p);
@@ -326,7 +322,11 @@ void free_all_blocks(Pool *p)
 void free_all_tensors() {
     printf("\ncall free_all_tensors :\n");
     printf("\t[DEBUG] freeing Tensors...\n");
+
     Pool* tensor_pool = fetch_pool(TENSOR);
+    printf("\nbefore call : free_all_tensors\n");
+    display_pool_stats(tensor_pool);
+
     // Free the memory of each Tensor in the pool
     for (uint32_t i = 0; i < tensor_pool->block_count; ++i) {
         // Iterate over each block in the pool
@@ -349,6 +349,9 @@ void free_all_tensors() {
         total_deallocated += sizeof(tensor_pool->blocks);
         tensor_pool->blocks = NULL;
     }
+
+    printf("\nin call : free_all_tensors\n");
+    display_pool_stats(tensor_pool);
 
     free_all_data(); // Free all Datas objects
 

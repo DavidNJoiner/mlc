@@ -71,7 +71,7 @@ Pool* fetch_pool(ObjectType type);
 
 // Pool memory managment
 void initialize_pool(ObjectType type, Pool *p, const uint32_t obj_size, const uint32_t num_obj, const uint32_t obj_per_block);
-void calculate_pool_stats(Pool *p, size_t* total_allocated, size_t* total_pool_size);
+void calculate_pool_stats(Pool *p, size_t* total_allocated_block_size, size_t* total_pool_filled);
 void display_pool_stats(Pool *p);
 void free_all_blocks(Pool *p);
 
