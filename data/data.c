@@ -29,7 +29,7 @@ int calculate_stride(int* shape, int dim, int dtype) {
 
 int calculate_size(int* shape, int dim) {
     int size = 1;
-    for (int i = 0; i < dim; i++) {
+    for (uint32_t i = 0; i < dim; i++) {
         size *= shape[i];
     }
     return size;
@@ -65,7 +65,7 @@ void flatten_array(void* array, void* flattened, int* shape, int dim, int dtype,
     } else {
         // recursive case: move to the next dimension
         int stride = calculate_stride(shape, dim, dtype);
-        for (int i = 0; i < shape[0]; i++) {
+        for (uint32_t i = 0; i < shape[0]; i++) {
             flatten_array((char*)array + i * stride, flattened, shape + 1, dim - 1, dtype, idx + i * stride / get_data_size(dtype));
         }
     }
@@ -102,7 +102,7 @@ void display_data(Data* dat) {
 
     printf("dtype : %4s \n", dtypeStr);
     printf("shape : ");
-    for (int i = 0; i < dat->dim; i++) {
+    for (uint32_t i = 0; i < dat->dim; i++) {
         printf("[%2d] ", dat->shape[i]);
     }
     printf("\n");
