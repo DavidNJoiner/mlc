@@ -55,7 +55,7 @@ void PrintArray(void* array, PrintFunc printFunc, int* shape, int dim, int dtype
     if (dim == 1) {
         printFunc(array, idx);
     } else {
-        for (int i = 0; i < shape[0]; i++) {
+        for (uint32_t i = 0; i < shape[0]; i++) {
             PrintArray((char*)array + i * stride, printFunc, shape + 1, dim - 1, dtype, idx + i * stride / dtype);
         }
     }
