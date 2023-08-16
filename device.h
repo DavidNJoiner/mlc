@@ -2,21 +2,22 @@
 #ifndef DEVICE_H_
 #define DEVICE_H_
 
-#include <cuda_runtime.h>
+#include "config.h"
 #include <stdlib.h>
 
-typedef enum {
+typedef enum
+{
     CPU,
     CUDA
 } DeviceType;
 
-typedef struct {
+typedef struct
+{
     DeviceType type;
     int deviceID;
 } Device;
 
-
-Device*         init_device(DeviceType type, int deviceID);
-void            free_device(Device* device);
+Device *init_device(DeviceType type, int deviceID);
+void free_device(Device *device);
 
 #endif // DEVICE_H_
