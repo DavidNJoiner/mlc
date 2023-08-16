@@ -13,7 +13,7 @@ Parameters train(Model* model, Tensor* X_train, Tensor* Y_train, Optim* optim, i
     int tw_size = params.w->data->size = data->size;
     params.w->data->dtype = data->dtype;
     // Randomly initialize weights and biases.
-    for (int i = 0; i < tw_size; i++) {
+    for (uint32_t i = 0; i < tw_size; i++) {
         params.w[i] = ()rand() / ()RAND_MAX;
         params.b[i] = ()rand() / ()RAND_MAX;
     }
@@ -21,7 +21,7 @@ Parameters train(Model* model, Tensor* X_train, Tensor* Y_train, Optim* optim, i
     
 
     for (int epoch = 0; epoch < EPOCHS; ++epoch) {
-        for (int i = 0; i < size; ++i) {
+        for (uint32_t i = 0; i < size; ++i) {
             float z = params.weights[0] * data[i].x1 + params.weights[1] * data[i].x2 + params.bias;
             float prediction = sigmoid(z);
 
@@ -38,9 +38,9 @@ Parameters train(Model* model, Tensor* X_train, Tensor* Y_train, Optim* optim, i
 
 /* int test() {
     //Data  dat[4] = {{0, 0, 1}, {0, 1, 1}, {1, 0, 1}, {1, 1, 0}};
-    //Tensor* t2 = createTensor(dat, 4, 1, 2);//Here dat decay into a pointer, which is what createTensor expect.
-    //Tensor* t1 = createTensor(dat, 4, 1, 2); 
-    //Tensor* res = createTensor(dat, 4, 1, 2);
+    //Tensor* t2 = create_tensor(dat, 4, 1, 2);//Here dat decay into a pointer, which is what create_tensor expect.
+    //Tensor* t1 = create_tensor(dat, 4, 1, 2); 
+    //Tensor* res = create_tensor(dat, 4, 1, 2);
     //mult(res,t2,t1);
     //add(res,t2);	
     //displayTensor(res);
@@ -48,9 +48,9 @@ Parameters train(Model* model, Tensor* X_train, Tensor* Y_train, Optim* optim, i
     Data  dat2[2][4] = {{{1.f, 2.f, 3.f}, {0.f, 6.f, 1.f}, {2.f, 0.f, 8.f}, {1.f, 4.f, 0.f}}, {{0.f, 2.f, 3.f}, {0.f, 6.f, 1.f}, {2.f, 0.f, 8.f}, {1.f, 4.f, 0.f}}};
     Data* data_p = &dat2[0][0];//Flatten the Data array
 
-    Tensor* t3 = createTensor(data_p, 4, 2, 2);
-    Tensor* t4 = createTensor(data_p, 4, 2, 2); 
-    Tensor* res1 = createTensor(data_p, 4, 2, 2);
+    Tensor* t3 = create_tensor(data_p, 4, 2, 2);
+    Tensor* t4 = create_tensor(data_p, 4, 2, 2); 
+    Tensor* res1 = create_tensor(data_p, 4, 2, 2);
     mult(res1,t4,t3);
     add(res1,t4);	
     displayTensor(res1);
