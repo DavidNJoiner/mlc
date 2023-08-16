@@ -1,0 +1,144 @@
+#ifndef DEFINE_H
+#define DEFINE_H
+
+#include <stdint.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdalign.h>
+#include <math.h>
+
+// Properly define static assertions.
+#if defined(__clang__) || defined(__GNUC__)
+/** @brief Static assertion */
+#define STATIC_ASSERT _Static_assert
+#else
+
+/** @brief Static assertion */
+#define STATIC_ASSERT static_assert
+#endif
+
+// Ensure all types are of the correct size.
+
+/** @brief Assert uint8_t to be 1 byte.*/
+STATIC_ASSERT(sizeof(uint8_t) == 1, "Expected uint8_t to be 1 byte.");
+
+/** @brief Assert uint16_t to be 2 bytes.*/
+STATIC_ASSERT(sizeof(uint16_t) == 2, "Expected uint16_t to be 2 bytes.");
+
+/** @brief Assert uint32_t to be 4 bytes.*/
+STATIC_ASSERT(sizeof(uint32_t) == 4, "Expected uint32_t to be 4 bytes.");
+
+/** @brief Assert uint64_t to be 8 bytes.*/
+STATIC_ASSERT(sizeof(uint64_t) == 8, "Expected uint64_t to be 8 bytes.");
+
+/** @brief Assert int8_t to be 1 byte.*/
+STATIC_ASSERT(sizeof(int8_t) == 1, "Expected int8_t to be 1 byte.");
+
+/** @brief Assert int16_t to be 2 bytes.*/
+STATIC_ASSERT(sizeof(int16_t) == 2, "Expected int16_t to be 2 bytes.");
+
+/** @brief Assert int32_t to be 4 bytes.*/
+STATIC_ASSERT(sizeof(int32_t) == 4, "Expected int32_t to be 4 bytes.");
+
+/** @brief Assert int64_t to be 8 bytes.*/
+STATIC_ASSERT(sizeof(int64_t) == 8, "Expected int64_t to be 8 bytes.");
+
+/** @brief Assert float to be 4 bytes.*/
+STATIC_ASSERT(sizeof(float) == 4, "Expected float to be 4 bytes.");
+
+/** @brief Assert double to be 8 bytes.*/
+STATIC_ASSERT(sizeof(double) == 8, "Expected double to be 8 bytes.");
+
+/** @brief True.*/
+#define true 1
+
+/** @brief False. */
+#define false 0
+
+#define DEEPC_CUDA_MEMORY_CACHING 0
+#define INITIAL_POOL_BLOCKS 1
+#define MAX_POOL_INSTANCES 1
+#define DEEPC_MIN_BLOCK_SIZE sizeof(uint32_t)
+
+#define pointer_t void *
+#define DEEPC_SIZE_OF_VOID_POINTER sizeof(pointer_t)
+
+// Pool define
+#define MAX_ORDER 10 // 2 ** 10 == 1024 bytes
+#define MIN_ORDER 4  // 2 ** 4 == 16 bytes
+/* the order ranges 0..MAX_ORDER, the largest subblock is 2**(MAX_ORDER) */
+#define BLOCKSIZE (1 << MAX_ORDER) // BLOCKSIZE = 1024
+/* the address of the memoryblock of a subblock from freelists[i]. */
+
+/*
+#define _MEMBASE ((uintptr_t)MEMBLOCK->m_subblock_array)
+#define _OFFSET(b) ((uintptr_t)b - _MEMBASE)
+#define _MEMBLOCKOF(b, i) (_OFFSET(b) ^ ((uint32_t)1 << (i)))
+#define MEMBLOCKOF(b, i) ((pointer_t)(_MEMBLOCKOF(b, i) + _MEMBASE))
+*/
+
+#define _MEMBASE(MEMBLOCK) ((uintptr_t)(MEMBLOCK)->m_subblock_array)
+#define _OFFSET(b, MEMBLOCK) ((uintptr_t)(b)-_MEMBASE(MEMBLOCK))
+#define _MEMBLOCKOF(b, i, MEMBLOCK) (_OFFSET(b, MEMBLOCK) ^ ((uint32_t)1 << (i)))
+#define MEMBLOCKOF(b, i, MEMBLOCK) ((pointer_t)(_MEMBLOCKOF(b, i, MEMBLOCK) + _MEMBASE(MEMBLOCK)))
+
+// Ensure that each subblock is aligned to a multiple of the machine's word size.
+#define ALIGN_SIZE(size) (((size) + DEEPC_SIZE_OF_VOID_POINTER - 1) & ~(DEEPC_SIZE_OF_VOID_POINTER - 1))
+#define ALIGN_ADDR(pointer_t) ((void *)((uintptr_t)(pointer_t + DEEPC_SIZE_OF_VOID_POINTER - 1) & ~(DEEPC_SIZE_OF_VOID_POINTER - 1)))
+
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+#define DEEPC_WINDOWS 1
+#ifndef _WIN64
+#error "64-bit is required on Windows!"
+#endif
+#elif defined(__linux__) || defined(__gnu_linux__)
+// Linux OS
+#define DEEPC_LINUX 1
+
+// Inlining
+#if defined(__clang__) || defined(__gcc__)
+/** @brief Inline qualifier */
+#define DEEPC_INLINE __attribute__((always_inline)) inline
+
+/** @brief No-inline qualifier */
+#define DEEPC_NOINLINE __attribute__((noinline))
+#elif defined(_MSC_VER)
+
+/** @brief Inline qualifier */
+#define DEEPC_INLINE __forceinline
+
+/** @brief No-inline qualifier */
+#define DEEPC_NOINLINE __declspec(noinline)
+#else
+
+/** @brief Inline qualifier */
+#define DEEPC_INLINE static inline
+
+/** @brief No-inline qualifier */
+#define DEEPC_NOINLINE
+#endif
+
+/** @brief Gets the number of bytes from amount of gibibytes (GiB) (1024*1024*1024) */
+#define GIBIBYTES(amount) ((amount)*1024ULL * 1024ULL * 1024ULL)
+/** @brief Gets the number of bytes from amount of mebibytes (MiB) (1024*1024) */
+#define MEBIBYTES(amount) ((amount)*1024ULL * 1024ULL)
+/** @brief Gets the number of bytes from amount of kibibytes (KiB) (1024) */
+#define KIBIBYTES(amount) ((amount)*1024ULL)
+
+/** @brief Gets the number of bytes from amount of gigabytes (GB) (1000*1000*1000) */
+#define GIGABYTES(amount) ((amount)*1000ULL * 1000ULL * 1000ULL)
+/** @brief Gets the number of bytes from amount of megabytes (MB) (1000*1000) */
+#define MEGABYTES(amount) ((amount)*1000ULL * 1000ULL)
+/** @brief Gets the number of bytes from amount of kilobytes (KB) (1000) */
+#define KILOBYTES(amount) ((amount)*1000ULL)
+
+DEEPC_INLINE uint64_t get_aligned(uint64_t operand, uint64_t granularity)
+{
+    return ((operand + (granularity - 1)) & ~(granularity - 1));
+}
+
+#define DEEPC_MIN(x, y) (x < y ? x : y)
+#define DEEPC_MAX(x, y) (x > y ? x : y)
+
+#endif
+#endif
