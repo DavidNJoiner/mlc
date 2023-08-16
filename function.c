@@ -14,13 +14,13 @@ Function* InitFunction(Device* device, Data* tensors, Tensor* (*ForwardFunc)(Fun
 
     self->needs_input_grad = (bool *)malloc(tensors->size * sizeof(bool));
     // Loop throught the tensors to fill the needs_input_grad array.
-    for (int i = 0; i < tensors->size; i++) {
+    for (uint32_t i = 0; i < tensors->size; i++) {
         Tensor *t = get_data_element(tensors, &i);
         self->needs_input_grad[i] = t->require_grad;
     }
 
     // If only one parent Tensor require_grad then the resulting Function will require it as well.
-    for (int i = 0; i < tensors->size; i++) {
+    for (uint32_t i = 0; i < tensors->size; i++) {
         if (self->needs_input_grad[i]) {
             self->requires_grad = true;
             break;
