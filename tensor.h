@@ -1,4 +1,4 @@
-#ifndef TENSOR_H_ 
+#ifndef TENSOR_H_
 #define TENSOR_H_
 
 #include <stdio.h>
@@ -29,30 +29,31 @@
 // These strategies can significantly improve performance by reducing memory overhead,
 // but they also introduce greater complexity in memory management.
 
-struct Pool;
+struct Pool_t;
 
-typedef struct {
+typedef struct
+{
     bool require_grad;
-    Data* data;
-    Device* device;
-    float32* gradient;
-    void* lazy;//LazyBuffer* lazydata;
-    void* creator; // Function* creator; Points to the Function that created this Tensor.
+    Data *data;
+    Device *device;
+    float32 *gradient;
+    void *lazy;    // LazyBuffer* lazydata;
+    void *creator; // Function* creator; Points to the Function that created this Tensor.
 } Tensor;
 
 //  Tensors creation
-Tensor*     zerosFrom(Tensor* t);
-Tensor*     tensor(Data* data, Device* device, bool requires_grad);
-Tensor*     createTensor(int* shape, int dim, int dtype, Device* device, bool requires_grad);
-Tensor*     newFull(int* shape, int fill_value, int dtype, Device* device, bool requires_grad);
+Tensor *zerosFrom(Tensor *t);
+Tensor *tensor(Data *data, Device *device, bool requires_grad);
+Tensor *create_tensor(int *shape, int dim, int dtype, Device *device, bool requires_grad);
+Tensor *newFull(int *shape, int fill_value, int dtype, Device *device, bool requires_grad);
 
 //  Tensors arithmetic
-void mul(Tensor* dst, Tensor* A, Tensor* B);
-void add(Tensor* dst, Tensor* A);
+void mul(Tensor *dst, Tensor *A, Tensor *B);
+void add(Tensor *dst, Tensor *A);
 
-//transpose here
+// transpose here
 
-void displayTensor(Tensor* A);
-bool is_aligned(void* ptr, size_t alignment);
+void displayTensor(Tensor *A);
+bool is_aligned(void *ptr, size_t alignment);
 
-#endif //TENSOR_H
+#endif // TENSOR_H
