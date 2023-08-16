@@ -93,10 +93,11 @@ gcc ${COMPILER} -g -c tensor.c -o tensor.o ${GCC_FLAGS}
 
 # Link all the object files, including cuda.o
 if [ -n "${NVCC_FLAGS}" ]; then
-    gcc config.o mempool.o cuda_ops.o main.o device.o avx.o dtype.o data.o dataset.o debug.o ops.o tensor.o -L${CUDA_PATH}/lib64 -lcudart -o deepc
+    gcc config.o mempool.o cuda_ops.o main.o device.o avx.o dtype.o data.o dataset.o debug.o ops.o tensor.o -L${CUDA_PATH}/lib64 -lcudart -o deepc -lm
 else
-    gcc config.o mempool.o main.o device.o avx.o dtype.o data.o dataset.o debug.o ops.o tensor.o -o deepc
+    gcc config.o mempool.o main.o device.o avx.o dtype.o data.o dataset.o debug.o ops.o tensor.o -o deepc -lm
 fi
+
 
 
 # Clean up object files
