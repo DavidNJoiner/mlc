@@ -17,7 +17,7 @@ void addSubset(SubsetArray* arr, int* indices, int length) {
     Subset subset;
     subset.indices = (int*)malloc(length * sizeof(int));
     subset.length = length;
-    for (int i = 0; i < length; i++) {
+    for (uint32_t i = 0; i < length; i++) {
         subset.indices[i] = indices[i];
     }
 
@@ -25,7 +25,7 @@ void addSubset(SubsetArray* arr, int* indices, int length) {
 }
 
 void freeSubsetArray(SubsetArray* arr) {
-    for (int i = 0; i < arr->count; i++) {
+    for (uint32_t i = 0; i < arr->count; i++) {
         free(arr->subsets[i].indices);
     }
     free(arr->subsets);
@@ -34,7 +34,7 @@ void freeSubsetArray(SubsetArray* arr) {
 
 int* randperm(int n, unsigned int seed) {
     int* indices = (int*)malloc(n * sizeof(int));
-    for (int i = 0; i < n; i++) {
+    for (uint32_t i = 0; i < n; i++) {
         indices[i] = i;
     }
 
@@ -56,7 +56,7 @@ SubsetArray* random_split(Dataset* dataset, float* lengths, int lengths_size, un
     int* sizes = (int*)malloc(lengths_size * sizeof(int));
     int remaining = total_size;
 
-    for (int i = 0; i < lengths_size; i++) {
+    for (uint32_t i = 0; i < lengths_size; i++) {
         float frac = lengths[i];
         if (frac < 0.0 || frac > 1.0) {
             printf("Error: Fraction at index %d is not between 0 and 1\n", i);
@@ -67,7 +67,7 @@ SubsetArray* random_split(Dataset* dataset, float* lengths, int lengths_size, un
         remaining -= sizes[i];
     }
 
-    for (int i = 0; i < lengths_size; i++) {
+    for (uint32_t i = 0; i < lengths_size; i++) {
         while (remaining > 0 && fabs(lengths[i] - (float)sizes[i] / total_size) > epsilon) {
             sizes[i]++;
             remaining--;
@@ -78,7 +78,7 @@ SubsetArray* random_split(Dataset* dataset, float* lengths, int lengths_size, un
     SubsetArray* subsets = createSubsetArray();
 
     int start = 0;
-    for (int i = 0; i < lengths_size; i++) {
+    for (uint32_t i = 0; i < lengths_size; i++) {
         int length = sizes[i];
         int* subset_indices = (int*)malloc(length * sizeof(int));
         for (int j = 0; j < length; j++) {
