@@ -139,6 +139,7 @@ DEEPC_INLINE uint64_t get_aligned(uint64_t operand, uint64_t granularity)
 
 #define DEEPC_MIN(x, y) (x < y ? x : y)
 #define DEEPC_MAX(x, y) (x > y ? x : y)
+#define LOG2(x) (log(x) / log(2.0))
 
 #endif
 #endif
