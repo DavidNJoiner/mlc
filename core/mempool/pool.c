@@ -65,11 +65,12 @@ static void init_pool_(Pool_t *pool, const size_t poolSize)
 {
     printf("[call] : init_pool_\n");
     init_table();
+    // static_assert(sizeof(MemoryBlock_t) == 1120, "\t[Error] MemoryBlock is not 1024 bytes!\n");
     static_assert(alignof(MemoryBlock_t) == DEEPC_SIZE_OF_VOID_POINTER, "\t[Error] MemoryBlock is not correctly aligned!\n");
 
     pool->m_numOfBlocks = (poolSize + sizeof(MemoryBlock_t) - 1) / sizeof(MemoryBlock_t);
     pool->m_sizeOfEachBlock = (uint32_t)sizeof(MemoryBlock_t);
-    pool->m_memStart = (MemoryBlock_ptr)malloc(pool->m_sizeOfEachBlock * pool->m_numOfBlocks);
+    pool->m_memStart = (MemoryBlock_ptr)malloc(DEEPC_SIZE_OF_VOID_POINTER); // pool->m_sizeOfEachBlock * pool->m_numOfBlocks
     pool->m_numFreeBlocks = pool->m_numOfBlocks;
     pool->m_next = pool->m_memStart;
     pool->m_numInitialized = 0;
@@ -88,8 +89,8 @@ static void init_pool_(Pool_t *pool, const size_t poolSize)
     printf("\t\033[34m[Info]\033[0m  : MemBlock unit size       %4u\n", pool->m_sizeOfEachBlock);
     printf("\t\033[34m[Info]\033[0m  : MemBlock initialized     %4u\n\n", pool->m_numInitialized);
 
-    add_entry("init_pool", 2, (double)(sizeof(*pool->m_memStart)), 0.0);
-    total_bytes_allocated += sizeof(*pool->m_memStart);
+    total_bytes_allocated += sizeof(pool->m_memStart);
+    add_entry("init_pool", 2, (double)(sizeof(pool->m_memStart)), 0.0);
 }
 
 void destroy_pool(Pool_t *pool)
@@ -108,9 +109,8 @@ void destroy_pool(Pool_t *pool)
         }
     }
 
-    total_bytes_allocated -= sizeof(*pool->m_memStart);
-
+    total_bytes_allocated -= sizeof(pool->m_memStart);
     free((DEEPC_VOID_POINTER)pool->m_memStart);
-    add_entry("destroy_pool", 2, 0.0, (double)(sizeof(*pool->m_memStart)));
+    add_entry("destroy_pool", 2, 0.0, (double)(sizeof(pool->m_memStart)));
     pool->m_memStart = (MemoryBlock_ptr)NULL;
 }

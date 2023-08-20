@@ -44,12 +44,10 @@ MemoryBlock_ptr block_alloc(Pool_t *pool)
         return NULL;
     }
 
-    size_t freelist = 0;
     // Initialize the freelist array
     for (int i = 0; i <= MAX_ORDER; i++)
     {
         new_block_address->freelist[i] = (SubBlock_ptr)malloc(sizeof(SubBlock_t));
-        printf("size freelist = %zu\n", freelist += sizeof(SubBlock_t));
     }
 
     memset(new_block_address->m_subblock_array, 0, BLOCKSIZE);
@@ -60,8 +58,8 @@ MemoryBlock_ptr block_alloc(Pool_t *pool)
 
     printf("\t[Info] : Memory Block Allocation Successful !\n");
 
-    total_bytes_allocated += sizeof(new_block_address->freelist);
-    add_entry("bloc_alloc", 2, (double)(sizeof(new_block_address->freelist)), 0);
+    total_bytes_allocated += sizeof(MemoryBlock_t);
+    add_entry("bloc_alloc", 2, (double)(sizeof(MemoryBlock_t)), 0);
     printf("total_bytes_currently_allocated = %d\n", total_bytes_allocated);
 
     return new_block_address;
@@ -82,8 +80,8 @@ void free_block(Pool_t *pool, MemoryBlock_ptr block)
             // subblock_free_all(block);
             // free((DEEPC_VOID_POINTER)(block->freelist));
 
-            total_bytes_allocated -= sizeof(block->freelist);
-            add_entry("free_bloc", 2, 0.0, (double)(sizeof(block->freelist)));
+            total_bytes_allocated -= sizeof(MemoryBlock_t);
+            add_entry("bloc_alloc", 2, 0.00, (double)(sizeof(MemoryBlock_t)));
 
             pool->m_numFreeBlocks++;
             pool->m_numInitialized--;
