@@ -1,4 +1,5 @@
 #include "table.h"
+#include "core/mempool/global.h"
 
 int sort_column;
 Table table;
@@ -12,6 +13,7 @@ void init_table()
     strcpy(table.headers[2], "Time");
     add_column("alloc");
     add_column("dealloc");
+    add_column("pool used"); // Add the column here only once
 }
 
 void add_column(const char *header)
@@ -32,8 +34,8 @@ void add_entry(char *name, int num_values, ...)
         printf("Table is full!\n");
         return;
     }
-    if (num_values != table.num_columns - 3)
-    { // -3 because of Refs, ID, and Time columns
+    if (num_values != table.num_columns - 4) // -3 because of Refs, ID, Time columns
+    {
         printf("Mismatch in number of values and columns!\n");
         return;
     }
@@ -42,7 +44,7 @@ void add_entry(char *name, int num_values, ...)
     strcpy(table.entries[table.num_entries].time, get_time());
 
     // Initialize the values array to 0
-    for (int i = 0; i < MAX_COLUMNS; i++)
+    for (int i = 0; i < table.num_columns; i++)
     {
         table.entries[table.num_entries].values[i] = 0.0;
     }
@@ -54,6 +56,8 @@ void add_entry(char *name, int num_values, ...)
         table.entries[table.num_entries].values[i + 2] = va_arg(args, double); // Start from index 2
     }
     va_end(args);
+
+    table.entries[table.num_entries].values[table.num_columns - 2] = (double)total_bytes_allocated;
 
     table.num_entries++;
 }
@@ -91,7 +95,6 @@ void display_table()
             }
 
             printf("%-*.*f", valueWidth, 2, table.entries[i].values[j]);
-
             printf("\033[0m"); // Reset color after printing the value
         }
         printf("\n");

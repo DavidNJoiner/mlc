@@ -7,7 +7,7 @@
 #include <stdarg.h>
 #include <time.h>
 
-#define MAX_ENTRIES 100
+#define MAX_ENTRIES 200
 #define MAX_COLUMNS 10
 #define MAX_NAME_LEN 50
 #define MAX_HEADER_LEN 50
