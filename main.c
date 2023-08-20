@@ -1,29 +1,25 @@
+#include <stdio.h>
 #include "config.h"
-#include "mempool.h"
+#include "core/mempool/mempool.h"
 #include "tensor.h"
 #include "nn.h"
 
-#include "mempool.h"
-#include <stdio.h>
-
-void test_memory_pool()
+void test_memory_pool(Pool_t *pool)
 {
-    printf("Starting memory pool tests...\n");
+    printf("\nStarting memory pool tests...\n");
 
-    // 1. Initialize the memory pool
-    printf("\nInitializing memory pool...\n");
-    setup_pool(0, 1024); // Initialize a pool with 1024 bytes
-    Pool_t *pool = fetch_pool();
+    printf("\nMemory pool statistics before allocations:\n");
+    display_pool_stats(pool);
 
-    // 2. Allocate memory blocks
     printf("\nAllocating memory blocks...\n");
-    MemoryBlock_t *block1 = create_block(pool);
-    MemoryBlock_t *block2 = create_block(pool);
-    MemoryBlock_t *block3 = create_block(pool);
+    MemoryBlock_ptr block1 = block_alloc(pool);
+    MemoryBlock_ptr block2 = block_alloc(pool);
+    MemoryBlock_ptr block3 = block_alloc(pool);
 
-    // 3. Display memory pool statistics
     printf("\nMemory pool statistics after allocations:\n");
     display_pool_stats(pool);
+
+    printf("total_bytes_currently_allocated = %d\n", total_bytes_allocated);
 
     // 4. Free some memory blocks
     printf("\nFreeing some memory blocks...\n");
@@ -33,23 +29,92 @@ void test_memory_pool()
     printf("\nMemory pool statistics after freeing:\n");
     display_pool_stats(pool);
 
-    // 6. Destroy the memory pool
-    printf("\nDestroying memory pool...\n");
-    destroy_pool(pool);
+    printf("total_bytes_currently_allocated = %d\n", total_bytes_allocated);
 
-    printf("Memory pool tests completed.\n");
+    printf("\nMemory pool tests completed.\n");
+}
+
+void test_adding_subblocks()
+{
+    printf("Running test_adding_subblocks...\n");
+
+    Pool_t *pool = fetch_pool();
+
+    // Implement function to asign subblock automatically to the first free adjacent memory block.
+    SubBlock_t *subblock1 = subblock_malloc(50, (MemoryBlock_t *)pool->m_next);
+    SubBlock_t *subblock2 = subblock_malloc(100, (MemoryBlock_t *)pool->m_next);
+    SubBlock_t *subblock3 = subblock_malloc(150, (MemoryBlock_t *)pool->m_next);
+
+    assert(subblock1->m_size > 0);
+    assert(subblock2->m_size > 0);
+    assert(subblock3->m_size > 0);
+
+    printf("test_adding_subblocks passed!\n");
+}
+
+void test_removing_last_subblock()
+{
+    printf("Running test_removing_last_subblock...\n");
+
+    Pool_t *pool = fetch_pool();
+    MemoryBlock_t *memblock = block_alloc(pool);
+
+    DEEPC_VOID_POINTER subblock1 = subblock_malloc(50, memblock);
+    DEEPC_VOID_POINTER subblock2 = subblock_malloc(100, memblock);
+    DEEPC_VOID_POINTER subblock3 = subblock_malloc(150, memblock);
+
+    remove_subblock(memblock, (SubBlock_t *)subblock3);
+
+    // After removal, the last subblock should be marked as free (size 0)
+    assert(((SubBlock_t *)subblock3)->m_size == 0);
+
+    printf("test_removing_last_subblock passed!\n");
+}
+
+void test_buddy_system_merge()
+{
+    printf("Running test_buddy_system_merge...\n");
+
+    Pool_t *pool = fetch_pool();
+    MemoryBlock_t *memblock = block_alloc(pool);
+
+    DEEPC_VOID_POINTER subblock1 = subblock_malloc(64, memblock);
+    DEEPC_VOID_POINTER subblock2 = subblock_malloc(64, memblock);
+
+    // Free the subblocks
+    remove_subblock(memblock, (SubBlock_t *)subblock1);
+    remove_subblock(memblock, (SubBlock_t *)subblock2);
+
+    // Optimize the layout within the MemoryBlock after deletion
+    optimize_layout(memblock);
+
+    // After merging, we should have one larger free block instead of two smaller ones
+    assert(count_blocks(6) == 1); // Assuming BLOCKSIZE is 64 and 6 is the order for 64 bytes
+
+    printf("test_buddy_system_merge passed!\n");
 }
 
 int main()
 {
+    getDevices();
 
-    test_memory_pool();
+    printf("\nInitializing memory pool...\n");
+    setup_pool(0, 4096); // Initialize a pool with 1024 bytes
+    Pool_t *pool = fetch_pool();
+
+    test_memory_pool(pool);
+    // test_adding_subblocks();
+    //  test_removing_last_subblock();
+    //  test_buddy_system_merge();
+
+    printf("\nDestroying memory pool...\n");
+    destroy_pool(pool);
+
+    display_table();
 
     // getDevices(); Work in Progress
     ////Device *gpu = init_device(CUDA, 0);
     ////Device *cpu = init_device(CPU, -1);
-
-    getDevices();
 
     // Initialize the global memory pool
     ////setup_tensor_pool(1);
