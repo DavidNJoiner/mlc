@@ -25,7 +25,7 @@ struct SubBlock
 struct MemoryBlock
 {
     SubBlock_ptr freelist[MAX_ORDER + 2];
-    alignas(DEEPC_SIZE_OF_VOID_POINTER) uint8_t m_subblock_array[BLOCKSIZE];
+    alignas(DEEPC_SIZE_OF_VOID_POINTER) uint8_t m_subblock_array[BLOCKSIZE - 96];
 };
 
 struct Pool
