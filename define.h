@@ -60,31 +60,25 @@ STATIC_ASSERT(sizeof(double) == 8, "Expected double to be 8 bytes.");
 #define MAX_POOL_INSTANCES 1
 #define DEEPC_MIN_BLOCK_SIZE sizeof(uint32_t)
 
-#define pointer_t void *
-#define DEEPC_SIZE_OF_VOID_POINTER sizeof(pointer_t)
+#define DEEPC_VOID_POINTER void *
+#define DEEPC_SIZE_OF_VOID_POINTER sizeof(DEEPC_VOID_POINTER)
 
 // Pool define
 #define MAX_ORDER 10 // 2 ** 10 == 1024 bytes
 #define MIN_ORDER 4  // 2 ** 4 == 16 bytes
 /* the order ranges 0..MAX_ORDER, the largest subblock is 2**(MAX_ORDER) */
-#define BLOCKSIZE (1 << MAX_ORDER) // BLOCKSIZE = 1024
+// #define BLOCKSIZE (1 << MAX_ORDER) // BLOCKSIZE = 1024
+#define BLOCKSIZE 1120 // BLOCKSIZE = 1120
 /* the address of the memoryblock of a subblock from freelists[i]. */
-
-/*
-#define _MEMBASE ((uintptr_t)MEMBLOCK->m_subblock_array)
-#define _OFFSET(b) ((uintptr_t)b - _MEMBASE)
-#define _MEMBLOCKOF(b, i) (_OFFSET(b) ^ ((uint32_t)1 << (i)))
-#define MEMBLOCKOF(b, i) ((pointer_t)(_MEMBLOCKOF(b, i) + _MEMBASE))
-*/
 
 #define _MEMBASE(MEMBLOCK) ((uintptr_t)(MEMBLOCK)->m_subblock_array)
 #define _OFFSET(b, MEMBLOCK) ((uintptr_t)(b)-_MEMBASE(MEMBLOCK))
 #define _MEMBLOCKOF(b, i, MEMBLOCK) (_OFFSET(b, MEMBLOCK) ^ ((uint32_t)1 << (i)))
-#define MEMBLOCKOF(b, i, MEMBLOCK) ((pointer_t)(_MEMBLOCKOF(b, i, MEMBLOCK) + _MEMBASE(MEMBLOCK)))
+#define MEMBLOCKOF(b, i, MEMBLOCK) ((DEEPC_VOID_POINTER)(_MEMBLOCKOF(b, i, MEMBLOCK) + _MEMBASE(MEMBLOCK)))
 
 // Ensure that each subblock is aligned to a multiple of the machine's word size.
 #define ALIGN_SIZE(size) (((size) + DEEPC_SIZE_OF_VOID_POINTER - 1) & ~(DEEPC_SIZE_OF_VOID_POINTER - 1))
-#define ALIGN_ADDR(pointer_t) ((void *)((uintptr_t)(pointer_t + DEEPC_SIZE_OF_VOID_POINTER - 1) & ~(DEEPC_SIZE_OF_VOID_POINTER - 1)))
+#define ALIGN_ADDR(DEEPC_VOID_POINTER) ((void *)((uintptr_t)(DEEPC_VOID_POINTER + DEEPC_SIZE_OF_VOID_POINTER - 1) & ~(DEEPC_SIZE_OF_VOID_POINTER - 1)))
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 #define DEEPC_WINDOWS 1
