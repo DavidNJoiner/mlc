@@ -1,4 +1,4 @@
-# DEEPC : A Machine learning framework written in C for learning purpose.
+# DEEPC : ## A Machine learning framework written in C for learning purpose.
 
 ## Memory Managment:
 
