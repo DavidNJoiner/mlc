@@ -22,7 +22,7 @@ uint32_t get_subblock_index(const MemoryBlock_ptr memblock_array_start, SubBlock
 SubBlock_t *subblock_malloc(uint32_t size, MemoryBlock_ptr MEMBLOCK)
 {
     printf("\n[call] : subblock_malloc\n");
-    printf("\t[info] MemoryBlock addr = %p\n", MEMBLOCK);
+    printf("\t[info] MemoryBlock addr = %p\n", (uintptr_t *)MEMBLOCK);
 
     SubBlock_ptr subblock;
     MemoryBlock_ptr memblock;
@@ -38,15 +38,15 @@ SubBlock_t *subblock_malloc(uint32_t size, MemoryBlock_ptr MEMBLOCK)
 
     order = (i < MIN_ORDER) ? MIN_ORDER : (i > MAX_ORDER ? MAX_ORDER : i);
 
-    printf("\ti = %d, order = 2^%d\n", i, order);
+    printf("\t[Debug] i = %d, order = 2^%d = %f\n", i, order, pow(2, order));
 
     // level up until non-null list found
     for (;; i++)
     {
         if (i > MAX_ORDER)
             return NULL;
-        if (MEMBLOCK->freelist[i])
-            printf("MEMBLOCK->freelist[%d] = %p\n", i, (uintptr_t *)MEMBLOCK->freelist[i]);
+        if (*(uintptr_t *)MEMBLOCK->freelist[i])
+            printf("\t[Debug] MEMBLOCK->freelist[%d] = %p\n", i, (uintptr_t *)MEMBLOCK->freelist[i]);
         break;
     }
 
@@ -69,6 +69,9 @@ SubBlock_t *subblock_malloc(uint32_t size, MemoryBlock_ptr MEMBLOCK)
 
     subblock->m_size = size + 1;
     subblock->m_ID = get_subblock_index(MEMBLOCK, subblock);
+
+    total_bytes_allocated += sizeof(SubBlock_t);
+    add_entry("subblock_malloc", 2, (double)(sizeof(SubBlock_t), 0.00));
 
     printf("\tSubBlock allocated at %p with size %zu and ID %d\n", subblock, subblock->m_size, subblock->m_ID);
 
@@ -102,6 +105,9 @@ void remove_subblock(MemoryBlock_ptr memblock, SubBlock_ptr subblock)
 
     printf("subblock address : %ld", (uintptr_t)subblock);
     printf("buddy_address : %ld", (uintptr_t)buddy);
+
+    total_bytes_allocated -= sizeof(SubBlock_t);
+    add_entry("remove_subblock", 2, 0.00, (double)(sizeof(SubBlock_t)));
 
     if (buddy->m_size == subblock->m_size)
     {
