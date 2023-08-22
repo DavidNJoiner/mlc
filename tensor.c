@@ -15,7 +15,7 @@ Tensor *tensor(Data *data, Device *device, bool requires_grad)
     Pool_t *Pool = fetch_pool();
     Tensor *new_tensor = (Tensor *)block_alloc(Pool);
 
-    new_tensor->require_grad = requires_grad;
+    set_require_grad(new_tensor, requires_grad);
     if (requires_grad)
     {
         if (device->type == CUDA)
@@ -69,7 +69,7 @@ Tensor *create_tensor(int *shape, int dim, int dtype, Device *device, bool requi
     Tensor *t = (Tensor *)block_alloc(Pool);
     t->data = data;
     t->device = device;
-    t->require_grad = requires_grad;
+    set_require_grad(t, (int)requires_grad);
     return t;
 }
 /*  -------------------------------------------------------------------------------------/
@@ -117,7 +117,7 @@ Tensor *zerosFrom(Tensor *t)
 
     new_tensor->data = new_data;
     new_tensor->device = t->device;
-    new_tensor->require_grad = t->require_grad;
+    set_require_grad(new_tensor, get_require_grad(t));
 
     if (t->gradient != NULL)
     {
@@ -291,4 +291,12 @@ void displayTensor(Tensor *A)
 bool is_aligned(void *ptr, size_t alignment)
 {
     return ((uintptr_t)ptr % alignment) == 0;
+}
+void set_require_grad(Tensor *tensor, int bit_flag)
+{
+    tensor->gradient |= (bit_flag << 31);
+}
+bool get_require_grad(Tensor *tensor)
+{
+    return (tensor->gradient >> 31) & 1;
 }

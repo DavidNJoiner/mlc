@@ -33,13 +33,16 @@ struct Pool_t;
 
 typedef struct
 {
-    bool require_grad;
+    uint16_t gradient; // This 32-bit variable stores both gradient and flags
     Data *data;
     Device *device;
-    float32 *gradient;
     void *lazy;    // LazyBuffer* lazydata;
     void *creator; // Function* creator; Points to the Function that created this Tensor.
 } Tensor;
+
+// Utils
+void set_require_grad(Tensor *tensor, int bit_flag);
+bool get_require_grad(Tensor *tensor);
 
 //  Tensors creation
 Tensor *zerosFrom(Tensor *t);
