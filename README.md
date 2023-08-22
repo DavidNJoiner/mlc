@@ -1,8 +1,6 @@
-# DEEPC : ## A Machine learning framework written in C for learning purpose.
-
-## Memory Managment:
-
-### Expected Behavior for Tensor creation and destruction:
+## DEEPC : A Machine learning framework written in C for learning purpose.
+### Memory Managment:
+#### Expected Behavior for Tensor creation and destruction:
 
 When a `Tensor` is instanciated. The programm looks for an available `MemoryBlocks` in a `Pool` instance.
 
