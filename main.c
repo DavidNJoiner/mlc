@@ -16,20 +16,16 @@ void test_memory_pool(Pool_t *pool)
     MemoryBlock_ptr block2 = block_alloc(pool);
     MemoryBlock_ptr block3 = block_alloc(pool);
 
+    // print_memblock_info(block2); SEGFAULT HERE
+
     printf("\nMemory pool statistics after allocations:\n");
     display_pool_stats(pool);
 
-    printf("total_bytes_currently_allocated = %d\n", total_bytes_allocated);
-
-    // 4. Free some memory blocks
     printf("\nFreeing some memory blocks...\n");
     free_block(pool, block2);
 
-    // 5. Display memory pool statistics again
     printf("\nMemory pool statistics after freeing:\n");
     display_pool_stats(pool);
-
-    printf("total_bytes_currently_allocated = %d\n", total_bytes_allocated);
 
     printf("\nMemory pool tests completed.\n");
 }
@@ -41,15 +37,17 @@ void test_adding_subblocks()
     Pool_t *pool = fetch_pool();
 
     // Implement function to asign subblock automatically to the first free adjacent memory block.
-    SubBlock_t *subblock1 = subblock_malloc(50, (MemoryBlock_t *)pool->m_next);
-    SubBlock_t *subblock2 = subblock_malloc(100, (MemoryBlock_t *)pool->m_next);
-    SubBlock_t *subblock3 = subblock_malloc(150, (MemoryBlock_t *)pool->m_next);
+    SubBlock_t *subblock1 = subblock_malloc(50, pool->m_next);
+    SubBlock_t *subblock2 = subblock_malloc(100, pool->m_next);
+    SubBlock_t *subblock3 = subblock_malloc(150, pool->m_next);
 
     assert(subblock1->m_size > 0);
     assert(subblock2->m_size > 0);
     assert(subblock3->m_size > 0);
 
     printf("test_adding_subblocks passed!\n");
+    printf("\nMemory pool statistics after adding subblocks:\n");
+    display_pool_stats(pool);
 }
 
 void test_removing_last_subblock()
@@ -103,7 +101,9 @@ int main()
     Pool_t *pool = fetch_pool();
 
     test_memory_pool(pool);
-    // test_adding_subblocks();
+    display_table();
+    test_adding_subblocks();
+    display_table();
     //  test_removing_last_subblock();
     //  test_buddy_system_merge();
 
