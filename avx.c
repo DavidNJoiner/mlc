@@ -5,6 +5,10 @@
 /*  ----------------------------------------------------------------------------*/
 void vec1_avx_mul_float16(float16 *dst, float16 *A, float16 *B, int mat_size)
 {
+    uint16_t *dst_uint16 = (uint16_t *)dst;
+    uint16_t *A_uint16 = (uint16_t *)A;
+    uint16_t *B_uint16 = (uint16_t *)B;
+
     int AVX_SIZE = 8; // F16C can process 8 half floats at a time
     int num_avx_chunks = mat_size / AVX_SIZE;
 
@@ -14,8 +18,8 @@ void vec1_avx_mul_float16(float16 *dst, float16 *A, float16 *B, int mat_size)
         int ii = i * AVX_SIZE;
 
         // Load data
-        __m128i a_half = _mm_load_si128((__m128i *)&A[ii]);
-        __m128i b_half = _mm_load_si128((__m128i *)&B[ii]);
+        __m128i a_half = _mm_load_si128((__m128i *)&A_uint16[ii]);
+        __m128i b_half = _mm_load_si128((__m128i *)&B_uint16[ii]);
 
         // Convert to single precision
         __m256 a = _mm256_cvtph_ps(a_half);
@@ -28,16 +32,17 @@ void vec1_avx_mul_float16(float16 *dst, float16 *A, float16 *B, int mat_size)
         __m128i product_half = _mm256_cvtps_ph(product, 0);
 
         // Store result
-        _mm_store_si128((__m128i *)&dst[ii], product_half);
+        _mm_store_si128((__m128i *)&dst_uint16[ii], product_half);
     }
 
     // Handle remaining elements with simple scalar multiplication
     int remaining_start = num_avx_chunks * AVX_SIZE;
     for (int i = remaining_start; i < mat_size; i++)
     {
-        dst[i] = (float16)((float32)A[i] * (float32)B[i]);
+        dst[i] = float16_from_float(A_uint16[i] * B_uint16[i]);
     }
 }
+
 /*  ------------------------------------------------------------------------------*/
 /*  vec1_avx_mul_float32 : Multiply two 1D float32 vector using AVX intrinsics.   */
 /*  ------------------------------------------------------------------------------*/
@@ -97,6 +102,9 @@ void vec1_avx_mul_float64(float64 *dst, float64 *A, float64 *B, int mat_size)
 /*  ------------------------------------------------------------------------------*/
 void vec1_avx_add_float16(float16 *dst, float16 *A, int mat_size)
 {
+    uint16_t *dst_uint16 = (uint16_t *)dst;
+    uint16_t *A_uint16 = (uint16_t *)A;
+
     int AVX_SIZE = 8; // F16C process 8 half floats at a time
     int num_avx_chunks = mat_size / AVX_SIZE;
 
@@ -106,8 +114,8 @@ void vec1_avx_add_float16(float16 *dst, float16 *A, int mat_size)
         int ii = i * AVX_SIZE;
 
         // Load data
-        __m128i a_half = _mm_load_si128((__m128i *)&A[ii]);
-        __m128i dst_half = _mm_load_si128((__m128i *)&dst[ii]);
+        __m128i a_half = _mm_load_si128((__m128i *)&A_uint16[ii]);
+        __m128i dst_half = _mm_load_si128((__m128i *)&dst_uint16[ii]);
 
         // Convert to single precision ( AVX512_FP16 not widely supported yet)
         __m256 a = _mm256_cvtph_ps(a_half);
@@ -126,7 +134,7 @@ void vec1_avx_add_float16(float16 *dst, float16 *A, int mat_size)
     for (int i = remaining_start; i < mat_size; i++)
     {
         // Assuming a software function to add half floats
-        dst[i] = (float16)((float32)A[i] + (float32)dst[i]);
+        dst[i] = dst[i] = float16_from_float(A_uint16[i] + dst_uint16[i]);
     }
 }
 /*  ------------------------------------------------------------------------------*/
