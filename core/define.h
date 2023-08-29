@@ -1,5 +1,5 @@
-#ifndef DEFINE_H
-#define DEFINE_H
+#ifndef _DEFINE_H_
+#define _DEFINE_H_
 
 #include <stdint.h>
 #include <string.h>
@@ -67,7 +67,12 @@ STATIC_ASSERT(sizeof(double) == 8, "Expected double to be 8 bytes.");
 #define MAX_ORDER 10 // 2 ** 10 == 1024 bytes
 #define MIN_ORDER 4  // 2 ** 4 == 16 bytes
 /* the order ranges 0..MAX_ORDER, the largest subblock is 2**(MAX_ORDER) */
-#define BLOCKSIZE (1 << MAX_ORDER) // BLOCKSIZE = 1024
+#if defined(_M_X64) || defined(__amd64__)
+#define BLOCKSIZE 1216
+#else
+#define BLOCKSIZE 1072
+#endif
+
 /* the address of the memoryblock of a subblock from freelists[i]. */
 
 #define _MEMBASE(MEMBLOCK) ((uintptr_t)(MEMBLOCK)->m_subblock_array)
@@ -111,28 +116,28 @@ STATIC_ASSERT(sizeof(double) == 8, "Expected double to be 8 bytes.");
 #define DEEPC_NOINLINE
 #endif
 
-/** @brief Gets the number of bytes from amount of gibibytes (GiB) (1024*1024*1024) */
-#define GIBIBYTES(amount) ((amount)*1024ULL * 1024ULL * 1024ULL)
-/** @brief Gets the number of bytes from amount of mebibytes (MiB) (1024*1024) */
-#define MEBIBYTES(amount) ((amount)*1024ULL * 1024ULL)
-/** @brief Gets the number of bytes from amount of kibibytes (KiB) (1024) */
-#define KIBIBYTES(amount) ((amount)*1024ULL)
-
-/** @brief Gets the number of bytes from amount of gigabytes (GB) (1000*1000*1000) */
-#define GIGABYTES(amount) ((amount)*1000ULL * 1000ULL * 1000ULL)
-/** @brief Gets the number of bytes from amount of megabytes (MB) (1000*1000) */
-#define MEGABYTES(amount) ((amount)*1000ULL * 1000ULL)
-/** @brief Gets the number of bytes from amount of kilobytes (KB) (1000) */
-#define KILOBYTES(amount) ((amount)*1000ULL)
-
 DEEPC_INLINE uint64_t get_aligned(uint64_t operand, uint64_t granularity)
 {
     return ((operand + (granularity - 1)) & ~(granularity - 1));
 }
+
+/** @brief Gets the number of bytes from amount of gibibytes (GiB) (1024*1024*1024) */
+#define GIBIBYTES(amount) ((amount) * 1024ULL * 1024ULL * 1024ULL)
+/** @brief Gets the number of bytes from amount of mebibytes (MiB) (1024*1024) */
+#define MEBIBYTES(amount) ((amount) * 1024ULL * 1024ULL)
+/** @brief Gets the number of bytes from amount of kibibytes (KiB) (1024) */
+#define KIBIBYTES(amount) ((amount) * 1024ULL)
+
+/** @brief Gets the number of bytes from amount of gigabytes (GB) (1000*1000*1000) */
+#define GIGABYTES(amount) ((amount) * 1000ULL * 1000ULL * 1000ULL)
+/** @brief Gets the number of bytes from amount of megabytes (MB) (1000*1000) */
+#define MEGABYTES(amount) ((amount) * 1000ULL * 1000ULL)
+/** @brief Gets the number of bytes from amount of kilobytes (KB) (1000) */
+#define KILOBYTES(amount) ((amount) * 1000ULL)
 
 #define DEEPC_MIN(x, y) (x < y ? x : y)
 #define DEEPC_MAX(x, y) (x > y ? x : y)
 #define LOG2(x) (log(x) / log(2.0))
 
 #endif
-#endif
+#endif // _DEFINE_H_

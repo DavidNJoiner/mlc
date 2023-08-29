@@ -1,19 +1,16 @@
-#ifndef CONFIG_H_
-#define CONFIG_H_
+// config.h
+#ifndef CONFIG_H
+#define CONFIG_H
 
-#include <stdio.h>
 #include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
 #include <stdio.h>
-#include <unistd.h>
-#include <time.h>
 
+// Common headers
 #include "device.h"
 #include "define.h"
-#include "cuda_ops.h"
+#include "../cuda_ops.h"
 
-// Check OS version
+// OS Specific includes
 #ifdef DEEPC_LINUX
 #include <unistd.h>
 void getDevices();
@@ -26,6 +23,15 @@ void cuda_version();
 uint32_t get_num_cores();
 void get_cpu_info();
 #endif
+//------------------------------------
+
+// Check for system architecture
+#if defined(_M_X64) || defined(__amd64__)
+#define DEEPC_64
+#else
+#define DEEPC_32
+#endif
+//------------------------------------
 
 // Check for compiler version
 #if __STDC_VERSION__ >= 201112L
@@ -33,6 +39,7 @@ void get_cpu_info();
 #else
 #define C11_SUPPORTED 0
 #endif
+//------------------------------------
 
 // Check for AVX512 support
 #if defined(__AVX512F__)
@@ -93,12 +100,15 @@ void get_cpu_info();
 #warning "No SIMD instruction set support detected"
 
 #endif
+//------------------------------------
 
+// Check for CUDA compatibility
 #ifdef CUDA_AVAILABLE
 #include "cuda_runtime.h"
 void cuda_version();
 #else
 // Alternative non-CUDA code here
 #endif
+//------------------------------------
 
-#endif // CONFIG_H_
+#endif // _CONFIG_H_

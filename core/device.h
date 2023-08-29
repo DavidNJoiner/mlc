@@ -1,6 +1,6 @@
 // device.h
-#ifndef DEVICE_H_
-#define DEVICE_H_
+#ifndef DEVICE_H
+#define DEVICE_H
 
 #include "config.h"
 #include <stdlib.h>
@@ -20,4 +20,4 @@ typedef struct
 Device *init_device(DeviceType type, int deviceID);
 void free_device(Device *device);
 
-#endif // DEVICE_H_
+#endif // _DEVICE_H_
