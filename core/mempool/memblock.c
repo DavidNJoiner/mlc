@@ -1,91 +1,87 @@
 #include "mempool.h"
 
-void print_memblock_info(MemoryBlock_ptr memblock)
+MemoryBlock_t *memblock_alloc(Pool_t *pool)
 {
-    uint32_t i;
-
-    printf("========================================\n");
-    printf("MEMBLOCK size: %d\n", BLOCKSIZE);
-    printf("MEMBLOCK start @ 0x%08x\n", (unsigned int)(uintptr_t)memblock->m_subblock_array);
-    printf("total free: %d\n", total_free());
-
-    for (i = 0; i <= MAX_ORDER; i++)
-    {
-        print_list_subblock(memblock, i);
-    }
-}
-
-MemoryBlock_ptr block_alloc(Pool_t *pool)
-{
-    printf("\n[call] : block_alloc \n");
+    printf("\033[0;37m[Call] memblock_alloc\033[0m\n");
 
     // If m_numInitialized is more than 0 or all blocks are in use, allocate memory for new MemoryBlocks
     if (pool->m_numInitialized != 0 && pool->m_numInitialized == pool->m_numOfBlocks)
     {
-        printf("\t[Debug] all blocks in use ( num block init %d ). allocating new blocks...\n", pool->m_numInitialized);
+        printf("\t\033[0;32m[Debug]\033[0mall blocks in use ( num block init %d ). allocating new blocks...\n", pool->m_numInitialized);
         destroy_pool(pool);
         exit(1);
     }
 
-    MemoryBlock_ptr new_block_address;
+    MemoryBlock_t *new_block_address = pool->m_next ? pool->m_next : (MemoryBlock_t *)pool->m_memStart;
 
-    if (pool->m_next = pool->m_memStart)
+    if (!new_block_address)
     {
-        new_block_address = (MemoryBlock_t *)pool->m_memStart;
-    }
-    else
-    {
-        new_block_address = pool->m_next;
-    }
-
-    if (new_block_address == NULL)
-    {
-        printf("\t[Error] Memory allocation for new_block failed\n");
+        printf("\t\033[0;31m[Error]\033[0m Memory allocation for new_block failed\n");
         return NULL;
     }
 
-    // Initialize the freelist array
-    for (int i = 0; i <= MAX_ORDER; i++)
-    {
-        new_block_address->freelist[i] = (SubBlock_ptr)malloc(sizeof(SubBlock_t));
-    }
-
-    memset(new_block_address->m_subblock_array, 0, BLOCKSIZE);
+    /*    for (int i = 0; i <= MAX_ORDER + 1; i++)
+       {
+           new_block_address->freelist[i] = NULL;
+       } */
 
     pool->m_numInitialized++;
     pool->m_numFreeBlocks--;
-    pool->m_next = (MemoryBlock_t *)((uintptr_t)pool->m_numInitialized * pool->m_sizeOfEachBlock + BLOCKSIZE);
+    pool->m_next = pool->m_memStart + (pool->m_numInitialized * BLOCKSIZE);
 
-    printf("\t[Info] : Memory Block Allocation Successful !\n");
+    printf("\t\033[34m[Info] Memory Block Allocation Successful ! Address %p\033[0m\n", (void *)new_block_address);
 
-    total_bytes_allocated += sizeof(MemoryBlock_t);
-    add_entry("bloc_alloc", 2, (double)(sizeof(MemoryBlock_t)), 0);
-    printf("total_bytes_currently_allocated = %d\n", total_bytes_allocated);
+    increase_total_bytes_allocated(BLOCKSIZE);
+    add_entry("bloc_alloc", 2, (double)(sizeof(MemoryBlock_t)), 0.0);
+    printf("total_bytes_currently_allocated = %d\n", get_total_bytes_allocated());
 
     return new_block_address;
 }
-
-void free_block(Pool_t *pool, MemoryBlock_ptr block)
+/*
+ *   Free a specific block from the pool
+ */
+void block_free(Pool_t *pool, MemoryBlock_t *block)
 {
-    printf("[call] : free_block\n");
-
-    // Check if the block is in the list of allocated blocks
-    bool isAllocated = false;
-    for (uint32_t i = 0; i <= pool->m_numInitialized; i++)
+    // TODO : subblock_free_all(block); free all subblocks in the given block.
+    /* for (int i = 0; i <= MAX_ORDER + 1; i++)
     {
+        // free(block->freelist[i]);
+        block->freelist[i] = NULL;
+    } */
+    printf("\t\033[34m[Info] Freed block at address %p\033[0m\n", (void *)(block));
+    block = NULL;
+
+    printf("\t\033[0;37m[Call] decrease_total_bytes_allocated\033[0m\n");
+    decrease_total_bytes_allocated(BLOCKSIZE);
+    add_entry("memblock_free", 2, 0.0, (double)(sizeof(MemoryBlock_t)));
+
+    pool->m_numFreeBlocks++;
+    pool->m_numInitialized--;
+}
+/*
+ *   Look block match before freeing it from the pool
+ */
+void memblock_free(Pool_t *pool, MemoryBlock_t *block)
+{
+    printf("\033[0;37m[Call] memblock_free\033[0m\n");
+
+    bool isAllocated = false;
+    for (uint32_t i = 0; i < pool->m_numInitialized; i++)
+    {
+
+        printf("\tChecking Initialized bloc %d out of %d indexes\n", i, pool->m_numInitialized - 1);
+        printf("\t%p / %p\n", block, pool->m_memStart + i * BLOCKSIZE);
 
         if (block == pool->m_memStart + i * BLOCKSIZE)
         {
             isAllocated = true;
-            // subblock_free_all(block);
-            // free((DEEPC_VOID_POINTER)(block->freelist));
-
-            total_bytes_allocated -= sizeof(MemoryBlock_t);
-            add_entry("bloc_alloc", 2, 0.00, (double)(sizeof(MemoryBlock_t)));
-
-            pool->m_numFreeBlocks++;
-            pool->m_numInitialized--;
+            block_free(pool, block);
+            break; // block was found - break loop
         }
+    }
+    if (!isAllocated)
+    {
+        printf("\033[0;31m[Error] The provided block does not belong to the pool!\033[0m\n");
     }
 }
 
@@ -95,7 +91,7 @@ void free_block(Pool_t *pool, MemoryBlock_ptr block)
 
 void setup_global_data_ptr_array(int initial_capacity)
 {
-    printf("\n[call] : setup_global_data_ptr_array\n");
+    printf("\033[0;37m[Call] setup_global_data_ptr_array\033[0m\n");
     global_data_ptr_array = (DataPtrArray *)malloc(sizeof(DataPtrArray));
     global_data_ptr_array->data_ptrs = (Data **)malloc(sizeof(Data *) * initial_capacity);
     global_data_ptr_array->count = 0;
@@ -107,7 +103,7 @@ void setup_global_data_ptr_array(int initial_capacity)
 
 void add_data_ptr(Data *data_ptr)
 {
-    printf("\n[call] : add_data_ptr :\n");
+    printf("\033[0;37m[Call] add_data_ptr\033[0m\n");
     if (global_data_ptr_array->count == global_data_ptr_array->capacity)
     {
         global_data_ptr_array->capacity *= 2;
@@ -115,20 +111,20 @@ void add_data_ptr(Data *data_ptr)
     }
     global_data_ptr_array->count++;
     global_data_ptr_array->data_ptrs[global_data_ptr_array->count - 1] = data_ptr;
-    printf("\t[DEBUG] Data ptrs count = %d\n", global_data_ptr_array->count);
-    printf("\t[DEBUG] Data pointer added : %p\n", global_data_ptr_array->data_ptrs[global_data_ptr_array->count - 1]);
+    printf("\t\033[0;32m[Debug]\033[0m Data ptrs count = %d\n", global_data_ptr_array->count);
+    printf("\t\033[0;32m[Debug]\033[0m Data pointer added : %p\n", global_data_ptr_array->data_ptrs[global_data_ptr_array->count - 1]);
 }
 void free_all_data()
 {
-    printf("\n[call] : free_all_data\n");
+    printf("\033[0;37m[Call] free_all_data\033[0m\n");
     if (global_data_ptr_array != NULL)
     {
-        printf("\t[DEBUG] global_data_ptr_array is not NULL\n");
+        printf("\t\033[0;32m[Debug]\033[0m global_data_ptr_array is not NULL\n");
         for (uint32_t i = 0; i < global_data_ptr_array->count; i++)
         {
             if (global_data_ptr_array->data_ptrs[i] != NULL)
             {
-                printf("\t[DEBUG] free Datas at address %p\n", global_data_ptr_array->data_ptrs[i]);
+                printf("\t\033[0;32m[Debug]\033[0m free Datas at address %p\n", global_data_ptr_array->data_ptrs[i]);
                 free(global_data_ptr_array->data_ptrs[i]);
                 global_data_ptr_array->data_ptrs[i] = NULL;
             }

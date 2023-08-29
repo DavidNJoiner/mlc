@@ -1,41 +1,59 @@
 #ifndef MEMPOOL_H_
 #define MEMPOOL_H_
 
-#include "../../table.h"
 #include <assert.h>
-#include "global.h"
-#include "../../define.h"
-#include "../../device.h"
+#include <stddef.h>
+#include <limits.h>
+#include "state_manager.h"
+#include "../define.h"
+#include "../device.h"
 #include "../../tensor.h"
+#include "../../logging/table_cmd.h"
+
+#define PARENT_OF(child_ptr, parent_type, parent_member) \
+    ((parent_type *)((char *)(child_ptr)-offsetof(parent_type, parent_member)))
 
 typedef struct SubBlock SubBlock_t;
 typedef struct MemoryBlock MemoryBlock_t;
 typedef struct Pool Pool_t;
 typedef struct GlobalPool GlobalPool_t;
 
-typedef SubBlock_t *SubBlock_ptr;
-typedef MemoryBlock_t *MemoryBlock_ptr;
-
+//------------------------------------------------------------
+// SubBlock
+//
+//
+//
+//------------------------------------------------------------
 struct SubBlock
 {
     size_t m_size;
     uint32_t m_ID;
 };
-
+//------------------------------------------------------------
+// MemoryBlock
+//
+//
+//
+//------------------------------------------------------------
 struct MemoryBlock
 {
-    SubBlock_ptr freelist[MAX_ORDER + 2];
-    alignas(DEEPC_SIZE_OF_VOID_POINTER) uint8_t m_subblock_array[BLOCKSIZE];
+    SubBlock_t *freelist[MAX_ORDER + 2];
+    alignas(DEEPC_SIZE_OF_VOID_POINTER) uint8_t m_subblock_array[BLOCKSIZE - ((MAX_ORDER + 2) * DEEPC_SIZE_OF_VOID_POINTER)];
 };
-
+//------------------------------------------------------------
+// Pool
+//
+// 24 bytes on 32 bit systems
+// 32 bytes on 64 bit systems
+//------------------------------------------------------------
 struct Pool
 {
     uint32_t m_numOfBlocks;     // Num of blocks
     uint32_t m_sizeOfEachBlock; // Size of each block
     uint32_t m_numFreeBlocks;   // Num of remaining blocks
     uint32_t m_numInitialized;  // Num of initialized blocks
-    MemoryBlock_ptr m_memStart; // Beginning of memory pool
-    MemoryBlock_ptr m_next;     // Next available block
+    MemoryBlock_t *m_memStart;  // Beginning of memory pool
+    MemoryBlock_t *m_next;      // Next available block
 };
 
 struct GlobalPool
@@ -46,24 +64,24 @@ struct GlobalPool
 
 #ifndef DISABLE_MEMORY_POOLING
 
-// Pool memory managment
-static void init_pool_(Pool_t *pool, const size_t poolSize);
-void setup_pool(uint8_t pool_instance_index, size_t pool_size);
+// Low level Pool memory managment
+static void _init_pool_(Pool_t *pool, const size_t poolSize);
+void init_pool(uint8_t pool_instance_index, size_t pool_size);
 void display_pool_stats(Pool_t *pool);
 void destroy_pool(Pool_t *pool);
 Pool_t *fetch_pool();
 
-// MemoryBlock managment
-void free_block(Pool_t *pool, MemoryBlock_ptr block);
-void print_memblock_info(MemoryBlock_ptr memblock);
-MemoryBlock_ptr block_alloc(Pool_t *p);
+// Low level MemoryBlock managment
+MemoryBlock_t *memblock_alloc(Pool_t *p);
+void block_free(Pool_t *pool, MemoryBlock_t *block);
+void memblock_free(Pool_t *pool, MemoryBlock_t *block);
 
-// SubBlock managment
-SubBlock_t *subblock_malloc(uint32_t size, MemoryBlock_ptr MEMBLOCK);
-void subblock_free_all(MemoryBlock_ptr MEMBLOCK);
-void remove_subblock(MemoryBlock_ptr memblock, SubBlock_ptr subblock);
-void merge_subblocks(MemoryBlock_ptr memblock, SubBlock_ptr subblock1, SubBlock_ptr subblock2);
-void optimize_layout(MemoryBlock_ptr memblock);
+// Low level SubBlock managment
+SubBlock_t *subblock_alloc(uint32_t size, MemoryBlock_t *MEMBLOCK);
+void _subblock_free_(MemoryBlock_t *memblock, SubBlock_t *subblock);
+void subblock_free_all(MemoryBlock_t *MEMBLOCK);
+void _subblock_merge_(MemoryBlock_t *memblock, SubBlock_t *subblock1, SubBlock_t *subblock2);
+void _subblock_coalescing_(MemoryBlock_t *memblock);
 
 #else
 
@@ -85,8 +103,13 @@ void add_data_ptr(Data *data_ptr);
 void free_all_data();
 
 // Debug functions
-void print_list_subblock(MemoryBlock_ptr memblock, uint32_t i);
+void print_list_subblock(MemoryBlock_t *memblock, uint32_t i);
 uint32_t count_blocks(uint32_t i);
 uint32_t total_free();
 
 #endif // MEMPOOL_H_
+
+#ifndef _MEMPOOL_IMPLEMENTATION_
+#define _MEMPOOL_IMPLEMENTATION_
+
+#endif // _IMPLEMENTATION_MEMPOOL_H_
