@@ -1,4 +1,4 @@
-#ifndef NN_H_ 
+#ifndef NN_H_
 #define NN_H_
 
 #include <stdio.h>
@@ -6,34 +6,38 @@
 #include <math.h>
 #include "tensor.h"
 #include "data/dataset.h"
-#include "dtype.h"
+#include "core/types/dtype.h"
 #include "function.h"
 
 #define LEARNING_RATE 0.1
 #define EPOCHS 1000
 
-typedef struct {
-    Tensor* w;
-    Tensor* b;
+typedef struct
+{
+    Tensor *w;
+    Tensor *b;
 } Parameters;
 
-typedef struct {
-    Parameters* params;
-    float (*Function)(float); //Pointer to the a activation function.
+typedef struct
+{
+    Parameters *params;
+    float (*Function)(float); // Pointer to the a activation function.
 } Neuron;
 
-typedef struct {
-    Neuron* neurons;
+typedef struct
+{
+    Neuron *neurons;
     int num_neurons;
 } Layer;
 
-typedef struct {
-    Layer* layers;
+typedef struct
+{
+    Layer *layers;
     int num_layers;
 } NeuralNet;
 
-Parameters train(Data* data);
+Parameters train(Data *data);
 float sigmoid(float x);
 float sigmoid_derivative(float x);
 
-#endif //NN_H
+#endif // NN_H

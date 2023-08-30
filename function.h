@@ -1,7 +1,7 @@
-#ifndef FUNCTION_H_ 
+#ifndef FUNCTION_H_
 #define FUNCTION_H_
 
-#include "device.h"
+#include "core/device.h"
 #include "tensor.h"
 
 // Initialize a new Function example : Function* sin_function = InitFunction(device, tensors, Sin_Forward, Sin_Backward);
@@ -15,7 +15,7 @@
 /* we don't need to compute it.
 ---------------------------------------------------------------------------------------------------------------------------*/
 
-// requires_grad : 
+// requires_grad :
 /*---------------------------------------------------------------------------------------------------------------------------
 /* Is a property of the Tensor class as well. Here it is set to True if any of the Function's parent tensors require a gradient.
 /* In other words, if the function uses any tensor that needs a gradient, then the function itself will need to participate
@@ -25,18 +25,18 @@
 // Forward declaration for Function
 struct Function;
 
-typedef struct  {
-    Device* device;
-    Data* parents;
+typedef struct
+{
+    Device *device;
+    Data *parents;
     bool *needs_input_grad;
     bool requires_grad;
-    Tensor* (*Forward)(struct Function *self, Data *args);
+    Tensor *(*Forward)(struct Function *self, Data *args);
     void (*Backward)(struct Function *self, Data *args);
 } Function;
 
-Function* InitFunction(Device* device, Data* tensors, Tensor* (*ForwardFunc)(Function *self, Data *args), void (*BackwardFunc)(Function *self, Data *args));
+Function *InitFunction(Device *device, Data *tensors, Tensor *(*ForwardFunc)(Function *self, Data *args), void (*BackwardFunc)(Function *self, Data *args));
 Tensor *Forward(Function *self, Data *args);
 void Backward(Function *self, Data *args);
 
-#endif //FUNCTION_H_
-
+#endif // FUNCTION_H_

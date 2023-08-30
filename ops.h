@@ -2,8 +2,8 @@
 #define OPS_H_
 
 #include "data/dataset.h"
-#include "config.h"
-#include "device.h"
+#include "core/config.h"
+#include "core/device.h"
 #include "cuda_ops.h"
 #include "intrinsics.h"
 

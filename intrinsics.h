@@ -1,8 +1,9 @@
 #ifndef INTRINSICS_H_
 #define INTRINSICS_H_
 
-#include "config.h"
-#include "dtype.h"
+#include <immintrin.h>
+#include "core/config.h"
+#include "core/types/dtype.h"
 
 #if defined(AVX512)
 // TODO : Write operation using appropriate vector types (__m512, __m512d, etc.).
