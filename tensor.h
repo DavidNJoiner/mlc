@@ -12,7 +12,7 @@
 #include "ops.h"
 
 #include "device_manager.h"
-#include "device.h"
+#include "core/device.h"
 
 /*  -------------------------------------------------------*/
 /*  Tensor memory management                               */
@@ -33,7 +33,7 @@ struct Pool_t;
 
 typedef struct
 {
-    uint16_t gradient; // This 32-bit variable stores both gradient and flags
+    float32 *gradient; // 1 flag, 31 bits gradient
     Data *data;
     Device *device;
     void *lazy;    // LazyBuffer* lazydata;

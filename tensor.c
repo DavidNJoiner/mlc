@@ -13,7 +13,7 @@ Tensor *tensor(Data *data, Device *device, bool requires_grad)
 
     // Use the custom memory allocator to allocate memory for the new tensor
     Pool_t *Pool = fetch_pool();
-    Tensor *new_tensor = (Tensor *)block_alloc(Pool);
+    Tensor *new_tensor = (Tensor *)memblock_alloc(Pool);
 
     set_require_grad(new_tensor, requires_grad);
     if (requires_grad)
@@ -66,7 +66,7 @@ Tensor *create_tensor(int *shape, int dim, int dtype, Device *device, bool requi
     }
     Data *data = create_data(array, shape, dim, dtype); // check if Data functions handle cuda memory
     Pool_t *Pool = fetch_pool();
-    Tensor *t = (Tensor *)block_alloc(Pool);
+    Tensor *t = (Tensor *)memblock_alloc(Pool);
     t->data = data;
     t->device = device;
     set_require_grad(t, (int)requires_grad);
@@ -80,8 +80,8 @@ Tensor *zerosFrom(Tensor *t)
 
     Pool_t *Pool = fetch_pool();
 
-    Tensor *new_tensor = (Tensor *)block_alloc(Pool);
-    Data *new_data = (Data *)block_alloc(Pool);
+    Tensor *new_tensor = (Tensor *)memblock_alloc(Pool);
+    Data *new_data = (Data *)memblock_alloc(Pool);
 
     new_data->shape = (int *)malloc(t->data->dim * sizeof(int));
     if (new_data->shape == NULL)
@@ -294,9 +294,11 @@ bool is_aligned(void *ptr, size_t alignment)
 }
 void set_require_grad(Tensor *tensor, int bit_flag)
 {
-    tensor->gradient |= (bit_flag << 31);
+    uint32_t *int_ptr = (uint32_t *)&tensor->gradient;
+    *int_ptr |= (bit_flag << 31);
 }
 bool get_require_grad(Tensor *tensor)
 {
-    return (tensor->gradient >> 31) & 1;
+    uint32_t *int_ptr = (uint32_t *)&tensor->gradient;
+    return (*int_ptr >> 31) & 1;
 }
