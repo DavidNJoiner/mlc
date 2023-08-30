@@ -5,6 +5,7 @@ COMPILER="-std=c11"
 export CUDA_PATH="/usr/local/cuda-12.2"
 export PATH=${CUDA_PATH}/bin${PATH:+:${PATH}}
 export LD_LIBRARY_PATH=${CUDA_PATH}/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+export GL_LIBS="/usr/lib/x86_64-linux-gnu"
 
 if [ ! -d "${CUDA_PATH}" ]; then
     echo "CUDA_PATH directory ${CUDA_PATH} does not exist. Please check the path and try again."
@@ -59,11 +60,11 @@ if [ "$ARCH" == "x86_64" ]; then
             SIMD_FLAGS=""
             ;;
     esac
-    GCC_FLAGS="-I${CUDA_PATH}/include ${SIMD_FLAGS} -march=native -O2 -fopenmp -lm ${CUDA_FLAG}"
+    GCC_FLAGS="-fPIC -I${CUDA_PATH}/include ${SIMD_FLAGS} -march=native -O2 -fopenmp -lm ${CUDA_FLAG}"
 elif [ "$ARCH" == "armv7l" ]; then
-    GCC_FLAGS="-I${CUDA_PATH}/include -march=armv7-a -O2 -fopenmp -lm ${CUDA_FLAG}"
+    GCC_FLAGS="-fPIC -I${CUDA_PATH}/include -march=armv7-a -O2 -fopenmp -lm ${CUDA_FLAG}"
 elif [ "$ARCH" == "aarch64" ]; then
-    GCC_FLAGS="-I${CUDA_PATH}/include -march=armv8-a -O2 -fopenmp -lm ${CUDA_FLAG}"
+    GCC_FLAGS="-fPIC -I${CUDA_PATH}/include -march=armv8-a -O2 -fopenmp -lm ${CUDA_FLAG}"
 else
     echo "Unsupported architecture: $ARCH"
     exit 1
@@ -79,28 +80,31 @@ if [ -n "${NVCC_FLAGS}" ]; then
 fi
 
 # Compile the C source files with gcc
-gcc ${COMPILER} -g -c config.c -o build/config.o ${GCC_FLAGS}
-gcc ${COMPILER} -g -c table.c -o build/table.o ${GCC_FLAGS}
-gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/mempool/global.c -o build/global.o ${GCC_FLAGS}
+gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/config.c -o build/config.o ${GCC_FLAGS}
+gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/deep_time.c -o build/deep_time.o ${GCC_FLAGS}
+gcc ${COMPILER} -g -c ${PROJECT_ROOT}/logging/table_cmd.c -o build/table_cmd.o ${GCC_FLAGS}
+gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/types/float16.c -o build/float16.o ${GCC_FLAGS}
+gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/types/dtype.c -o build/dtype.o ${GCC_FLAGS}
+gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/mempool/state_manager.c -o build/state_manager.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/mempool/pool.c -o build/pool.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/mempool/memblock.c -o build/memblock.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/mempool/subblock.c -o build/subblock.o ${GCC_FLAGS}
-gcc ${COMPILER} -g -c main.c -o build/main.o ${GCC_FLAGS}
-gcc ${COMPILER} -g -c device.c -o build/device.o ${GCC_FLAGS}
+gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/device.c -o build/device.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c avx.c -o build/avx.o ${GCC_FLAGS}
-gcc ${COMPILER} -g -c dtype.c -o build/dtype.o ${GCC_FLAGS}
+#gcc ${COMPILER} -g -c sse.c -o build/sse.o ${GCC_FLAGS}
+gcc ${COMPILER} -g -c ops.c -o build/ops.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c data/data.c -o build/data.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c data/dataset.c -o build/dataset.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c debug.c -o build/debug.o ${GCC_FLAGS}
-gcc ${COMPILER} -g -c ops.c -o build/ops.o ${GCC_FLAGS}
 #gcc -c function.c -o build/function.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c tensor.c -o build/tensor.o ${GCC_FLAGS}
+gcc ${COMPILER} -g -c main.c -o build/main.o ${GCC_FLAGS}
 
 # Link all the object files, including cuda.o
 if [ -n "${NVCC_FLAGS}" ]; then
-    gcc build/*.o -L${CUDA_PATH}/lib64 -lcudart -o deepc -lm
+    gcc build/*.o -L${CUDA_PATH}/lib64 -lcudart -L${GL_LIBS} -lGL -lGLEW -lglut -lGLU -o deepc -lm 
 else
-    gcc build/*.o -o deepc -lm
+    gcc build/*.o -L${GL_LIBS} -lGL -lGLEW -lglut -lGLU -o deepc -lm
 fi
 
 # Clean up object files
