@@ -3,7 +3,7 @@
 #define DEVICE_MANAGER_H_
 
 #include <stdio.h>
-#include "device.h"
+#include "core/device.h"
 
 void            InitDM();
 void            SetDevice(Device* device);
