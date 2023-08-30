@@ -240,7 +240,8 @@ void fill_random_data(void *array, int dtype, int size, int min_range, int max_r
         float16 *ptr = (float16 *)array;
         for (int i = 0; i < size; i++)
         {
-            ptr[i] = (float16)(min_range + ((float16)rand() / (float16)RAND_MAX) * (max_range - min_range));
+            float random_value = min_range + ((float)rand() / (float)RAND_MAX) * (max_range - min_range);
+            ptr[i] = float16_from_float(random_value);
         }
         break;
     }
