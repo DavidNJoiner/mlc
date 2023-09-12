@@ -59,8 +59,8 @@ Pool_t *fetch_pool()
 
 void init_pool(uint8_t pool_instance_index, size_t pool_size)
 {
-    printf("\033[0;35mMAXIMUM UNSIGNED INT SIZE =  %5u \033[0m\n", UINT_MAX);
-    printf("\033[0;35mSIZE MemoryBlock_t =         %5u \033[0m\n", BLOCKSIZE);
+    printf("\033[0;35mMAXIMUM UNSIGNED INT SIZE  %5u \033[0m\n", UINT_MAX);
+    printf("\033[0;35mSIZE MemoryBlock_t         %5u \033[0m\n", BLOCKSIZE);
     _init_pool_(&global_pool_instances.m_pools[pool_instance_index], pool_size);
     global_pool_instances.m_is_initialized = true;
 }
