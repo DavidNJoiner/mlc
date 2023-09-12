@@ -6,11 +6,6 @@
 #include <string.h>
 #include <stdarg.h>
 
-// OPEN GL
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glut.h>
-
 // CORE
 #include "../core/deep_time.h"
 #include "../core/mempool/state_manager.h"
@@ -45,19 +40,6 @@ typedef struct
 
 extern int sort_column;
 extern Table table;
-
-// Console
-void addToConsole(const char *line);
-void renderConsoleArea(int width, int height);
-
-// visual test
-void initOpenGL(int argc, char **argv);
-void setOpenGLColor(int col);
-void drawCellBackground(float x, float y, float width, float height);
-void drawString(float x, float y, const char *string, int col);
-void drawHeader(float x, float y, const char *string);
-void drawValue(float x, float y, const char *string, float value, int columnIndex);
-void gl_display_table();
 
 // command
 void init_table();
