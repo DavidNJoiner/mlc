@@ -1,7 +1,7 @@
 #include "intrinsics.h"
 
 /*  ----------------------------------------------------------------------------*/
-/*  vec1_sse_mul_float16 : Mavx.cultiply two 1D float16 vector using AVX intrinsics. */
+/*  vec1_sse_mul_float16 : Multiply two 1D float16 vector using AVX intrinsics. */
 /*  ----------------------------------------------------------------------------*/
 void vec1_sse_mul_float16(float16 *dst, float16 *A, float16 *B, int mat_size)
 {
@@ -188,7 +188,9 @@ void vec1_sse_add_float16(float16 *dst, float16 *A, int mat_size)
         dst[i] = (float16)((float32)A[i] + (float32)dst[i]);
     }
 }
-
+/*  ------------------------------------------------------------------------------*/
+/*  vec1_sse_add_float32 : Add two 1D float32 vector using AVX intrinsics.        */
+/*  ------------------------------------------------------------------------------*/
 void vec1_sse_add_float32(float32 *dst, float32 *A, int mat_size)
 {
     int SSE_SIZE = 4; // SSE2 can process 4 floats at a time
@@ -211,7 +213,9 @@ void vec1_sse_add_float32(float32 *dst, float32 *A, int mat_size)
         dst[i] += A[i];
     }
 }
-
+/*  ------------------------------------------------------------------------------*/
+/*  vec1_sse_add_float64 : Add two 1D float64 vector using AVX intrinsics.        */
+/*  ------------------------------------------------------------------------------*/
 void vec1_sse_add_float64(float64 *dst, float64 *A, int mat_size)
 {
     int SSE_SIZE = 2; // SSE2 can process 2 doubles at a time

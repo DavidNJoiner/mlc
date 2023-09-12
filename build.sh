@@ -72,7 +72,7 @@ fi
 
 # Compile the CUDA source file with nvcc
 if [ -n "${NVCC_FLAGS}" ]; then
-    nvcc -g -c cuda_ops.cu -o build/cuda_ops.o ${NVCC_FLAGS}
+    nvcc -g -c ${PROJECT_ROOT}/ops/cuda_ops.cu -o build/cuda_ops.o ${NVCC_FLAGS}
     if [ $? -ne 0 ]; then
         echo "Compilation of cuda_ops.cu failed."
         exit 1
@@ -90,9 +90,9 @@ gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/mempool/pool.c -o build/pool.o ${GCC_
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/mempool/memblock.c -o build/memblock.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/mempool/subblock.c -o build/subblock.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/device.c -o build/device.o ${GCC_FLAGS}
-gcc ${COMPILER} -g -c avx.c -o build/avx.o ${GCC_FLAGS}
-#gcc ${COMPILER} -g -c sse.c -o build/sse.o ${GCC_FLAGS}
-gcc ${COMPILER} -g -c ops.c -o build/ops.o ${GCC_FLAGS}
+gcc ${COMPILER} -g -c ${PROJECT_ROOT}/ops/avx.c -o build/avx.o ${GCC_FLAGS}
+#gcc ${COMPILER} -g -c ${PROJECT_ROOT}/ops/sse.c -o build/sse.o ${GCC_FLAGS}
+gcc ${COMPILER} -g -c ${PROJECT_ROOT}/ops/ops.c -o build/ops.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c data/data.c -o build/data.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c data/dataset.c -o build/dataset.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c debug.c -o build/debug.o ${GCC_FLAGS}
@@ -102,9 +102,9 @@ gcc ${COMPILER} -g -c main.c -o build/main.o ${GCC_FLAGS}
 
 # Link all the object files, including cuda.o
 if [ -n "${NVCC_FLAGS}" ]; then
-    gcc build/*.o -L${CUDA_PATH}/lib64 -lcudart -L${GL_LIBS} -lGL -lGLEW -lglut -lGLU -o deepc -lm 
+    gcc build/*.o -L${CUDA_PATH}/lib64 -lcudart -o deepc -lm #-L${GL_LIBS} -lGL -lGLEW -lglut -lGLU 
 else
-    gcc build/*.o -L${GL_LIBS} -lGL -lGLEW -lglut -lGLU -o deepc -lm
+    gcc build/*.o -L${GL_LIBS} -o deepc -lm #-lGL -lGLEW -lglut -lGLU
 fi
 
 # Clean up object files

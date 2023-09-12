@@ -1,5 +1,7 @@
-#include "cuda_ops.h"
+// std
 #include <stdio.h>
+
+#include "cuda_ops.h"
 
 #ifdef __CUDACC__
     #include <cuda_runtime.h>

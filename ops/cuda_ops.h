@@ -1,7 +1,7 @@
 #ifndef _CUDA_OPS_H_
 #define _CUDA_OPS_H_
 
-#include "core/types/dtype.h"
+#include "../core/types/dtype.h"
 
 #ifdef __cplusplus
 extern "C"
