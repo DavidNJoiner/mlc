@@ -2,13 +2,13 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+// std
 #include <stdint.h>
 #include <stdio.h>
 
-// Common headers
 #include "device.h"
 #include "define.h"
-#include "../cuda_ops.h"
+#include "../ops/cuda_ops.h"
 
 // OS Specific includes
 #ifdef DEEPC_LINUX

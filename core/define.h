@@ -67,6 +67,8 @@ STATIC_ASSERT(sizeof(double) == 8, "Expected double to be 8 bytes.");
 #define MAX_ORDER 10 // 2 ** 10 == 1024 bytes
 #define MIN_ORDER 4  // 2 ** 4 == 16 bytes
 /* the order ranges 0..MAX_ORDER, the largest subblock is 2**(MAX_ORDER) */
+
+// TODO : avoid hardcoding memblock size
 #if defined(_M_X64) || defined(__amd64__)
 #define BLOCKSIZE 1216
 #else

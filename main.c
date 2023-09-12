@@ -92,9 +92,11 @@ void test_float16()
 int main(int argc, char **argv)
 {
     // getDevices();
+    Device *gpu = init_device(CUDA, 0);
+    Device *cpu = init_device(CPU, -1);
 
     printf("Initializing memory pool...\n");
-    init_pool(0, 4096); // Initialize a pool with 1024 bytes
+    init_pool(0, 4096);
     Pool_t *pool = fetch_pool();
 
     test_memory_pool(pool);
@@ -107,10 +109,6 @@ int main(int argc, char **argv)
     destroy_pool(pool);
 
     display_table();
-
-    // getDevices(); Work in Progress
-    ////Device *gpu = init_device(CUDA, 0);
-    ////Device *cpu = init_device(CPU, -1);
 
     // Initialize the global memory pool
     ////setup_tensor_pool(1);

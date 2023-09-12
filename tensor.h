@@ -1,6 +1,7 @@
 #ifndef TENSOR_H_
 #define TENSOR_H_
 
+// std
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -9,7 +10,7 @@
 
 #include "data/dataset.h"
 #include "debug.h"
-#include "ops.h"
+#include "ops/ops.h"
 
 #include "device_manager.h"
 #include "core/device.h"

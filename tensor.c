@@ -10,7 +10,6 @@
 // TODO : check if device is available on the system
 Tensor *tensor(Data *data, Device *device, bool requires_grad)
 {
-
     // Use the custom memory allocator to allocate memory for the new tensor
     Pool_t *Pool = fetch_pool();
     Tensor *new_tensor = (Tensor *)memblock_alloc(Pool);
