@@ -14,7 +14,7 @@ void vec1_avx_mul_float16(float16 *dst, float16 *A, float16 *B, int mat_size)
 
     for (uint32_t i = 0; i < num_avx_chunks; i++)
     {
-        // Calculate the starting index for the current chunk
+        // compute the starting index for the current chunk
         int ii = i * AVX_SIZE;
 
         // Load data
@@ -53,7 +53,7 @@ void vec1_avx_mul_float32(float32 *dst, float32 *A, float32 *B, int mat_size)
 
     for (uint32_t i = 0; i < num_avx_chunks; i++)
     {
-        // Calculate the starting index for the current chunk
+        // compute the starting index for the current chunk
         int ii = i * AVX_SIZE;
 
         __m256 a = _mm256_load_ps(&A[ii]);
@@ -80,7 +80,7 @@ void vec1_avx_mul_float64(float64 *dst, float64 *A, float64 *B, int mat_size)
 
     for (uint32_t i = 0; i < num_avx_chunks; i++)
     {
-        // Calculate the starting index for the current chunk
+        // compute the starting index for the current chunk
         int ii = i * AVX_SIZE;
 
         __m256d a = _mm256_load_pd(&A[ii]);
@@ -110,7 +110,7 @@ void vec1_avx_add_float16(float16 *dst, float16 *A, int mat_size)
 
     for (uint32_t i = 0; i < num_avx_chunks; i++)
     {
-        // Calculate the starting index for the current chunk
+        // compute the starting index for the current chunk
         int ii = i * AVX_SIZE;
 
         // Load data
@@ -147,7 +147,7 @@ void vec1_avx_add_float32(float32 *dst, float32 *A, int mat_size)
 
     for (uint32_t i = 0; i < num_avx_chunks; i++)
     {
-        // Calculate the starting index for the current chunk
+        // compute the starting index for the current chunk
         int ii = i * AVX_SIZE;
 
         __m256 a = _mm256_load_ps(&A[ii]);
@@ -174,7 +174,7 @@ void vec1_avx_add_float64(float64 *dst, float64 *A, int mat_size)
 
     for (uint32_t i = 0; i < num_avx_chunks; i++)
     {
-        // Calculate the starting index for the current chunk
+        // compute the starting index for the current chunk
         int ii = i * AVX_SIZE;
 
         __m256d a = _mm256_load_pd(&A[ii]);

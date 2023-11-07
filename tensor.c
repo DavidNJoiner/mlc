@@ -63,7 +63,7 @@ Tensor *create_tensor(int *shape, int dim, int dtype, Device *device, bool requi
         printf("Memory allocation failed!\n");
         return NULL;
     }
-    Data *data = create_data(array, shape, dim, dtype); // check if Data functions handle cuda memory
+    Data *data = data_create_from_array(array, shape, dim, dtype); // check if Data functions handle cuda memory
     Pool_t *Pool = fetch_pool();
     Tensor *t = (Tensor *)memblock_alloc(Pool);
     t->data = data;
@@ -276,7 +276,7 @@ void displayTensor(Tensor *A)
 
     if (0 < A->data->dtype && A->data->dtype <= 16)
     {
-        display_data(A->data);
+        data_print(A->data);
     }
     else
     {

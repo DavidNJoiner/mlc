@@ -33,7 +33,7 @@ PrintFunc print_types[] = {
 /* void printHelper(Data* A, PrintFunc printFunc, int* indices, int dim, int cur_dim) {
     if (cur_dim == dim - 1) {
         for (indices[cur_dim] = 0; indices[cur_dim] < A->shape[cur_dim]; indices[cur_dim]++) {
-            int index = calculate_index(indices, A->shape, dim);
+            int index = compute_index(indices, A->shape, dim);
             printFunc(A->values, index);
         }
         printf("\n");

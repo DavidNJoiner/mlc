@@ -10,7 +10,7 @@ void vec1_sse_mul_float16(float16 *dst, float16 *A, float16 *B, int mat_size)
 
     for (uint32_t i = 0; i < num_sse_chunks; i++)
     {
-        // Calculate the starting index for the current chunk
+        // compute the starting index for the current chunk
         int ii = i * SSE_SIZE;
 
         // Load data
@@ -99,7 +99,7 @@ void vec1_sse_mul_float32(float32 *dst, float32 *A, float32 *B, int mat_size)
 
     for (uint32_t i = 0; i < num_sse_chunks; i++)
     {
-        // Calculate the starting index for the current chunk
+        // compute the starting index for the current chunk
         int ii = i * SSE_SIZE;
 
         // Load data
@@ -130,7 +130,7 @@ void vec1_sse_mul_float64(float64 *dst, float64 *A, float64 *B, int mat_size)
 
     for (uint32_t i = 0; i < num_sse_chunks; i++)
     {
-        // Calculate the starting index for the current chunk
+        // compute the starting index for the current chunk
         int ii = i * SSE_SIZE;
 
         // Load data
@@ -161,7 +161,7 @@ void vec1_sse_add_float16(float16 *dst, float16 *A, int mat_size)
 
     for (uint32_t i = 0; i < num_sse_chunks; i++)
     {
-        // Calculate the starting index for the current chunk
+        // compute the starting index for the current chunk
         int ii = i * AVX_SIZE;
 
         // Load data

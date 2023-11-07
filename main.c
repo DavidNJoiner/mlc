@@ -117,8 +117,8 @@ int main(int argc, char **argv)
     // Create a tensor
     ////int shape[] = {16, 512};
 
-    ////Data *data001 = random_data(8192, 0, 1, shape, 2, FLOAT32);
-    // Data* data002 = random_data(8192, 0, 1, shape, 2, FLOAT32);
+    ////Data *data001 = data_create_from_random(8192, 0, 1, shape, 2, FLOAT32);
+    // Data* data002 = data_create_from_random(8192, 0, 1, shape, 2, FLOAT32);
 
     // Tensor* t001 = tensor(data001, gpu, false);
     // Tensor* t002 = tensor(data002, gpu, false);

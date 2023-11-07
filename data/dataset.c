@@ -17,8 +17,8 @@ void** getElement(Dataset* dataset, int index) {
         return NULL;
     }
 
-    element[0] = get_data_element(dataset->data, &index);
-    element[1] = get_data_element(dataset->labels, &index);
+    element[0] = data_get_element_at_index(dataset->data, &index);
+    element[1] = data_get_element_at_index(dataset->labels, &index);
 
     return element;
 }
