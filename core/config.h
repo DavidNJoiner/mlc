@@ -27,9 +27,9 @@ void get_cpu_info();
 
 // Check for system architecture
 #if defined(_M_X64) || defined(__amd64__)
-#define DEEPC_64
+#define DEEPC_CPU 64
 #else
-#define DEEPC_32
+#define DEEPC_CPU 32
 #endif
 //------------------------------------
 

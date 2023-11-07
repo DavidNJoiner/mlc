@@ -2,35 +2,35 @@
 
 MemoryBlock_t *memblock_alloc(Pool_t *pool)
 {
-    printf("\033[0;37m[Call] memblock_alloc\033[0m\n");
+    // Print a debugging message indicating the function call.
+    printf("[Call] memblock_alloc\n");
 
-    // If m_numInitialized is more than 0 or all blocks are in use, allocate memory for new MemoryBlocks
+    // Check if all blocks are in use and handle the situation.
     if (pool->m_numInitialized != 0 && pool->m_numInitialized == pool->m_numOfBlocks)
     {
-        printf("\t\033[0;32m[Debug]\033[0mall blocks in use ( num block init %d ). allocating new blocks...\n", pool->m_numInitialized);
+        printf("[Debug] All blocks are in use (num block init %d). Allocating new blocks...\n", pool->m_numInitialized);
         destroy_pool(pool);
         exit(1);
     }
 
+    // Try to allocate a new MemoryBlock.
     MemoryBlock_t *new_block_address = pool->m_next ? pool->m_next : (MemoryBlock_t *)pool->m_memStart;
 
     if (!new_block_address)
     {
-        printf("\t\033[0;31m[Error]\033[0m Memory allocation for new_block failed\n");
+        printf("[Error] Memory allocation for new_block failed\n");
         return NULL;
     }
 
-    /*    for (int i = 0; i <= MAX_ORDER + 1; i++)
-       {
-           new_block_address->freelist[i] = NULL;
-       } */
-
+    // Update the pool properties.
     pool->m_numInitialized++;
     pool->m_numFreeBlocks--;
     pool->m_next = pool->m_memStart + (pool->m_numInitialized * BLOCKSIZE);
 
-    printf("\t\033[34m[Info] Memory Block Allocation Successful ! Address %p\033[0m\n", (void *)new_block_address);
+    // Print an informative message about the successful allocation.
+    printf("[Info] Memory Block Allocation Successful! Address %p\n", (void *)new_block_address);
 
+    // Update and display memory allocation statistics.
     increase_total_bytes_allocated(BLOCKSIZE);
     add_entry("bloc_alloc", 2, (double)(sizeof(MemoryBlock_t)), 0.0);
     printf("total_bytes_currently_allocated = %d\n", get_total_bytes_allocated());

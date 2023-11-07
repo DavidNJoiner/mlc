@@ -85,6 +85,9 @@ void _subblock_coalescing_(MemoryBlock_t *memblock);
 
 #endif // DISABLE_MEMORY_POOLING
 
+// Memory 
+void* memory_alloc_padded (int size, int dtype);
+
 // Layer memory managment
 
 // Neuron memory managment
@@ -92,6 +95,7 @@ void _subblock_coalescing_(MemoryBlock_t *memblock);
 // Tensor memory managment
 
 // Data memory managment
+Data *data_alloc();
 void setup_global_data_ptr_array(int initial_capacity);
 void add_data_ptr(Data *data_ptr);
 void free_all_data();
@@ -104,6 +108,33 @@ uint32_t total_free();
 #endif // MEMPOOL_H_
 
 #ifndef _MEMPOOL_IMPLEMENTATION_
+
+void* memory_alloc_padded (int size, int dtype)
+{
+    int alignment_size = DEEPC_CPU;
+    size_t element_size = sizeof(dtype);
+    size_t padded_size = size * element_size;
+
+    if (padded_size % alignment_size != 0) {
+        size_t padding = alignment_size - (padded_size % alignment_size);
+        padded_size += padding;
+    }
+
+    void *allocated_memory = malloc(padded_size);
+    if (!allocated_memory) {
+        return NULL;
+    }
+}
+
+Data* data_alloc(){
+    Data* data = malloc(sizeof(Data));
+    if (!data) {
+        perror("Error allocating Data structure");
+        exit(EXIT_FAILURE);
+    }
+    return data;
+}
+
 #define _MEMPOOL_IMPLEMENTATION_
 
 #endif // _IMPLEMENTATION_MEMPOOL_H_
