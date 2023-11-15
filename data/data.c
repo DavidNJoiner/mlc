@@ -3,8 +3,8 @@
 #include "../core/mempool/mempool.h"
 
 DataPtrArray *global_data_ptr_array = NULL;
-int total_data_allocated = 0;
-int total_data_deallocated = 0;
+int data_total_alloc = 0;
+int data_total_dealloc = 0;
 
 /* Converts multi-dimensional index into a linear index. */
 int compute_index(int *indices, int *shape, int dim)
@@ -100,7 +100,7 @@ Data *data_create_from_array(void *source_array, int *shape, int dim, int dtype)
     dat->shape = shape;
     dat->dtype = dtype;
 
-    total_data_allocated += sizeof(Data);
+    data_total_alloc += sizeof(Data);
     add_data_ptr(dat);
 
     return dat;
@@ -144,7 +144,7 @@ Data *data_create_from_random(int size, int min_range, int max_range, int *shape
     data->shape = shape;
     data->dtype = dtype;
 
-    total_data_allocated += sizeof(Data);
+    data_total_alloc += sizeof(Data);
     add_data_ptr(data);
 
     return data;

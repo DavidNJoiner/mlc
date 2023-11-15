@@ -102,8 +102,8 @@ void free_all_data();
 
 // Debug functions
 void print_list_subblock(MemoryBlock_t *memblock, uint32_t i);
-uint32_t count_blocks(uint32_t i);
-uint32_t total_free();
+uint32_t count_free_pool_memoryblocks(uint32_t i);
+uint32_t count_free_pool_bytes();
 
 #endif // MEMPOOL_H_
 

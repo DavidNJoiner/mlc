@@ -25,8 +25,8 @@ typedef struct
 } DataPtrArray;
 
 extern DataPtrArray *global_data_ptr_array;
-extern int total_data_allocated;
-extern int total_data_deallocated;
+extern int data_total_alloc;
+extern int data_total_dealloc;
 
 // Data functions Prototypes
 void array_flatten(void *array, void *flattened, int *shape, int dim, int dtype, int idx);

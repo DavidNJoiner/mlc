@@ -73,7 +73,7 @@ void test_buddy_system_merge()
     _subblock_coalescing_(memblock);
 
     // After merging, we should have one larger free block instead of two smaller ones
-    assert(count_blocks(6) == 1); // Assuming BLOCKSIZE is 64 and 6 is the order for 64 bytes
+    assert(count_free_pool_memoryblocks(6) == 1); // Assuming BLOCKSIZE is 64 and 6 is the order for 64 bytes
 
     printf("test_buddy_system_merge passed!\n");
 }

@@ -97,8 +97,8 @@ void setup_global_data_ptr_array(int initial_capacity)
     global_data_ptr_array->count = 0;
     global_data_ptr_array->capacity = initial_capacity;
 
-    total_data_allocated += sizeof(DataPtrArray);
-    total_data_allocated += sizeof(sizeof(Data *) * initial_capacity);
+    data_total_alloc += sizeof(DataPtrArray);
+    data_total_alloc += sizeof(sizeof(Data *) * initial_capacity);
 }
 
 void add_data_ptr(Data *data_ptr)
@@ -128,7 +128,7 @@ void free_all_data()
                 free(global_data_ptr_array->data_ptrs[i]);
                 global_data_ptr_array->data_ptrs[i] = NULL;
             }
-            total_data_deallocated += sizeof(Data);
+            data_total_dealloc += sizeof(Data);
         }
         // Free the memory allocated for the array of Data ptrs
         free(global_data_ptr_array->data_ptrs);
@@ -137,6 +137,6 @@ void free_all_data()
         free(global_data_ptr_array);
         global_data_ptr_array = NULL;
 
-        total_data_deallocated += 2 * sizeof(DEEPC_SIZE_OF_VOID_POINTER);
+        data_total_dealloc += 2 * sizeof(DEEPC_SIZE_OF_VOID_POINTER);
     }
 }
