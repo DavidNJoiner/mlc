@@ -53,7 +53,7 @@ if defined NVCC_FLAGS (
 %GCC% %COMPILER% -g -c "%PROJECT_ROOT%\ops\avx.c" -o build\avx.o %GCC_FLAGS%
 %GCC% %COMPILER% -g -c "%PROJECT_ROOT%\ops\sse.c" -o build\sse.o %GCC_FLAGS%
 %GCC% %COMPILER% -g -c "%PROJECT_ROOT%\ops\ops.c" -o build\ops.o %GCC_FLAGS%
-%GCC% %COMPILER% -g -c "%PROJECT_ROOT%\core\data\arr_t.c" -o build\data.o %GCC_FLAGS%
+%GCC% %COMPILER% -g -c "%PROJECT_ROOT%\core\data\arr.c" -o build\data.o %GCC_FLAGS%
 %GCC% %COMPILER% -g -c "%PROJECT_ROOT%\core\data\arrset.c" -o build\dataset.o %GCC_FLAGS%
 %GCC% %COMPILER% -g -c "%PROJECT_ROOT%\debug.c -o build\debug.o %GCC_FLAGS%
 :: gcc -c function.c -o build\function.o %GCC_FLAGS%
