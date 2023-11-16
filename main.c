@@ -94,11 +94,12 @@ int main(int argc, char **argv)
     printf("\033[0;35mMAXIMUM UNSIGNED INT SIZE  %5u \033[0m\n", UINT_MAX);
     printf("\033[0;35mSIZE MemBlock_t         %5u \033[0m\n", BLOCKSIZE);
     // getDevices();
+
     Device *gpu = init_device(CUDA, 0);
     Device *cpu = init_device(CPU, -1);
 
     printf("Initializing memory pool...\n");
-    pool_init(0, 4096);
+    pool_init(0, 1024);
     Pool_t *pool = fetch_pool();
 
     test_memory_pool(pool);
