@@ -1,18 +1,5 @@
 #include "config.h"
 
-void cuda_version()
-{
-    if (DEEPC_CUDA_MEMORY_CACHING)
-    {
-        int cudaVersion = CUDART_VERSION;
-        printf("[Info] CUDA version: %d.%d.\n\n", cudaVersion / 1000, (cudaVersion % 100) / 10);
-    }
-    else
-    {
-        printf("[Info] CUDA is not installed.\n\n");
-    }
-}
-
 // getDevices will detect the available hardware and create a Device object for each of them.
 void getDevices()
 {
@@ -24,6 +11,8 @@ void getDevices()
 /*  -------------------------------------------------------*/
 /*  Unix-like functions                                    */
 /*  -------------------------------------------------------*/
+
+#ifdef DEEPC_LINUX
 
 int get_num_core() {
     return sysconf(_SC_NPROCESSORS_ONLN);
@@ -64,15 +53,18 @@ void cpu_get_stats()
     fclose(fp);
 }
 
+#endif //DEEPC_LINUX
+
 /*  -------------------------------------------------------*/
 /*  Windows functions                                      */
 /*  -------------------------------------------------------*/
 
-/* uint32_t get_num_cores()
-{
-    SYSTEM_INFO sysinfo;
-    GetSystemInfo(&sysinfo);
-    return (uint32_t)sysinfo.dwNumberOfProcessors;
+#ifdef DEEPC_WINDOWS
+
+int getNumProcessors() {
+    SYSTEM_INFO sysInfo;
+    GetSystemInfo(&sysInfo);
+    return sysInfo.dwNumberOfProcessors;
 }
 
 void cpu_get_stats()
@@ -103,4 +95,27 @@ void cpu_get_stats()
     }
 
     printf("\n");
-} */
+} 
+
+#endif //DEEPC_WINDOWS
+
+/*  -------------------------------------------------------*/
+/*  CUDA                                                   */
+/*  -------------------------------------------------------*/
+
+#ifdef CUDA_AVAILABLE
+
+void cuda_version()
+{
+    if (DEEPC_CUDA_MEMORY_CACHING)
+    {
+        int cudaVersion = CUDART_VERSION;
+        printf("[Info] CUDA version: %d.%d.\n\n", cudaVersion / 1000, (cudaVersion % 100) / 10);
+    }
+    else
+    {
+        printf("[Info] CUDA is not installed.\n\n");
+    }
+}
+
+#endif //CUDA_AVAILABLE
