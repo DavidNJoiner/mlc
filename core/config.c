@@ -5,7 +5,7 @@ void getDevices()
 {
     Device *gpu = init_device(CUDA, 0);
     Device *cpu = init_device(CPU, -1);
-    cuda_version();
+    // cuda_version();
 }
 
 /*  -------------------------------------------------------*/
