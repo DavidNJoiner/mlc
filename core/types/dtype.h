@@ -2,8 +2,8 @@
 #define DTYPE_H_
 #include <assert.h>
 
-static_assert(sizeof(float) == 4, "float is not 32 bits");
-static_assert(sizeof(double) == 8, "double is not 64 bits");
+typedef char static_assertion[sizeof(float) == 4 ? 1 : -1];
+typedef char static_assertion[sizeof(double) == 8 ? 1 : -1];
 
 // CUDA HALF TYPE
 #ifdef __CUDACC__
