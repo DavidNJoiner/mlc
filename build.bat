@@ -4,7 +4,7 @@ setlocal enabledelayedexpansion
 :: Set environment variables
 set "PROJECT_ROOT=.\"
 set "COMPILER=-std=c99"
-set "CUDA_PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.2"
+set CUDA_PATH="C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.2"
 
 :: Set PATH and LD_LIBRARY_PATH for CUDA
 set "PATH=%CUDA_PATH%\bin;%PATH%"
@@ -53,12 +53,12 @@ if defined NVCC_FLAGS (
 %GCC% %COMPILER% -g -c "%PROJECT_ROOT%\ops\avx.c" -o build\avx.o %GCC_FLAGS%
 %GCC% %COMPILER% -g -c "%PROJECT_ROOT%\ops\sse.c" -o build\sse.o %GCC_FLAGS%
 %GCC% %COMPILER% -g -c "%PROJECT_ROOT%\ops\ops.c" -o build\ops.o %GCC_FLAGS%
-%GCC% %COMPILER% -g -c "%PROJECT_ROOT%\core\data\arr.c" -o build\data.o %GCC_FLAGS%
-%GCC% %COMPILER% -g -c "%PROJECT_ROOT%\core\data\arrset.c" -o build\dataset.o %GCC_FLAGS%
-%GCC% %COMPILER% -g -c "%PROJECT_ROOT%\debug.c -o build\debug.o %GCC_FLAGS%
+%GCC% %COMPILER% -g -c "%PROJECT_ROOT%\data\arr.c" -o build\data.o %GCC_FLAGS%
+%GCC% %COMPILER% -g -c "%PROJECT_ROOT%\data\arrset.c" -o build\dataset.o %GCC_FLAGS%
+%GCC% %COMPILER% -g -c "%PROJECT_ROOT%\debug.c" -o build\debug.o %GCC_FLAGS%
 :: gcc -c function.c -o build\function.o %GCC_FLAGS%
-%GCC% %COMPILER% -g -c "%PROJECT_ROOT%\tensor.c -o build\tensor.o %GCC_FLAGS%
-%GCC% %COMPILER% -g -c "%PROJECT_ROOT%\main.c -o build\main.o %GCC_FLAGS%
+%GCC% %COMPILER% -g -c "%PROJECT_ROOT%\tensor.c" -o build\tensor.o %GCC_FLAGS%
+%GCC% %COMPILER% -g -c "%PROJECT_ROOT%\main.c" -o build\main.o %GCC_FLAGS%
 
 :: Link object files
 if defined NVCC_FLAGS (
