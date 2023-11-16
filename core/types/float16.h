@@ -62,6 +62,8 @@ static unsigned short _eLut[1 << 9];
                            // a normalized float16
 
 // Function prototypes
+float16 float16_add(float16 a, float16 b);
+float16 float16_mult(float16 a, float16 b);
 float16 float16_new(); // Constructor equivalent
 float16 float16_from_float(float f);
 float float16_to_float(float16 h);

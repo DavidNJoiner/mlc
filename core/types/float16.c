@@ -1,5 +1,22 @@
 #include "float16.h"
 
+
+float16 float16_add(float16 a, float16 b) 
+{
+    float f_a = float16_to_float(a);
+    float f_b = float16_to_float(b);
+    float f_result = f_a + f_b;
+    return float16_from_float(f_result);
+}
+
+float16 float16_mult(float16 a, float16 b) 
+{
+    float f_a = float16_to_float(a);
+    float f_b = float16_to_float(b);
+    float f_result = f_a * f_b;
+    return float16_from_float(f_result);
+}
+
 float16 float16_new()
 {
     float16 h;

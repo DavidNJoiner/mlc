@@ -35,7 +35,7 @@ void vec1_sse_mul_float16(float16 *dst, float16 *A, float16 *B, int mat_size)
     int remaining_start = num_sse_chunks * SSE_SIZE;
     for (int i = remaining_start; i < mat_size; i++)
     {
-        dst[i] = (float16)((float32)A[i] * (float32)B[i]);
+        dst[i] = float16_mult(A[i], B[i]);
     }
 }
 
@@ -185,7 +185,7 @@ void vec1_sse_add_float16(float16 *dst, float16 *A, int mat_size)
     for (int i = remaining_start; i < mat_size; i++)
     {
         // Assuming a software function to add half floats
-        dst[i] = (float16)((float32)A[i] + (float32)dst[i]);
+        dst[i] = float16_add(A[i], dst[i]);
     }
 }
 /*  ------------------------------------------------------------------------------*/
