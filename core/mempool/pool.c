@@ -27,7 +27,7 @@ uint32_t pool_count_free_bytes(int pool_index)
 void pool_init(uint8_t pool_instance_index, size_t pool_size)
 {
     // static_assert(sizeof(MemBlock_t) == 1120, "\t[Error] MemBlock is not 1024 bytes!\n");
-    static_assert(alignof(MemBlock_t) == DEEPC_SIZE_OF_VOID_POINTER, "\t[Error] MemBlock is not correctly aligned!\n");
+    typedef char check_memblock_alignment[(alignof(MemBlock_t) == DEEPC_SIZE_OF_VOID_POINTER) ? 1 : -1];
 
     Pool_t* pool = &global_pool_instances.m_pools[pool_instance_index];
 
