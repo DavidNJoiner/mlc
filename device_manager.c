@@ -1,5 +1,4 @@
 #include "device_manager.h"
-#include "cuda.h"
 
 Device *current_device = NULL; // Global variable to store the current device
 
