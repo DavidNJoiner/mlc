@@ -5,6 +5,7 @@
 // std
 #include <stdint.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include "device.h"
 #include "define.h"
@@ -15,13 +16,13 @@
 #include <unistd.h>
 void getDevices();
 // uint32_t get_num_cores();
-// void get_cpu_info();
+// void cpu_get_stats();
 
 #elif DEEPC_WINDOWS
 #include <windows.h>
-void cuda_version();
-uint32_t get_num_cores();
-void get_cpu_info();
+//void cuda_version();
+//void cpu_get_stats();
+//uint32_t get_num_cores();
 #endif
 //------------------------------------
 
@@ -100,7 +101,6 @@ void get_cpu_info();
 #warning "No SIMD instruction set support detected"
 
 #endif
-//------------------------------------
 
 // Check for CUDA compatibility
 #ifdef CUDA_AVAILABLE
@@ -109,6 +109,5 @@ void cuda_version();
 #else
 // Alternative non-CUDA code here
 #endif
-//------------------------------------
 
 #endif // _CONFIG_H_

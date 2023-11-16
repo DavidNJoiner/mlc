@@ -25,12 +25,11 @@ void getDevices()
 /*  Unix-like functions                                    */
 /*  -------------------------------------------------------*/
 
-uint32_t get_num_cores()
-{
-    return (uint32_t)sysconf(_SC_NPROCESSORS_ONLN);
+int get_num_core() {
+    return sysconf(_SC_NPROCESSORS_ONLN);
 }
 
-void get_cpu_info()
+void cpu_get_stats()
 {
     FILE *fp;
     char buffer[128];
@@ -42,6 +41,9 @@ void get_cpu_info()
         fprintf(stderr, "Failed to open %s\n", filename);
         return;
     }
+
+    uint32_t num_cores = get_num_core();
+    printf("Number of CPU cores: %d\n", num_cores);
 
     while (fgets(buffer, sizeof(buffer), fp) != NULL)
     {
@@ -73,7 +75,7 @@ void get_cpu_info()
     return (uint32_t)sysinfo.dwNumberOfProcessors;
 }
 
-void get_cpu_info()
+void cpu_get_stats()
 {
     // This example only gets the processor architecture
     SYSTEM_INFO sysinfo;
