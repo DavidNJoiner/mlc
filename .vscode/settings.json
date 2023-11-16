@@ -6,6 +6,7 @@
         "device.h": "c",
         "arrset.h": "c",
         "mempool.h": "c",
-        "tensor.h": "c"
+        "tensor.h": "c",
+        "config.h": "c"
     }
 }
