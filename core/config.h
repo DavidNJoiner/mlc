@@ -104,6 +104,7 @@ void getDevices();
 
 // Check for CUDA compatibility
 #ifdef CUDA_AVAILABLE
+#include "cuda.h"
 #include "cuda_runtime.h"
 void cuda_version();
 #else
