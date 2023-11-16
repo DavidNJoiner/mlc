@@ -14,7 +14,7 @@
     ((parent_type *)((char *)(child_ptr)-offsetof(parent_type, parent_member)))
 
 typedef struct SubBlock SubBlock_t;
-typedef struct MemoryBlock MemoryBlock_t;
+typedef struct MemBlock MemBlock_t;
 typedef struct Pool Pool_t;
 typedef struct GlobalPool GlobalPool_t;
 
@@ -27,9 +27,9 @@ struct SubBlock
     uint32_t m_ID;
 };
 //------------------------------------------------------------
-// MemoryBlock
+// MemBlock
 //------------------------------------------------------------
-struct MemoryBlock
+struct MemBlock
 {
     SubBlock_t *freelist[MAX_ORDER + 2];
     alignas(DEEPC_SIZE_OF_VOID_POINTER) uint8_t m_subblock_array[BLOCKSIZE - ((MAX_ORDER + 2) * DEEPC_SIZE_OF_VOID_POINTER)];
@@ -46,8 +46,8 @@ struct Pool
     uint32_t m_sizeOfEachBlock; // Size of each block
     uint32_t m_numFreeBlocks;   // Num of remaining blocks
     uint32_t m_numInitialized;  // Num of initialized blocks
-    MemoryBlock_t *m_memStart;  // Beginning of memory pool
-    MemoryBlock_t *m_next;      // Next available block
+    MemBlock_t *m_memStart;  // Beginning of memory pool
+    MemBlock_t *m_next;      // Next available block
 };
 
 struct GlobalPool
@@ -58,24 +58,32 @@ struct GlobalPool
 
 #ifndef DISABLE_MEMORY_POOLING
 
-// Low level Pool memory managment
-static void _init_pool_(Pool_t *pool, const size_t poolSize);
-void init_pool(uint8_t pool_instance_index, size_t pool_size);
-void display_pool_stats(Pool_t *pool);
-void destroy_pool(Pool_t *pool);
-Pool_t *fetch_pool();
+                // Low level Pool memory managment
 
-// Low level MemoryBlock managment
-MemoryBlock_t *memblock_alloc(Pool_t *p);
-void block_free(Pool_t *pool, MemoryBlock_t *block);
-void memblock_free(Pool_t *pool, MemoryBlock_t *block);
+Pool_t*         pool_get_from_index(int pool_index);
+uint32_t        pool_count_free_bytes(int pool_index);
 
-// Low level SubBlock managment
-SubBlock_t *subblock_alloc(uint32_t size, MemoryBlock_t *MEMBLOCK);
-void _subblock_free_(MemoryBlock_t *memblock, SubBlock_t *subblock);
-void subblock_free_all(MemoryBlock_t *MEMBLOCK);
-void _subblock_merge_(MemoryBlock_t *memblock, SubBlock_t *subblock1, SubBlock_t *subblock2);
-void _subblock_coalescing_(MemoryBlock_t *memblock);
+static void     pool_init_debug(Pool_t *pool, const size_t poolSize);
+void            pool_init(uint8_t pool_instance_index, size_t pool_size);
+void            pool_print_stats(Pool_t *pool);
+void            pool_destroy(Pool_t *pool);
+
+                // Low level MemBlock managment
+
+uint32_t        memblock_count_free_subblocks(MemBlock_t* memblock_ptr);
+MemBlock_t*     memblock_alloc(Pool_t *p);
+
+                // TODO: clean this mess. block_free and memblock_free are comfusing !
+void            block_free(Pool_t *pool, MemBlock_t *block); 
+void            memblock_free(Pool_t *pool, MemBlock_t *block);
+
+                // Low level SubBlock managment
+
+SubBlock_t*     subblock_alloc(uint32_t size, MemBlock_t *MEMBLOCK);
+void            _subblock_free_(MemBlock_t *memblock, SubBlock_t *subblock);
+void            subblock_free_all(MemBlock_t *MEMBLOCK);
+void            _subblock_merge_(MemBlock_t *memblock, SubBlock_t *subblock1, SubBlock_t *subblock2);
+void            _subblock_coalescing_(MemBlock_t *memblock);
 
 #else
 
@@ -94,16 +102,14 @@ void* memory_alloc_padded (int size, int dtype);
 
 // Tensor memory managment
 
-// Data memory managment
-Data *data_alloc();
-void setup_global_data_ptr_array(int initial_capacity);
-void add_data_ptr(Data *data_ptr);
-void free_all_data();
+// Array memory managment
+arr_t *arr_alloc();
+void arr_init_global_ptr_count(int initial_capacity);
+void arr_increment_ptr_count(arr_t *data_ptr);
+void arr_free_all();
 
 // Debug functions
-void print_list_subblock(MemoryBlock_t *memblock, uint32_t i);
-uint32_t count_free_pool_memoryblocks(uint32_t i);
-uint32_t count_free_pool_bytes();
+void subblock_print(MemBlock_t *memblock, uint32_t i);
 
 #endif // MEMPOOL_H_
 
@@ -126,10 +132,10 @@ void* memory_alloc_padded (int size, int dtype)
     }
 }
 
-Data* data_alloc(){
-    Data* data = malloc(sizeof(Data));
+arr_t* arr_alloc(){
+    arr_t* data = malloc(sizeof(arr_t));
     if (!data) {
-        perror("Error allocating Data structure");
+        perror("Error allocating Array structure");
         exit(EXIT_FAILURE);
     }
     return data;

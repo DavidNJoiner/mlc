@@ -1,7 +1,7 @@
 #include <math.h>
 #include "mempool.h"
 
-void print_list_subblock(MemoryBlock_t *memblock, uint32_t i)
+void subblock_print(MemBlock_t *memblock, uint32_t i)
 {
 
     printf("freelist[%d]: \n", i);
@@ -14,18 +14,18 @@ void print_list_subblock(MemoryBlock_t *memblock, uint32_t i)
     }
 }
 
-uint32_t get_subblock_index(const MemoryBlock_t *memblock_array_start, SubBlock_t *subblock_address)
+uint32_t get_subblock_index(const MemBlock_t *memblock_array_start, SubBlock_t *subblock_address)
 {
     return (uint32_t)((uintptr_t)subblock_address - (uintptr_t)memblock_array_start);
 }
 
-SubBlock_t *subblock_alloc(uint32_t size, MemoryBlock_t *MEMBLOCK)
+SubBlock_t *subblock_alloc(uint32_t size, MemBlock_t *MEMBLOCK)
 {
     printf("\033[0;37m[Call] subblock_alloc\033[0m\n");
-    printf("\t\033[34m[Info]\033[0m MemoryBlock addr = %p\n", (uintptr_t *)MEMBLOCK);
+    printf("\t\033[34m[Info]\033[0m MemBlock addr = %p\n", (uintptr_t *)MEMBLOCK);
 
     SubBlock_t *subblock;
-    MemoryBlock_t *memblock;
+    MemBlock_t *memblock;
     uint32_t i, order = 0;
 
     size = ALIGN_SIZE(size);
@@ -60,7 +60,7 @@ SubBlock_t *subblock_alloc(uint32_t size, MemoryBlock_t *MEMBLOCK)
     while (i-- > order)
     {
         printf("order = %d\n", i);
-        memblock = (MemoryBlock_t *)MEMBLOCKOF(subblock, i, MEMBLOCK);
+        memblock = (MemBlock_t *)MEMBLOCKOF(subblock, i, MEMBLOCK);
         memblock->freelist[i] = (SubBlock_t *)memblock;
     }
 
@@ -81,8 +81,8 @@ SubBlock_t *subblock_alloc(uint32_t size, MemoryBlock_t *MEMBLOCK)
     return subblock;
 }
 
-// Merge two SubBlocks in a common MemoryBlock
-void _subblock_merge_(MemoryBlock_t *memblock, SubBlock_t *subblock1, SubBlock_t *subblock2)
+// Merge two SubBlocks in a common MemBlock
+void _subblock_merge_(MemBlock_t *memblock, SubBlock_t *subblock1, SubBlock_t *subblock2)
 {
     // Ensure both SubBlocks are adjacent
     uintptr_t distance = (uintptr_t)subblock2 - (uintptr_t)subblock1;
@@ -98,7 +98,7 @@ void _subblock_merge_(MemoryBlock_t *memblock, SubBlock_t *subblock1, SubBlock_t
 }
 
 // Remove a SubBlock
-void _subblock_free_(MemoryBlock_t *memblock, SubBlock_t *subblock)
+void _subblock_free_(MemBlock_t *memblock, SubBlock_t *subblock)
 {
     printf("\033[0;37m[Call] _subblock_free_\033[0m\n");
     // Check if its buddy is also free and merge them
@@ -120,10 +120,10 @@ void _subblock_free_(MemoryBlock_t *memblock, SubBlock_t *subblock)
     add_entry("_subblock_free_", 2, 0.00, (double)(sizeof(SubBlock_t)));
 }
 
-// Optimize the layout within the MemoryBlock after deletion
-void _subblock_coalescing_(MemoryBlock_t *memblock)
+// Optimize the layout within the MemBlock after deletion
+void _subblock_coalescing_(MemBlock_t *memblock)
 {
-    // Iterate through the MemoryBlock and try to merge adjacent free SubBlocks
+    // Iterate through the MemBlock and try to merge adjacent free SubBlocks
     uintptr_t current_address = (uintptr_t)memblock->m_subblock_array;
     uintptr_t end_address = current_address + BLOCKSIZE;
 
@@ -151,16 +151,16 @@ void _subblock_coalescing_(MemoryBlock_t *memblock)
     }
 }
 
-void subblock_free_all(MemoryBlock_t *memblock)
+void subblock_free_all(MemBlock_t *memblock)
 {
     printf("\033[0;37m[Call] subblock_free_all\033[0m\n");
 
     if (memblock->m_subblock_array != NULL)
     {
-        // Check if the MemoryBlock pointer is NULL
+        // Check if the MemBlock pointer is NULL
         if (memblock == NULL)
         {
-            printf("\t\033[0;31m[Error]\033[0m NULL MemoryBlock pointer\n");
+            printf("\t\033[0;31m[Error]\033[0m NULL MemBlock pointer\n");
             return;
         }
 
@@ -186,7 +186,7 @@ void subblock_free_all(MemoryBlock_t *memblock)
             current_address += (1 << i);
         }
 
-        // Optimize the layout within the MemoryBlock after deletion
+        // Optimize the layout within the MemBlock after deletion
         _subblock_coalescing_(memblock);
         printf("\t\033[34m[Info]\033[0m subblock freed\n");
     }

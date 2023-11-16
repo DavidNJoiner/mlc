@@ -9,23 +9,23 @@ void test_memory_pool(Pool_t *pool)
     printf("\nStarting memory pool tests...\n");
 
     printf("\nMemory pool statistics before allocations:\n");
-    display_pool_stats(pool);
+    pool_print_stats(pool);
 
     printf("\nAllocating memory blocks...\n");
-    MemoryBlock_t *block1 = memblock_alloc(pool);
-    MemoryBlock_t *block2 = memblock_alloc(pool);
-    MemoryBlock_t *block3 = memblock_alloc(pool);
+    MemBlock_t *block1 = memblock_alloc(pool);
+    MemBlock_t *block2 = memblock_alloc(pool);
+    MemBlock_t *block3 = memblock_alloc(pool);
 
     // memblock_print(block2); SEGFAULT HERE
 
     printf("\nMemory pool statistics after allocations:\n");
-    display_pool_stats(pool);
+    pool_print_stats(pool);
 
     printf("\nFreeing some memory blocks...\n");
     memblock_free(pool, block2);
 
     printf("\nMemory pool statistics after freeing:\n");
-    display_pool_stats(pool);
+    pool_print_stats(pool);
 
     printf("\nMemory pool tests completed.\n");
 }
@@ -45,14 +45,14 @@ void test_adding_subblocks()
 
     printf("test_adding_subblocks passed!\n");
     printf("\nMemory pool statistics after adding subblocks:\n");
-    display_pool_stats(pool);
+    pool_print_stats(pool);
 
     _subblock_free_(pool->m_memStart, (SubBlock_t *)subblock3);
     _subblock_free_(pool->m_memStart, (SubBlock_t *)subblock1);
 
     printf("test_removing_subblocks passed!\n");
     printf("\nMemory pool statistics after removing subblocks:\n");
-    display_pool_stats(pool);
+    pool_print_stats(pool);
 }
 
 void test_buddy_system_merge()
@@ -60,7 +60,7 @@ void test_buddy_system_merge()
     printf("Running test_buddy_system_merge...\n");
 
     Pool_t *pool = fetch_pool();
-    MemoryBlock_t *memblock = memblock_alloc(pool);
+    MemBlock_t *memblock = memblock_alloc(pool);
 
     DEEPC_VOID_POINTER subblock1 = subblock_alloc(64, memblock);
     DEEPC_VOID_POINTER subblock2 = subblock_alloc(64, memblock);
@@ -69,11 +69,11 @@ void test_buddy_system_merge()
     _subblock_free_(memblock, (SubBlock_t *)subblock1);
     _subblock_free_(memblock, (SubBlock_t *)subblock2);
 
-    // Optimize the layout within the MemoryBlock after deletion
+    // Optimize the layout within the MemBlock after deletion
     _subblock_coalescing_(memblock);
 
     // After merging, we should have one larger free block instead of two smaller ones
-    assert(count_free_pool_memoryblocks(6) == 1); // Assuming BLOCKSIZE is 64 and 6 is the order for 64 bytes
+    assert(pool_count_free_memblocks(6) == 1); // Assuming BLOCKSIZE is 64 and 6 is the order for 64 bytes
 
     printf("test_buddy_system_merge passed!\n");
 }
@@ -91,12 +91,14 @@ void test_float16()
 
 int main(int argc, char **argv)
 {
+    printf("\033[0;35mMAXIMUM UNSIGNED INT SIZE  %5u \033[0m\n", UINT_MAX);
+    printf("\033[0;35mSIZE MemBlock_t         %5u \033[0m\n", BLOCKSIZE);
     // getDevices();
     Device *gpu = init_device(CUDA, 0);
     Device *cpu = init_device(CPU, -1);
 
     printf("Initializing memory pool...\n");
-    init_pool(0, 4096);
+    pool_init(0, 4096);
     Pool_t *pool = fetch_pool();
 
     test_memory_pool(pool);
@@ -106,19 +108,19 @@ int main(int argc, char **argv)
     //  test_buddy_system_merge();
 
     printf("Destroying memory pool...\n");
-    destroy_pool(pool);
+    pool_destroy(pool);
 
     display_table();
 
     // Initialize the global memory pool
     ////setup_tensor_pool(1);
-    ////setup_global_data_ptr_array(1);
+    ////arr_init_global_ptr_count(1);
 
     // Create a tensor
     ////int shape[] = {16, 512};
 
-    ////Data *data001 = data_create_from_random(8192, 0, 1, shape, 2, FLOAT32);
-    // Data* data002 = data_create_from_random(8192, 0, 1, shape, 2, FLOAT32);
+    ////arr_t *data001 = data_create_from_random(8192, 0, 1, shape, 2, FLOAT32);
+    // arr_t* data002 = data_create_from_random(8192, 0, 1, shape, 2, FLOAT32);
 
     // Tensor* t001 = tensor(data001, gpu, false);
     // Tensor* t002 = tensor(data002, gpu, false);
