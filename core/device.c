@@ -1,4 +1,3 @@
-
 #include "device.h"
 
 Device *init_device(DeviceType type, int deviceID)
