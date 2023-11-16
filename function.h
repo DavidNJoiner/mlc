@@ -28,15 +28,15 @@ struct Function;
 typedef struct
 {
     Device *device;
-    Data *parents;
+    arr_t *parents;
     bool *needs_input_grad;
     bool requires_grad;
-    Tensor *(*Forward)(struct Function *self, Data *args);
-    void (*Backward)(struct Function *self, Data *args);
+    Tensor *(*Forward)(struct Function *self, arr_t *args);
+    void (*Backward)(struct Function *self, arr_t *args);
 } Function;
 
-Function *InitFunction(Device *device, Data *tensors, Tensor *(*ForwardFunc)(Function *self, Data *args), void (*BackwardFunc)(Function *self, Data *args));
-Tensor *Forward(Function *self, Data *args);
-void Backward(Function *self, Data *args);
+Function *InitFunction(Device *device, arr_t *tensors, Tensor *(*ForwardFunc)(Function *self, arr_t *args), void (*BackwardFunc)(Function *self, arr_t *args));
+Tensor *Forward(Function *self, arr_t *args);
+void Backward(Function *self, arr_t *args);
 
 #endif // FUNCTION_H_

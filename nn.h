@@ -36,7 +36,7 @@ typedef struct
     int num_layers;
 } NeuralNet;
 
-Parameters train(Data *data);
+Parameters train(arr_t *data);
 float sigmoid(float x);
 float sigmoid_derivative(float x);
 

@@ -8,7 +8,7 @@
 #include <stdbool.h>
 #include <math.h>
 
-#include "data/dataset.h"
+#include "./data/arr.h"
 #include "debug.h"
 #include "ops/ops.h"
 
@@ -35,7 +35,7 @@ struct Pool_t;
 typedef struct
 {
     float32 *gradient; // 1 flag, 31 bits gradient
-    Data *data;
+    arr_t *data;
     Device *device;
     void *lazy;    // LazyBuffer* lazydata;
     void *creator; // Function* creator; Points to the Function that created this Tensor.
@@ -47,7 +47,7 @@ bool get_require_grad(Tensor *tensor);
 
 //  Tensors creation
 Tensor *zerosFrom(Tensor *t);
-Tensor *tensor(Data *data, Device *device, bool requires_grad);
+Tensor *tensor(arr_t *data, Device *device, bool requires_grad);
 Tensor *create_tensor(int *shape, int dim, int dtype, Device *device, bool requires_grad);
 Tensor *newFull(int *shape, int fill_value, int dtype, Device *device, bool requires_grad);
 

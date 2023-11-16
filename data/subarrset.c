@@ -1,35 +1,35 @@
-#include "subset.h"
+#include "subarrset.h"
 
-SubsetArray* createSubsetArray() {
-    SubsetArray* arr = (SubsetArray*)malloc(sizeof(SubsetArray));
-    arr->count = 0;
-    arr->capacity = 2; // Initial capacity, can be adjusted as needed
-    arr->subsets = (Subset*)malloc(arr->capacity * sizeof(Subset));
-    return arr;
+subarrset* createSubsetArray() {
+    subarrset* arr_t = (subarrset*)malloc(sizeof(subarrset));
+    arr_t->count = 0;
+    arr_t->capacity = 2; // Initial capacity, can be adjusted as needed
+    arr_t->subsets = (subset*)malloc(arr_t->capacity * sizeof(arrset));
+    return arr_t;
 }
 
-void addSubset(SubsetArray* arr, int* indices, int length) {
-    if (arr->count == arr->capacity) {
-        arr->capacity *= 2;
-        arr->subsets = (Subset*)realloc(arr->subsets, arr->capacity * sizeof(Subset));
+void addSubset(subarrset* arr_t, int* indices, int length) {
+    if (arr_t->count == arr_t->capacity) {
+        arr_t->capacity *= 2;
+        arr_t->subsets = (subset*)realloc(arr_t->subsets, arr_t->capacity * sizeof(subset));
     }
 
-    Subset subset;
+    subset subset;
     subset.indices = (int*)malloc(length * sizeof(int));
     subset.length = length;
     for (uint32_t i = 0; i < length; i++) {
         subset.indices[i] = indices[i];
     }
 
-    arr->subsets[arr->count++] = subset;
+    arr_t->subsets[arr_t->count++] = subset;
 }
 
-void freeSubsetArray(SubsetArray* arr) {
-    for (uint32_t i = 0; i < arr->count; i++) {
-        free(arr->subsets[i].indices);
+void freeSubsetArray(subarrset* arr_t) {
+    for (uint32_t i = 0; i < arr_t->count; i++) {
+        free(arr_t->subsets[i].indices);
     }
-    free(arr->subsets);
-    free(arr);
+    free(arr_t->subsets);
+    free(arr_t);
 }
 
 int* randperm(int n, unsigned int seed) {
@@ -49,7 +49,7 @@ int* randperm(int n, unsigned int seed) {
     return indices;
 }
 
-SubsetArray* random_split(Dataset* dataset, float* lengths, int lengths_size, unsigned int seed) {
+subarrset* random_split(arrset* dataset, float* lengths, int lengths_size, unsigned int seed) {
     float epsilon = 1e-5;
 
     int total_size = dataset->data->size;
@@ -75,7 +75,7 @@ SubsetArray* random_split(Dataset* dataset, float* lengths, int lengths_size, un
     }
 
     int* indices = randperm(total_size, seed);
-    SubsetArray* subsets = createSubsetArray();
+    subarrset* subsets = createSubsetArray();
 
     int start = 0;
     for (uint32_t i = 0; i < lengths_size; i++) {

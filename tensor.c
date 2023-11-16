@@ -5,10 +5,10 @@
 // so that the gradient computations can be automatically done during backpropagation.
 
 /*  -------------------------------------------------------*/
-/*  tensor : create a new Tensor from a Data object.       */
+/*  tensor : create a new Tensor from a arr_t object.       */
 /*  -------------------------------------------------------*/
 // TODO : check if device is available on the system
-Tensor *tensor(Data *data, Device *device, bool requires_grad)
+Tensor *tensor(arr_t *data, Device *device, bool requires_grad)
 {
     // Use the custom memory allocator to allocate memory for the new tensor
     Pool_t *Pool = fetch_pool();
@@ -63,7 +63,7 @@ Tensor *create_tensor(int *shape, int dim, int dtype, Device *device, bool requi
         printf("Memory allocation failed!\n");
         return NULL;
     }
-    Data *data = data_create_from_array(array, shape, dim, dtype); // check if Data functions handle cuda memory
+    arr_t *data = data_create_from_array(array, shape, dim, dtype); // check if Array functions handle cuda memory
     Pool_t *Pool = fetch_pool();
     Tensor *t = (Tensor *)memblock_alloc(Pool);
     t->data = data;
@@ -80,7 +80,7 @@ Tensor *zerosFrom(Tensor *t)
     Pool_t *Pool = fetch_pool();
 
     Tensor *new_tensor = (Tensor *)memblock_alloc(Pool);
-    Data *new_data = (Data *)memblock_alloc(Pool);
+    arr_t *new_data = (arr_t *)memblock_alloc(Pool);
 
     new_data->shape = (int *)malloc(t->data->dim * sizeof(int));
     if (new_data->shape == NULL)
@@ -264,7 +264,7 @@ void displayTensor(Tensor *A)
 
     if (A->data == NULL)
     {
-        printf("Error: Null Data pointer inside Tensor structure.\n");
+        printf("Error: Null Array pointer inside Tensor structure.\n");
         return;
     }
 

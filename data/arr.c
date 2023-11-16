@@ -1,8 +1,8 @@
-#include "data.h"
+#include "arr.h"
 #include "../debug.h"
 #include "../core/mempool/mempool.h"
 
-DataPtrArray *global_data_ptr_array = NULL;
+arrPtrTracker_t *global_data_ptr_array = NULL;
 int data_total_alloc = 0;
 int data_total_dealloc = 0;
 
@@ -85,14 +85,14 @@ void array_flatten(void *array, void *flattened, int *shape, int dim, int dtype,
     }
 }
 
-/* Converts a given multi-dimensional array into a Data structure. */
-Data *data_create_from_array(void *source_array, int *shape, int dim, int dtype)
+/* Converts a given multi-dimensional array into a Array structure. */
+arr_t *data_create_from_array(void *source_array, int *shape, int dim, int dtype)
 {
     int size = compute_size(shape, dim);
     void* mem_ptr = memory_alloc_padded (size, dtype);
     array_flatten(source_array, mem_ptr, shape, dim, dtype, 0);
 
-    Data *dat = data_alloc();
+    arr_t *dat = arr_alloc();
 
     dat->values = mem_ptr;
     dat->size = size;
@@ -100,14 +100,14 @@ Data *data_create_from_array(void *source_array, int *shape, int dim, int dtype)
     dat->shape = shape;
     dat->dtype = dtype;
 
-    data_total_alloc += sizeof(Data);
-    add_data_ptr(dat);
+    data_total_alloc += sizeof(arr_t);
+    arr_increment_ptr_count(dat);
 
     return dat;
 }
 
-/* Display properties of the Data structure. */
-void data_print(Data *dat) {
+/* Display properties of the Array structure. */
+void data_print(arr_t *dat) {
     const char *dtypeStr = get_data_type(dat->dtype);
     if (dtypeStr == NULL) {
         printf("Error: getDType returned NULL.\n");
@@ -130,13 +130,13 @@ void data_print(Data *dat) {
     PrintOp(dat, dat->dim);
 }
 
-/* Create a Data object filled with random values within a given range. */
-Data *data_create_from_random(int size, int min_range, int max_range, int *shape, int dim, int dtype)
+/* Create a Array object filled with random values within a given range. */
+arr_t *data_create_from_random(int size, int min_range, int max_range, int *shape, int dim, int dtype)
 {
     srand((unsigned int)time(NULL)); // Seed the random number generator
 
     void* mem_ptr = memory_alloc_padded (size, dtype);
-    Data* data = data_alloc();
+    arr_t* data = arr_alloc();
 
     data->values = mem_ptr;
     data->size = size;
@@ -144,14 +144,14 @@ Data *data_create_from_random(int size, int min_range, int max_range, int *shape
     data->shape = shape;
     data->dtype = dtype;
 
-    data_total_alloc += sizeof(Data);
-    add_data_ptr(data);
+    data_total_alloc += sizeof(arr_t);
+    arr_increment_ptr_count(data);
 
     return data;
 }
 
-/* Access an element in the Data object. */
-void *data_get_element_at_index(Data *data, int *indices) {
+/* Access an element in the Array object. */
+void *data_get_element_at_index(arr_t *data, int *indices) {
     int linear_index = compute_index(indices, data->shape, data->dim);
     int dtype_size = get_data_size(data->dtype);
 
@@ -169,8 +169,8 @@ void *data_get_element_at_index(Data *data, int *indices) {
     }
 }
 
-/* Set the value of an element in the Data object. */
-void data_set_element_at_index(Data *data, int *indices, void *value) {
+/* Set the value of an element in the Array object. */
+void data_set_element_at_index(arr_t *data, int *indices, void *value) {
     void *element_ptr = data_get_element_at_index(data, indices);
 
     switch (data->dtype) {

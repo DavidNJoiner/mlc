@@ -1,15 +1,15 @@
-#include "dataset.h"
+#include "arrset.h"
 
-// Function to create a new Dataset
-Dataset* createDataset(Data* data, Data* labels) {
-    Dataset* dataset = (Dataset*)malloc(sizeof(Dataset));
+// Function to create a new Arrayset
+arrset* createArrayset(arr_t* data, arr_t* labels) {
+    arrset* dataset = (arrset*)malloc(sizeof(arrset));
     dataset->data = data;
     dataset->labels = labels;
     return dataset;
 }
 
-// Function to access elements in the Data object of the Dataset
-void** getElement(Dataset* dataset, int index) {
+// Function to access elements in the Array object of the Arrayset
+void** getElement(arrset* dataset, int index) {
     void** element = (void**)malloc(2 * sizeof(void*));
 
     if (element == NULL) {
@@ -23,7 +23,7 @@ void** getElement(Dataset* dataset, int index) {
     return element;
 }
 
-// Function to release memory for the Dataset
-void freeDataset(Dataset* dataset) {
+// Function to release memory for the Arrayset
+void freeArrayset(arrset* dataset) {
     free(dataset);
 }

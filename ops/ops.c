@@ -3,7 +3,7 @@
 /*  -------------------------------------------------------*/
 /*  speed_mul_op : Tensor data Fast Multiply Operation.    */
 /*  -------------------------------------------------------*/
-void speed_mul_op(Data* dst, Data* A, Data* B, Device* device){
+void speed_mul_op(arr_t* dst, arr_t* A, arr_t* B, Device* device){
     int mat_size = dst->size;
     DeviceType device_type = device->type;
     switch (dst->dtype) {
@@ -42,7 +42,7 @@ void speed_mul_op(Data* dst, Data* A, Data* B, Device* device){
 /*  -------------------------------------------------------*/
 /*  speed_add_op : Tensor data Fast Add Operation.         */
 /*  -------------------------------------------------------*/
-void speed_add_op(Data* dst, Data* A, Device* device){
+void speed_add_op(arr_t* dst, arr_t* A, Device* device){
     int mat_size = dst->size;
     DeviceType device_type = device->type;
     switch (dst->dtype) {

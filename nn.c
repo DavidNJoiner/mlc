@@ -37,7 +37,7 @@ Parameters train(Model* model, Tensor* X_train, Tensor* Y_train, Optim* optim, i
 }
 
 /* int test() {
-    //Data  dat[4] = {{0, 0, 1}, {0, 1, 1}, {1, 0, 1}, {1, 1, 0}};
+    //arr_t  dat[4] = {{0, 0, 1}, {0, 1, 1}, {1, 0, 1}, {1, 1, 0}};
     //Tensor* t2 = create_tensor(dat, 4, 1, 2);//Here dat decay into a pointer, which is what create_tensor expect.
     //Tensor* t1 = create_tensor(dat, 4, 1, 2); 
     //Tensor* res = create_tensor(dat, 4, 1, 2);
@@ -45,8 +45,8 @@ Parameters train(Model* model, Tensor* X_train, Tensor* Y_train, Optim* optim, i
     //add(res,t2);	
     //displayTensor(res);
 
-    Data  dat2[2][4] = {{{1.f, 2.f, 3.f}, {0.f, 6.f, 1.f}, {2.f, 0.f, 8.f}, {1.f, 4.f, 0.f}}, {{0.f, 2.f, 3.f}, {0.f, 6.f, 1.f}, {2.f, 0.f, 8.f}, {1.f, 4.f, 0.f}}};
-    Data* data_p = &dat2[0][0];//Flatten the Data array
+    arr_t  dat2[2][4] = {{{1.f, 2.f, 3.f}, {0.f, 6.f, 1.f}, {2.f, 0.f, 8.f}, {1.f, 4.f, 0.f}}, {{0.f, 2.f, 3.f}, {0.f, 6.f, 1.f}, {2.f, 0.f, 8.f}, {1.f, 4.f, 0.f}}};
+    arr_t* data_p = &dat2[0][0];//Flatten the arr_t array
 
     Tensor* t3 = create_tensor(data_p, 4, 2, 2);
     Tensor* t4 = create_tensor(data_p, 4, 2, 2); 

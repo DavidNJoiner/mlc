@@ -28,9 +28,9 @@ PrintFunc print_types[] = {
     [FLOAT16] = print_float16,
 };
 /*  ------------------------------------------------------------------------------------*/
-/*  printArray : Recursive helper function to print array pointed to by a Data struct. */
+/*  printArray : Recursive helper function to print array pointed to by an arr_t struct. */
 /*  ------------------------------------------------------------------------------------*/
-/* void printHelper(Data* A, PrintFunc printFunc, int* indices, int dim, int cur_dim) {
+/* void printHelper(arr_t* A, PrintFunc printFunc, int* indices, int dim, int cur_dim) {
     if (cur_dim == dim - 1) {
         for (indices[cur_dim] = 0; indices[cur_dim] < A->shape[cur_dim]; indices[cur_dim]++) {
             int index = compute_index(indices, A->shape, dim);
@@ -63,7 +63,7 @@ void PrintArray(void *array, PrintFunc printFunc, int *shape, int dim, int dtype
 /*  ------------------------------------------------------------------------------------*/
 /*  printOp : Print any dtype Tensor of any dimension to the console.                   */
 /*  ------------------------------------------------------------------------------------*/
-void PrintOp(Data *A, int dim)
+void PrintOp(arr_t *A, int dim)
 {
     if (A != NULL)
     {
@@ -82,6 +82,6 @@ void PrintOp(Data *A, int dim)
     }
     else
     {
-        printf("Data object is NULL");
+        printf("Array object is NULL");
     }
 }

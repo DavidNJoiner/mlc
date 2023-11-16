@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
-#include "data/dataset.h"
+#include "data/arrset.h"
 
 typedef void (*PrintFunc)(void *, int);
 
@@ -15,6 +15,6 @@ void print_float32(void *values, int index);
 void print_float64(void *values, int index);
 
 void PrintArray(void *array, PrintFunc printFunc, int *shape, int dim, int dtype, int idx);
-void PrintOp(Data *A, int dim);
+void PrintOp(arr_t *A, int dim);
 
 #endif // DEBUG_H

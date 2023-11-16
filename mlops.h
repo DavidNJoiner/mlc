@@ -13,11 +13,11 @@ typedef struct {
     Tensor* ret; // Type will change to LazyBuffer
 } Relu;
 
-Tensor* SinForward(Sin* self, Data* args);
-void SinBackward(Sin* self, Data* args);
+Tensor* SinForward(Sin* self, arr_t* args);
+void SinBackward(Sin* self, arr_t* args);
 
-Tensor* ReluForward(Relu* self, Data* args);
-void ReluBackward(Relu* self, Data* args);
+Tensor* ReluForward(Relu* self, arr_t* args);
+void ReluBackward(Relu* self, arr_t* args);
 
 
 
@@ -26,7 +26,7 @@ void ReluBackward(Relu* self, Data* args);
 #ifdef IMPLEMENTATION_MLOPS
 #define IMPLEMENTATION_MLOPS
 
-Sin* InitSin(Device* device, Data* tensors) {
+Sin* InitSin(Device* device, arr_t* tensors) {
     Sin* self = malloc(sizeof(Sin));
     self->base = *InitFunction(device, tensors, SinForward, SinBackward);
     return self;
@@ -60,7 +60,7 @@ void SinBackward(Sin* self, Tensor* grad_output) {
 }
 
 
-Relu* InitRelu(Device* device, Data* tensors) {
+Relu* InitRelu(Device* device, arr_t* tensors) {
     Relu* self = malloc(sizeof(Relu));
     self->base = *InitFunction(device, tensors, ReluForward, ReluBackward);
     return self;
