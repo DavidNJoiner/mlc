@@ -34,7 +34,7 @@ void test_adding_subblocks()
 {
     printf("Running test_adding_subblocks...\n");
 
-    Pool_t *pool = fetch_pool();
+    Pool_t *pool = pool_get_from_index(0);
 
     // Implement function to asign subblock automatically to the first free adjacent memory block.
     SubBlock_t *subblock1 = subblock_alloc(50, pool->m_memStart);
@@ -59,7 +59,7 @@ void test_buddy_system_merge()
 {
     printf("Running test_buddy_system_merge...\n");
 
-    Pool_t *pool = fetch_pool();
+    Pool_t *pool = pool_get_from_index(0);
     MemBlock_t *memblock = memblock_alloc(pool);
 
     DEEPC_VOID_POINTER subblock1 = subblock_alloc(64, memblock);
@@ -73,7 +73,7 @@ void test_buddy_system_merge()
     _subblock_coalescing_(memblock);
 
     // After merging, we should have one larger free block instead of two smaller ones
-    assert(pool_count_free_memblocks(6) == 1); // Assuming BLOCKSIZE is 64 and 6 is the order for 64 bytes
+    assert(pool_count_free_bytes(6) == 1); // Assuming BLOCKSIZE is 64 and 6 is the order for 64 bytes
 
     printf("test_buddy_system_merge passed!\n");
 }
@@ -95,12 +95,12 @@ int main(int argc, char **argv)
     printf("\033[0;35mSIZE MemBlock_t         %5u \033[0m\n", BLOCKSIZE);
     // getDevices();
 
-    Device *gpu = init_device(CUDA, 0);
+    //Device *gpu = init_device(CUDA, 0);
     Device *cpu = init_device(CPU, -1);
 
     printf("Initializing memory pool...\n");
     pool_init(0, 1024);
-    Pool_t *pool = fetch_pool();
+    Pool_t *pool = pool_get_from_index(0);
 
     test_memory_pool(pool);
     display_table();

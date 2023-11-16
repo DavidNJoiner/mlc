@@ -11,7 +11,7 @@
 Tensor *tensor(arr_t *data, Device *device, bool requires_grad)
 {
     // Use the custom memory allocator to allocate memory for the new tensor
-    Pool_t *Pool = fetch_pool();
+    Pool_t *Pool = pool_get_from_index(0);
     Tensor *new_tensor = (Tensor *)memblock_alloc(Pool);
 
     set_require_grad(new_tensor, requires_grad);
@@ -64,7 +64,7 @@ Tensor *create_tensor(int *shape, int dim, int dtype, Device *device, bool requi
         return NULL;
     }
     arr_t *data = data_create_from_array(array, shape, dim, dtype); // check if Array functions handle cuda memory
-    Pool_t *Pool = fetch_pool();
+    Pool_t *Pool = pool_get_from_index(0);
     Tensor *t = (Tensor *)memblock_alloc(Pool);
     t->data = data;
     t->device = device;
@@ -77,7 +77,7 @@ Tensor *create_tensor(int *shape, int dim, int dtype, Device *device, bool requi
 Tensor *zerosFrom(Tensor *t)
 {
 
-    Pool_t *Pool = fetch_pool();
+    Pool_t *Pool = pool_get_from_index(0);
 
     Tensor *new_tensor = (Tensor *)memblock_alloc(Pool);
     arr_t *new_data = (arr_t *)memblock_alloc(Pool);
@@ -106,7 +106,7 @@ Tensor *zerosFrom(Tensor *t)
     }
     else
     {
-        new_data->values = (float32 *)aligned_alloc(32, new_data->size * get_data_size(new_data->dtype));
+        new_data->values = (float32 *)_aligned_malloc(32, new_data->size * get_data_size(new_data->dtype));
         if (new_data->values == NULL)
         {
             printf("Error: Failed to allocate memory for new_data->values\n");
