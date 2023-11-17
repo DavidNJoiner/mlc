@@ -1,6 +1,6 @@
 #include "device.h"
 
-Device *init_device(DeviceType type, int deviceID)
+Device *device_init(DeviceType type, int deviceID)
 {
     Device *device = (Device *)malloc(sizeof(Device));
     device->type = type;
@@ -13,7 +13,7 @@ Device *init_device(DeviceType type, int deviceID)
     return device;
 }
 
-void free_device(Device *device)
+void device_release(Device *device)
 {
     free(device);
 }

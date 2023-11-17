@@ -3,8 +3,8 @@
 // getDevices will detect the available hardware and create a Device object for each of them.
 void getDevices()
 {
-    Device *gpu = init_device(CUDA, 0);
-    Device *cpu = init_device(CPU, -1);
+    Device *gpu = device_init(CUDA, 0);
+    Device *cpu = device_init(CPU, -1);
     // cuda_version();
 }
 

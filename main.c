@@ -98,8 +98,8 @@ int main(int argc, char **argv)
     
     // getDevices();
 
-    //Device *gpu = init_device(CUDA, 0);
-    ////Device *cpu = init_device(CPU, -1);
+    //Device *gpu = device_init(CUDA, 0);
+    ////Device *cpu = device_init(CPU, -1);
 
     ////printf("Initializing memory pool...\n");
     ////pool_init(0, 4096);
@@ -156,8 +156,8 @@ int main(int argc, char **argv)
     ////destroy_tensor_pool();
 
     // Free the global memory pool
-    ////free_device(gpu);
-    ////free_device(cpu);
+    ////device_release(gpu);
+    ////device_release(cpu);
 
     return 0;
 }

@@ -18,14 +18,14 @@ void InitDM()
     if (err != cudaSuccess)
     {
         printf("Failed to detect CUDA devices: %s", cudaGetErrorString(err));
-        SetDevice(init_device(CPU, -1));
+        SetDevice(device_init(CPU, -1));
     }
     else
     {
         printf("Found %d CUDA capable device(s)", num_devices);
         int best_device = SelectCudaDevice(&num_devices);
         cudaSetDevice(best_device);
-        SetDevice(init_device(CUDA, best_device));
+        SetDevice(device_init(CUDA, best_device));
     }
 }
 

@@ -17,7 +17,7 @@ typedef struct
     int deviceID;
 } Device;
 
-Device *init_device(DeviceType type, int deviceID);
-void free_device(Device *device);
+Device*         device_init(DeviceType type, int deviceID);
+void            device_release(Device *device);
 
 #endif // _DEVICE_H_
