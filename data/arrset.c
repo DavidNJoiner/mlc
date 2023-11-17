@@ -17,8 +17,8 @@ void** getElement(arrset* dataset, int index) {
         return NULL;
     }
 
-    element[0] = data_get_element_at_index(dataset->data, &index);
-    element[1] = data_get_element_at_index(dataset->labels, &index);
+    element[0] = arr_get_value_at_index(dataset->data, &index);
+    element[1] = arr_get_value_at_index(dataset->labels, &index);
 
     return element;
 }
