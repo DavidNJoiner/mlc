@@ -94,8 +94,7 @@ gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/mempool/pool.c -o build/pool.o ${GCC_
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/mempool/memblock.c -o build/memblock.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/mempool/subblock.c -o build/subblock.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/device.c -o build/device.o ${GCC_FLAGS}
-gcc ${COMPILER} -g -c ${PROJECT_ROOT}/ops/avx.c -o build/avx.o ${GCC_FLAGS}
-#gcc ${COMPILER} -g -c ${PROJECT_ROOT}/ops/sse.c -o build/sse.o ${GCC_FLAGS}
+gcc ${COMPILER} -g -c ${PROJECT_ROOT}/ops/intrinsics.c -o build/intrinsics.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/ops/ops.c -o build/ops.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/data/arr.c -o build/arr.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/data/arrset.c -o build/arrset.o ${GCC_FLAGS}
