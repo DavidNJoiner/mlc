@@ -94,10 +94,9 @@ gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/mempool/pool.c -o build/pool.o ${GCC_
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/mempool/memblock.c -o build/memblock.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/mempool/subblock.c -o build/subblock.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/device.c -o build/device.o ${GCC_FLAGS}
-gcc ${COMPILER} -g -c ${PROJECT_ROOT}/ops/intrinsics.c -o build/intrinsics.o ${GCC_FLAGS}
+gcc ${COMPILER} -g -c ${PROJECT_ROOT}/ops/intel_intrinsics.c -o build/intel_intrinsics.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/ops/ops.c -o build/ops.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/data/arr.c -o build/arr.o ${GCC_FLAGS}
-gcc ${COMPILER} -g -c ${PROJECT_ROOT}/data/arrset.c -o build/arrset.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/debug.c -o build/debug.o ${GCC_FLAGS}
 #gcc -c function.c -o build/function.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/tensor.c -o build/tensor.o ${GCC_FLAGS}

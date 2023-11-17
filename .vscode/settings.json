@@ -4,10 +4,14 @@
         "device_manager.h": "c",
         "debug.h": "c",
         "device.h": "c",
-        "arrset.h": "c",
         "mempool.h": "c",
         "tensor.h": "c",
         "config.h": "c",
-        "ops.h": "c"
+        "ops.h": "c",
+        "intel_intrinsics.h": "c",
+        "stdint.h": "c",
+        "compare": "c",
+        "cstdint": "c",
+        "format": "c"
     }
 }
