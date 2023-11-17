@@ -7,7 +7,7 @@
 
 //ops includes
 #include "cuda_ops.h"
-#include "intrinsics.h"
+#include "intel_intrinsics.h"
 
 void speed_mul_op(arr_t *dst, arr_t *A, arr_t *B, Device *device);
 void speed_add_op(arr_t *dst, arr_t *A, Device *device);
