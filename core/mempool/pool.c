@@ -151,6 +151,24 @@ void* memory_alloc_padded (int size, int dtype)
     }
 }
 
+void* memory_malloc_aligned(size_t size, size_t alignment) {
+    #ifdef _WIN32
+        return _aligned_malloc(size, alignment);
+    #else
+        void* ptr = NULL;
+        posix_memalign(&ptr, alignment, size);
+        return ptr;
+    #endif
+}
+
+void memory_free_aligned(void* ptr) {
+    #ifdef _WIN32
+        _aligned_free(ptr);
+    #else
+        free(ptr);
+    #endif
+}
+
 arr_t* arr_alloc(){
     arr_t* data = malloc(sizeof(arr_t));
     if (!data) {

@@ -91,7 +91,10 @@ void            _subblock_coalescing_(MemBlock_t *memblock);
 
 
 // Memory 
-void* memory_alloc_padded (int size, int dtype);
+void*           memory_alloc_padded (int size, int dtype);
+void*           memory_malloc_aligned(size_t size, size_t alignment);
+void            memory_free_aligned(void* ptr);
+
 
 // Layer memory managment
 
@@ -100,13 +103,13 @@ void* memory_alloc_padded (int size, int dtype);
 // Tensor memory managment
 
 // Array memory managment
-arr_t *arr_alloc();
-void arr_init_global_ptr_count(int initial_capacity);
-void arr_increment_ptr_count(arr_t *data_ptr);
-void arr_free_all();
+arr_t*          arr_alloc();
+void            arr_init_global_ptr_count(int initial_capacity);
+void            arr_increment_ptr_count(arr_t *data_ptr);
+void            arr_free_all();
 
 // Debug functions
-void subblock_print(MemBlock_t *memblock, uint32_t i);
+void            subblock_print(MemBlock_t *memblock, uint32_t i);
 
 #endif // MEMPOOL_H_
 
