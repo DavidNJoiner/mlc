@@ -3,12 +3,23 @@
 /*  -------------------------------------------------------*/
 /*  Monotonic Chrono                                       */
 /*  -------------------------------------------------------*/
+#ifdef DEEPC_LINUX
 uint64_t nanos()
 {
     struct timespec start;
     clock_gettime(CLOCK_MONOTONIC, &start);
     return (uint64_t)start.tv_sec * 1000000000 + (uint64_t)start.tv_nsec;
 }
+#else
+uint64_t nanos() 
+{
+    LARGE_INTEGER frequency, start;
+    QueryPerformanceFrequency(&frequency);
+    QueryPerformanceCounter(&start);
+
+    return (uint64_t)((start.QuadPart * 1000000000) / frequency.QuadPart);
+}
+#endif
 
 char *get_time()
 {

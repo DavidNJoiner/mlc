@@ -4,6 +4,7 @@
 
 #include <stdint.h>
 #include <time.h>
+#include <windows.h>
 
 uint64_t nanos();
 char *get_time();
