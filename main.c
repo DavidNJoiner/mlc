@@ -92,8 +92,9 @@ void test_float16()
 int main(int argc, char **argv)
 {
     printf("\033[0;35mMAXIMUM UNSIGNED INT SIZE  %5u \033[0m\n", UINT_MAX);
-    printf("\033[0;35mSIZE MemBlock_t         %5u \033[0m\n", BLOCKSIZE);
+    printf("\033[0;35mSIZE MemBlock_t            %5u \033[0m\n", BLOCKSIZE);
 
+    test_float16();
     
     // getDevices();
 

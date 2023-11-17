@@ -2,9 +2,9 @@
 #include "../debug.h"
 #include "../core/mempool/mempool.h"
 
-global_data_ptr_array = NULL;
-data_total_alloc = 0;
-data_total_dealloc = 0;
+arrPtrTracker_t * global_data_ptr_array = NULL;
+int data_total_alloc = 0;
+int data_total_dealloc = 0;
 
 /* Converts multi-dimensional index into a linear index. */
 int compute_index(int *indices, int *shape, int dim)
