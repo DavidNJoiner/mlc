@@ -44,7 +44,7 @@ void pool_init(uint8_t pool_instance_index, size_t pool_size)
     init_table(); // Table should be init somewhere else.
     
     // Update globals
-    increase_total_bytes_allocated(sizeof(pool->m_memStart));
+    sm_increase_total_bytes_allocated(sizeof(pool->m_memStart));
     add_entry("pool_init", 2, (double)(sizeof(pool->m_memStart)), 0.0);
 }
 
@@ -62,7 +62,7 @@ void pool_destroy(Pool_t *pool)
     }
 
     // Update globals
-    decrease_total_bytes_allocated(sizeof(pool->m_memStart));
+    sm_decrease_total_bytes_allocated(sizeof(pool->m_memStart));
     free((DEEPC_VOID_POINTER)pool->m_memStart);
     add_entry("pool_destroy", 2, 0.00, (double)(sizeof(pool->m_memStart)));
     pool->m_memStart = NULL;
@@ -98,8 +98,8 @@ uint32_t memblock_count_free_subblocks(MemBlock_t* memblock_ptr)
 void pool_print_stats(Pool_t *pool)
 {
     size_t poolSize = pool->m_numOfBlocks * pool->m_sizeOfEachBlock;
-    int allocated_bytes = get_total_bytes_allocated();
-    printf("\t\033[0;32m[Debug]\033[0m Display_pool_stats : \nTotal bytes allocated %d\n", get_total_bytes_allocated());
+    int allocated_bytes = sm_get_total_bytes_allocated();
+    printf("\t\033[0;32m[Debug]\033[0m Display_pool_stats : \nTotal bytes allocated %d\n", sm_get_total_bytes_allocated());
 
     double percentage_allocated_from_pool = poolSize == 0 ? 0 : (100.0 * allocated_bytes) / poolSize;
 

@@ -7,7 +7,7 @@ static StateManager *StateManager_getInstance()
     return &instance;
 }
 
-void increase_total_bytes_allocated(int bytes)
+void sm_increase_total_bytes_allocated(int bytes)
 {
     StateManager *mm = StateManager_getInstance();
     mm->total_bytes_allocated += bytes;
@@ -15,12 +15,12 @@ void increase_total_bytes_allocated(int bytes)
     // TODO: Add alerting functionality if total_bytes_allocated exceeds a certain threshold to update the memory visualization.
 }
 
-void decrease_total_bytes_allocated(int bytes)
+void sm_decrease_total_bytes_allocated(int bytes)
 {
     printf("\t\t[State Manager] Freeing %d bytes from pool\n", bytes);
 
     StateManager *mm = StateManager_getInstance();
-    if ((get_total_bytes_allocated() - bytes) < 0)
+    if ((sm_get_total_bytes_allocated() - bytes) < 0)
     {
         printf("\t\t[State Manager] Pool is empty\n");
         mm->total_bytes_allocated = 0;
@@ -31,7 +31,7 @@ void decrease_total_bytes_allocated(int bytes)
     }
 }
 
-int get_total_bytes_allocated(void)
+int sm_get_total_bytes_allocated(void)
 {
     StateManager *mm = StateManager_getInstance();
     return mm->total_bytes_allocated;

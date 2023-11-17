@@ -73,7 +73,7 @@ SubBlock_t *subblock_alloc(uint32_t size, MemBlock_t *MEMBLOCK)
     subblock->m_size = size + 1;
     subblock->m_ID = get_subblock_index(MEMBLOCK, subblock);
 
-    increase_total_bytes_allocated(sizeof(SubBlock_t));
+    sm_increase_total_bytes_allocated(sizeof(SubBlock_t));
     // add_entry("subblock_alloc", 2, (double)(sizeof(SubBlock_t)), 0.00);
 
     printf("\t\033[34m[Info]\033[0m SubBlock allocated at %p with size %zu and ID %d\n", subblock, subblock->m_size, subblock->m_ID);
@@ -116,7 +116,7 @@ void _subblock_free_(MemBlock_t *memblock, SubBlock_t *subblock)
     // Mark the SubBlock as free
     subblock->m_size = 0;
 
-    decrease_total_bytes_allocated(sizeof(SubBlock_t));
+    sm_decrease_total_bytes_allocated(sizeof(SubBlock_t));
     add_entry("_subblock_free_", 2, 0.00, (double)(sizeof(SubBlock_t)));
 }
 

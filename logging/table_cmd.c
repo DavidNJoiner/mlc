@@ -62,7 +62,7 @@ void add_entry(char *name, int num_values, ...)
     }
     va_end(args);
 
-    table.entries[table.num_entries].values[table.num_columns - 2] = (double)(get_total_bytes_allocated());
+    table.entries[table.num_entries].values[table.num_columns - 2] = (double)(sm_get_total_bytes_allocated());
 
     table.num_entries++;
 }

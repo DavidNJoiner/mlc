@@ -31,9 +31,9 @@ MemBlock_t *memblock_alloc(Pool_t *pool)
     printf("[Info] MemBlock Allocation Successful! Address %p\n", (void *)new_block_address);
 
     // Update and display memory allocation statistics.
-    increase_total_bytes_allocated(BLOCKSIZE);
+    sm_increase_total_bytes_allocated(BLOCKSIZE);
     add_entry("membloc_alloc", 2, (double)(sizeof(MemBlock_t)), 0.0);
-    printf("total_bytes_currently_allocated = %d\n", get_total_bytes_allocated());
+    printf("total_bytes_currently_allocated = %d\n", sm_get_total_bytes_allocated());
 
     return new_block_address;
 }
@@ -51,8 +51,8 @@ void block_free(Pool_t *pool, MemBlock_t *block)
     printf("\t\033[34m[Info] Freed memblock at address %p\033[0m\n", (void *)(block));
     block = NULL;
 
-    printf("\t\033[0;37m[Call] decrease_total_bytes_allocated\033[0m\n");
-    decrease_total_bytes_allocated(BLOCKSIZE);
+    printf("\t\033[0;37m[Call] sm_decrease_total_bytes_allocated\033[0m\n");
+    sm_decrease_total_bytes_allocated(BLOCKSIZE);
     add_entry("memblock_free", 2, 0.0, (double)(sizeof(MemBlock_t)));
 
     pool->m_numFreeBlocks++;
