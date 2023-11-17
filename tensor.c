@@ -106,7 +106,7 @@ Tensor *zerosFrom(Tensor *t)
     }
     else
     {
-        new_data->values = (float32 *)_aligned_malloc(32, new_data->size * get_data_size(new_data->dtype));
+        new_data->values = (float32 *)aligned_alloc(32, new_data->size * get_data_size(new_data->dtype));
         if (new_data->values == NULL)
         {
             printf("Error: Failed to allocate memory for new_data->values\n");

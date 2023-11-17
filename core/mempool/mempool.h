@@ -1,6 +1,12 @@
 #ifndef MEMPOOL_H_
 #define MEMPOOL_H_
 
+/*
+ If your header file is included in multiple translation units (source files), make sure to handle memory management cautiously,
+ especially with functions that perform memory allocation. If possible, keep allocation and deallocation within the same
+ translation unit to avoid potential issues.
+*/
+
 #include <assert.h>
 #include <stddef.h>
 #include <limits.h>
@@ -56,8 +62,6 @@ struct GlobalPool
     bool m_is_initialized;
 };
 
-#ifndef DISABLE_MEMORY_POOLING
-
                 // Low level Pool memory managment
 
 Pool_t*         pool_get_from_index(int pool_index);
@@ -85,13 +89,6 @@ void            subblock_free_all(MemBlock_t *MEMBLOCK);
 void            _subblock_merge_(MemBlock_t *memblock, SubBlock_t *subblock1, SubBlock_t *subblock2);
 void            _subblock_coalescing_(MemBlock_t *memblock);
 
-#else
-
-#include <stdlib.h>
-#define pool_malloc(p) malloc((p)->block_size)
-#define pool_free(p, d) free(d)
-
-#endif // DISABLE_MEMORY_POOLING
 
 // Memory 
 void* memory_alloc_padded (int size, int dtype);
@@ -113,34 +110,3 @@ void subblock_print(MemBlock_t *memblock, uint32_t i);
 
 #endif // MEMPOOL_H_
 
-#ifndef _MEMPOOL_IMPLEMENTATION_
-
-void* memory_alloc_padded (int size, int dtype)
-{
-    int alignment_size = DEEPC_CPU;
-    size_t element_size = sizeof(dtype);
-    size_t padded_size = size * element_size;
-
-    if (padded_size % alignment_size != 0) {
-        size_t padding = alignment_size - (padded_size % alignment_size);
-        padded_size += padding;
-    }
-
-    void *allocated_memory = malloc(padded_size);
-    if (!allocated_memory) {
-        return NULL;
-    }
-}
-
-arr_t* arr_alloc(){
-    arr_t* data = malloc(sizeof(arr_t));
-    if (!data) {
-        perror("Error allocating Array structure");
-        exit(EXIT_FAILURE);
-    }
-    return data;
-}
-
-#define _MEMPOOL_IMPLEMENTATION_
-
-#endif // _IMPLEMENTATION_MEMPOOL_H_

@@ -70,6 +70,10 @@ else
     exit 1
 fi
 
+echo "GCC_FLAGS : $GCC_FLAGS"
+echo "NVCC_FLAGS : $NVCC_FLAGS"
+echo "CUDA_FLAG : $CUDA_FLAG"
+
 # Compile the CUDA source file with nvcc
 if [ -n "${NVCC_FLAGS}" ]; then
     nvcc -g -c ${PROJECT_ROOT}/ops/cuda_ops.cu -o build/cuda_ops.o ${NVCC_FLAGS}
@@ -93,12 +97,12 @@ gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/device.c -o build/device.o ${GCC_FLAG
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/ops/avx.c -o build/avx.o ${GCC_FLAGS}
 #gcc ${COMPILER} -g -c ${PROJECT_ROOT}/ops/sse.c -o build/sse.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/ops/ops.c -o build/ops.o ${GCC_FLAGS}
-gcc ${COMPILER} -g -c data/data.c -o build/data.o ${GCC_FLAGS}
-gcc ${COMPILER} -g -c data/dataset.c -o build/dataset.o ${GCC_FLAGS}
-gcc ${COMPILER} -g -c debug.c -o build/debug.o ${GCC_FLAGS}
+gcc ${COMPILER} -g -c ${PROJECT_ROOT}/data/arr.c -o build/arr.o ${GCC_FLAGS}
+gcc ${COMPILER} -g -c ${PROJECT_ROOT}/data/arrset.c -o build/arrset.o ${GCC_FLAGS}
+gcc ${COMPILER} -g -c ${PROJECT_ROOT}/debug.c -o build/debug.o ${GCC_FLAGS}
 #gcc -c function.c -o build/function.o ${GCC_FLAGS}
-gcc ${COMPILER} -g -c tensor.c -o build/tensor.o ${GCC_FLAGS}
-gcc ${COMPILER} -g -c main.c -o build/main.o ${GCC_FLAGS}
+gcc ${COMPILER} -g -c ${PROJECT_ROOT}/tensor.c -o build/tensor.o ${GCC_FLAGS}
+gcc ${COMPILER} -g -c ${PROJECT_ROOT}/main.c -o build/main.o ${GCC_FLAGS}
 
 # Link all the object files, including cuda.o
 if [ -n "${NVCC_FLAGS}" ]; then

@@ -99,7 +99,7 @@ int main(int argc, char **argv)
     Device *cpu = init_device(CPU, -1);
 
     printf("Initializing memory pool...\n");
-    pool_init(0, 1024);
+    pool_init(0, 4096);
     Pool_t *pool = pool_get_from_index(0);
 
     test_memory_pool(pool);

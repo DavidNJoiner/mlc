@@ -134,3 +134,28 @@ static void pool_init_debug(Pool_t *pool, const size_t poolSize)
     printf("\t\033[34m[Info]\033[0m MemBlock initialized     %4u\n\n", pool->m_numInitialized); 
 }
 
+void* memory_alloc_padded (int size, int dtype)
+{
+    int alignment_size = DEEPC_CPU;
+    size_t element_size = sizeof(dtype);
+    size_t padded_size = size * element_size;
+
+    if (padded_size % alignment_size != 0) {
+        size_t padding = alignment_size - (padded_size % alignment_size);
+        padded_size += padding;
+    }
+
+    void *allocated_memory = malloc(padded_size);
+    if (!allocated_memory) {
+        return NULL;
+    }
+}
+
+arr_t* arr_alloc(){
+    arr_t* data = malloc(sizeof(arr_t));
+    if (!data) {
+        perror("Error allocating Array structure");
+        exit(EXIT_FAILURE);
+    }
+    return data;
+}
