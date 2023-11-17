@@ -41,23 +41,26 @@ typedef struct
     void *creator; // Function* creator; Points to the Function that created this Tensor.
 } Tensor;
 
-// Utils
-void set_require_grad(Tensor *tensor, int bit_flag);
-bool get_require_grad(Tensor *tensor);
-
 //  Tensors creation
-Tensor *zerosFrom(Tensor *t);
-Tensor *tensor(arr_t *data, Device *device, bool requires_grad);
-Tensor *create_tensor(int *shape, int dim, int dtype, Device *device, bool requires_grad);
-Tensor *newFull(int *shape, int fill_value, int dtype, Device *device, bool requires_grad);
+Tensor*         tensor_zeros(Tensor *t);
+Tensor*         tensor_from_array(arr_t *data, Device *device, bool requires_grad);
+Tensor*         tensor_from_scratch(int *shape, int dim, int dtype, Device *device, bool requires_grad);
+Tensor*         tensor_ones(int *shape, int fill_value, int dtype, Device *device, bool requires_grad);
 
-//  Tensors arithmetic
-void mul(Tensor *dst, Tensor *A, Tensor *B);
-void add(Tensor *dst, Tensor *A);
+// Unary Ops
 
-// transpose here
+//  Binary Ops
+void            mul(Tensor *dst, Tensor *A, Tensor *B);
+void            add(Tensor *dst, Tensor *A);
 
-void displayTensor(Tensor *A);
-bool is_aligned(void *ptr, size_t alignment);
+// Movement Ops
+
+// Utils
+void            set_require_grad(Tensor *tensor, int bit_flag);
+bool            get_require_grad(Tensor *tensor);
+void            tensor_print(Tensor *A);
+bool            is_tensor_aligned(void *ptr, size_t alignment);
+
+
 
 #endif // TENSOR_H

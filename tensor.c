@@ -4,12 +4,11 @@
 // Setting requires_grad=True for a tensor means that the operations involving this tensor are tracked
 // so that the gradient computations can be automatically done during backpropagation.
 
-/*  -------------------------------------------------------*/
-/*  tensor : create a new Tensor from a arr_t object.       */
-/*  -------------------------------------------------------*/
-// TODO : check if device is available on the system
-Tensor *tensor(arr_t *data, Device *device, bool requires_grad)
+
+//Create a Tensor object from a arr_t object.
+Tensor *tensor_from_array(arr_t *data, Device *device, bool requires_grad)
 {
+    // TODO : check if device is available on the system
     // Use the custom memory allocator to allocate memory for the new tensor
     Pool_t *Pool = pool_get_from_index(0);
     Tensor *new_tensor = (Tensor *)memblock_alloc(Pool);
@@ -39,10 +38,9 @@ Tensor *tensor(arr_t *data, Device *device, bool requires_grad)
     return new_tensor;
 }
 
-/*  -------------------------------------------------------*/
-/*  create_tensor : create a new Tensor from scratch.       */
-/*  -------------------------------------------------------*/
-Tensor *create_tensor(int *shape, int dim, int dtype, Device *device, bool requires_grad)
+
+// Create a new Tensor from scratch.
+Tensor *tensor_from_scratch(int *shape, int dim, int dtype, Device *device, bool requires_grad)
 {
     int size = 1;
     for (uint32_t i = 0; i < dim; i++)
@@ -63,7 +61,7 @@ Tensor *create_tensor(int *shape, int dim, int dtype, Device *device, bool requi
         printf("Memory allocation failed!\n");
         return NULL;
     }
-    arr_t *data = data_create_from_array(array, shape, dim, dtype); // check if Array functions handle cuda memory
+    arr_t *data = arr_create_from_array(array, shape, dim, dtype); // check if Array functions handle cuda memory
     Pool_t *Pool = pool_get_from_index(0);
     Tensor *t = (Tensor *)memblock_alloc(Pool);
     t->data = data;
@@ -71,10 +69,9 @@ Tensor *create_tensor(int *shape, int dim, int dtype, Device *device, bool requi
     set_require_grad(t, (int)requires_grad);
     return t;
 }
-/*  -------------------------------------------------------------------------------------/
-  zerosFrom : create a new Tensor filled with zeros from an existing Tensor(template).
-/  -------------------------------------------------------------------------------------*/
-Tensor *zerosFrom(Tensor *t)
+
+// Create a Tensor filled with zeros from an existing Tensor(template tensor).
+Tensor *tensor_zeros(Tensor *t)
 {
 
     Pool_t *Pool = pool_get_from_index(0);
@@ -106,7 +103,7 @@ Tensor *zerosFrom(Tensor *t)
     }
     else
     {
-        new_data->values = (float32 *)aligned_alloc(32, new_data->size * get_data_size(new_data->dtype));
+        new_data->values = (float32 *)memory_malloc_aligned(32, new_data->size * get_data_size(new_data->dtype));
         if (new_data->values == NULL)
         {
             printf("Error: Failed to allocate memory for new_data->values\n");
@@ -148,14 +145,13 @@ Tensor *zerosFrom(Tensor *t)
     return new_tensor;
 }
 
-Tensor *newFull(int *shape, int fill_value, int dtype, Device *device, bool requires_grad)
+Tensor *tensor_ones(int *shape, int fill_value, int dtype, Device *device, bool requires_grad)
 {
     // TODO: Implement this function
     return NULL;
 }
-/*  ---------------------------------------------------------------*/
-/*  shapesAreEqual : Check if two Tensors shapes are equals.       */
-/*  ---------------------------------------------------------------*/
+
+// Check if two Tensors shapes are equals.
 bool shapesAreEqual(Tensor *A, Tensor *B)
 {
     if (A->data->dim != B->data->dim)
@@ -175,14 +171,14 @@ bool shapesAreEqual(Tensor *A, Tensor *B)
 
     return true;
 }
-/*  ---------------------------------------------------------------*/
-/*  sameDevice : Check if n-Tensors are on the same device.        */
-/*  ---------------------------------------------------------------*/
+
+// Check if n-Tensors are on the same device.
 bool sameDevice(int num_tensors, ...)
 {
     va_list args;
     va_start(args, num_tensors);
 
+    int mismatches = 0;
     Tensor *first_tensor = va_arg(args, Tensor *);
     Device *reference_device = first_tensor->device;
 
@@ -192,17 +188,17 @@ bool sameDevice(int num_tensors, ...)
         if (tensor->device != reference_device)
         {
             va_end(args);
-            printf("Device mismatch.\n");
+            mismatches += 1;
             return false;
         }
     }
 
+    printf("[info] Device mismatch : %d\n", mismatches);
     va_end(args);
     return true;
 }
-/*  --------------------------------------------------------------------------------*/
-/*  mul : Multiply two Tensors A and B. Stores the result as a third Tensor dst */
-/*  --------------------------------------------------------------------------------*/
+
+// Multiply two Tensors A and B. Stores the result as a third Tensor dst
 void mul(Tensor *dst, Tensor *A, Tensor *B)
 {
 
@@ -216,7 +212,7 @@ void mul(Tensor *dst, Tensor *A, Tensor *B)
         return;
     }
 
-    if (is_aligned(dst->data->values, 32) && is_aligned(A->data->values, 32) && is_aligned(B->data->values, 32))
+    if (is_tensor_aligned(dst->data->values, 32) && is_tensor_aligned(A->data->values, 32) && is_tensor_aligned(B->data->values, 32))
     {
         speed_mul_op(dst->data, A->data, B->data, dst->device);
     }
@@ -225,9 +221,8 @@ void mul(Tensor *dst, Tensor *A, Tensor *B)
         printf("values are NOT 32-byte aligned.\n");
     }
 }
-/*  -----------------------------------------------------------------------------*/
-/*  add : Add two Tensors A and B. Stores the result as a third Tensor dst   */
-/*  -----------------------------------------------------------------------------*/
+
+// Add two Tensors A and B. Stores the result as a third Tensor dst
 void add(Tensor *dst, Tensor *A)
 {
 
@@ -241,7 +236,7 @@ void add(Tensor *dst, Tensor *A)
         return;
     }
 
-    if (is_aligned(dst->data->values, 32) && is_aligned(A->data->values, 32))
+    if (is_tensor_aligned(dst->data->values, 32) && is_tensor_aligned(A->data->values, 32))
     {
         speed_add_op(dst->data, A->data, dst->device);
     }
@@ -250,15 +245,14 @@ void add(Tensor *dst, Tensor *A)
         printf("values are NOT 32-byte aligned.\n");
     }
 }
-/*  ---------------------------------------------------------------*/
-/*   displayTensor : print a Tensor to the console.                  */
-/*  ---------------------------------------------------------------*/
-void displayTensor(Tensor *A)
-{
 
+// Print a Tensor to the console.
+void tensor_print(Tensor *A)
+{
+    // TODO : finish writing this function
     if (A == NULL)
     {
-        printf("Error: Null Tensor pointer passed to displayTensor function.\n");
+        printf("Error: Null Tensor pointer passed to tensor_print function.\n");
         return;
     }
 
@@ -276,7 +270,7 @@ void displayTensor(Tensor *A)
 
     if (0 < A->data->dtype && A->data->dtype <= 16)
     {
-        data_print(A->data);
+        arr_print(A->data);
     }
     else
     {
@@ -284,13 +278,14 @@ void displayTensor(Tensor *A)
     }
 }
 
-/*  -------------------------------------------------------*/
-/*  Memory Alignement Check                                */
-/*  -------------------------------------------------------*/
-bool is_aligned(void *ptr, size_t alignment)
+
+// Memory Alignement Check.
+bool is_tensor_aligned(void *ptr, size_t alignment)
 {
     return ((uintptr_t)ptr % alignment) == 0;
 }
+
+// Set and Get Tensor gradient.
 void set_require_grad(Tensor *tensor, int bit_flag)
 {
     uint32_t *int_ptr = (uint32_t *)&tensor->gradient;

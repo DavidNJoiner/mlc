@@ -8,7 +8,7 @@
 
 typedef void (*PrintFunc)(void *, int);
 
-bool is_aligned(void *ptr, size_t alignment);
+bool is_tensor_aligned(void *ptr, size_t alignment);
 
 void print_float16(void *values, int index);
 void print_float32(void *values, int index);

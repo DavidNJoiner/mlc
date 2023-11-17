@@ -38,22 +38,22 @@ Parameters train(Model* model, Tensor* X_train, Tensor* Y_train, Optim* optim, i
 
 /* int test() {
     //arr_t  dat[4] = {{0, 0, 1}, {0, 1, 1}, {1, 0, 1}, {1, 1, 0}};
-    //Tensor* t2 = create_tensor(dat, 4, 1, 2);//Here dat decay into a pointer, which is what create_tensor expect.
-    //Tensor* t1 = create_tensor(dat, 4, 1, 2); 
-    //Tensor* res = create_tensor(dat, 4, 1, 2);
+    //Tensor* t2 = tensor_from_scratch(dat, 4, 1, 2);//Here dat decay into a pointer, which is what tensor_from_scratch expect.
+    //Tensor* t1 = tensor_from_scratch(dat, 4, 1, 2); 
+    //Tensor* res = tensor_from_scratch(dat, 4, 1, 2);
     //mult(res,t2,t1);
     //add(res,t2);	
-    //displayTensor(res);
+    //tensor_print(res);
 
     arr_t  dat2[2][4] = {{{1.f, 2.f, 3.f}, {0.f, 6.f, 1.f}, {2.f, 0.f, 8.f}, {1.f, 4.f, 0.f}}, {{0.f, 2.f, 3.f}, {0.f, 6.f, 1.f}, {2.f, 0.f, 8.f}, {1.f, 4.f, 0.f}}};
     arr_t* data_p = &dat2[0][0];//Flatten the arr_t array
 
-    Tensor* t3 = create_tensor(data_p, 4, 2, 2);
-    Tensor* t4 = create_tensor(data_p, 4, 2, 2); 
-    Tensor* res1 = create_tensor(data_p, 4, 2, 2);
+    Tensor* t3 = tensor_from_scratch(data_p, 4, 2, 2);
+    Tensor* t4 = tensor_from_scratch(data_p, 4, 2, 2); 
+    Tensor* res1 = tensor_from_scratch(data_p, 4, 2, 2);
     mult(res1,t4,t3);
     add(res1,t4);	
-    displayTensor(res1);
+    tensor_print(res1);
     //printf("Tensor size = %zu\n", sizeof(res)); 
     //	Parameters params = train(data, 4);
 
