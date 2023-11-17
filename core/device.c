@@ -6,10 +6,9 @@ Device *init_device(DeviceType type, int deviceID)
     device->type = type;
     device->deviceID = deviceID;
 
-    if (type == CUDA)
-    {
-        cudaSetDevice(deviceID);
-    }
+    #ifdef CUDA_AVAILABLE
+    cudaSetDevice(deviceID);
+    #endif // CUDA_AVAILABLE
 
     return device;
 }
