@@ -15,7 +15,7 @@ Function* InitFunction(Device* device, arr_t* tensors, Tensor* (*ForwardFunc)(Fu
     self->needs_input_grad = (bool *)malloc(tensors->size * sizeof(bool));
     // Loop throught the tensors to fill the needs_input_grad array.
     for (uint32_t i = 0; i < tensors->size; i++) {
-        Tensor *t = data_get_element_at_index(tensors, &i);
+        Tensor *t = arr_get_value_at_index(tensors, &i);
         self->needs_input_grad[i] = t->require_grad;
     }
 

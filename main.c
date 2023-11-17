@@ -93,25 +93,27 @@ int main(int argc, char **argv)
 {
     printf("\033[0;35mMAXIMUM UNSIGNED INT SIZE  %5u \033[0m\n", UINT_MAX);
     printf("\033[0;35mSIZE MemBlock_t         %5u \033[0m\n", BLOCKSIZE);
+
+    
     // getDevices();
 
     //Device *gpu = init_device(CUDA, 0);
-    Device *cpu = init_device(CPU, -1);
+    ////Device *cpu = init_device(CPU, -1);
 
-    printf("Initializing memory pool...\n");
-    pool_init(0, 4096);
-    Pool_t *pool = pool_get_from_index(0);
+    ////printf("Initializing memory pool...\n");
+    ////pool_init(0, 4096);
+    ////Pool_t *pool = pool_get_from_index(0);
 
-    test_memory_pool(pool);
-    display_table();
+    ////test_memory_pool(pool);
+    ////display_table();
     // test_adding_subblocks();
     //  test_removing_last_subblock();
     //  test_buddy_system_merge();
 
-    printf("Destroying memory pool...\n");
-    pool_destroy(pool);
+    ////printf("Destroying memory pool...\n");
+    ////pool_destroy(pool);
 
-    display_table();
+    ////display_table();
 
     // Initialize the global memory pool
     ////setup_tensor_pool(1);
@@ -120,28 +122,28 @@ int main(int argc, char **argv)
     // Create a tensor
     ////int shape[] = {16, 512};
 
-    ////arr_t *data001 = data_create_from_random(8192, 0, 1, shape, 2, FLOAT32);
-    // arr_t* data002 = data_create_from_random(8192, 0, 1, shape, 2, FLOAT32);
+    ////arr_t *data001 = arr_create_from_random(8192, 0, 1, shape, 2, FLOAT32);
+    // arr_t* data002 = arr_create_from_random(8192, 0, 1, shape, 2, FLOAT32);
 
-    // Tensor* t001 = tensor(data001, gpu, false);
-    // Tensor* t002 = tensor(data002, gpu, false);
-    ////Tensor *t003 = tensor(data001, cpu, false);
-    // Tensor* t004 = tensor(data001, cpu, false);
-    // Tensor* t004 = tensor(data002, cpu, false);
-    // Tensor* gpures = zerosFrom(t002);
-    // Tensor* cpures = zerosFrom(t004);
+    // Tensor* t001 = tensor_from_array(data001, gpu, false);
+    // Tensor* t002 = tensor_from_array(data002, gpu, false);
+    ////Tensor *t003 = tensor_from_array(data001, cpu, false);
+    // Tensor* t004 = tensor_from_array(data001, cpu, false);
+    // Tensor* t004 = tensor_from_array(data002, cpu, false);
+    // Tensor* gpures = tensor_zeros(t002);
+    // Tensor* cpures = tensor_zeros(t004);
 
     // uint64_t s0 = nanos();
     // mul(gpures, t001, t002);
     // uint64_t e0 = nanos();
-    // displayTensor(t9);
+    // tensor_print(t9);
 
     // printf("\t \t \t \t CUDA Time: %f ms\n", (double)(e0 - s0) / 1000000.0);
 
     // uint64_t s1 = nanos();
     // mul(cpures, t003, t004);
     // uint64_t e1 = nanos();
-    // displayTensor(t12);
+    // tensor_print(t12);
 
     // printf("\t \t \t \t AVX Time: %f ms\n", (double)(e1 - s1) / 1000000.0);
 
