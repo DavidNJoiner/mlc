@@ -18,13 +18,20 @@
 When a `Tensor` is instanciated. The programm looks for an available `MemoryBlocks` in a `Pool` instance.
 
 
-### Common Object Sizes:
+### Ops Lookup:
 
-| dtype                  | x64 byte size | x86 byte size |
-| ---------------------- | ------------- | ------------- |
-| struct SubBlock        | 8 bytes       | 8 bytes       |
-| struct MemBlock        | 48 bytes      | 36 bytes      |
-| struct Pool            | 28 bytes      | 28 bytes      |
-| struct GlobalPool      | variable      | variable      |
-| struct Tensor          | 16 bytes      | 16 bytes      |
-| struct arr_t           | 20 bytes      | 20 bytes      |
+The filled cells represent native numerical type support, while the goal is to ensure compatibility for the remaining cells through software solutions.
+
+|         | DTYPE      | quint4x2 | quint8 | qint8 | int8 | uint8 | int16 | uint16 | int32 | uint32 | int64 | float16 | bfloat16 | float32 | float64 | bool |
+|:-------:|:----------:|:--------:|:------:|:-----:|:----:|:-----:|:-----:|:------:|:-----:|:------:|:-----:|:-------:|:--------:|:-------:|:-------:|:----:|
+| **Intel CPU** | **AMD CPU** |          |        |       |      |       |       |        |       |        |       |         |          |         |         |      |
+| AVX512  | AVX-512 FMA|          |        |       | x    | x     | x     | x      | x     | x      | x     | x       |          | x       | x       | x    |
+| AVX2    | AVX2       |          |        |       | x    | x     | x     | x      | x     | x      | x     |         |          | x       | x       | x    |
+| AVX     | AVX        |          |        |       | x    | x     | x     | x      | x     | x      | x     |         |          | x       | x       | x    |
+| SSE4.2  | SSE4a      |          |        |       | x    | x     | x     | x      | x     | x      | x     |         |          | x       | x       | x    |
+| SSE4.1  | SSE4.1     |          |        |       | x    | x     | x     | x      | x     | x      | x     |         |          | x       | x       | x    |
+| SSSE3   | SSSE3      |          |        |       | x    | x     | x     | x      | x     | x      | x     |         |          | x       | x       | x    |
+| SSE3    | SSE3       |          |        |       | x    | x     | x     | x      | x     | x      | x     |         |          | x       | x       | x    |
+| SSE2    | SSE2       |          |        |       | x    | x     | x     | x      | x     | x      | x     |         |          | x       | x       | x    |
+| SSE     | SSE        |          |        |       | x    | x     | x     | x      | x     | x      | x     |         |          | x       | x       | x    |
+
