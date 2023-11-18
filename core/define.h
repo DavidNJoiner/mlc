@@ -55,12 +55,11 @@ STATIC_ASSERT(sizeof(double) == 8, "Expected double to be 8 bytes.");
 /** @brief False. */
 #define false 0
 
-#define DEEPC_CUDA_MEMORY_CACHING 0
 #define INITIAL_POOL_BLOCKS 1
 #define MAX_POOL_INSTANCES 1
 #define DEEPC_MIN_BLOCK_SIZE sizeof(uint32_t)
 
-#define DEEPC_VOID_POINTER void *
+#define DEEPC_VOID_POINTER void*
 #define DEEPC_SIZE_OF_VOID_POINTER sizeof(DEEPC_VOID_POINTER)
 
 // Pool define
@@ -87,13 +86,13 @@ STATIC_ASSERT(sizeof(double) == 8, "Expected double to be 8 bytes.");
 #define ALIGN_ADDR(DEEPC_VOID_POINTER) ((void *)((uintptr_t)(DEEPC_VOID_POINTER + DEEPC_SIZE_OF_VOID_POINTER - 1) & ~(DEEPC_SIZE_OF_VOID_POINTER - 1)))
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-#define DEEPC_WINDOWS 1
+#define DEEPC_WINDOWS true
 #ifndef _WIN64
 #error "64-bit is required on Windows!"
 #endif
 #elif defined(__linux__) || defined(__gnu_linux__)
 // Linux OS
-#define DEEPC_LINUX 1
+#define DEEPC_LINUX true
 
 // Inlining
 #if defined(__clang__) || defined(__gcc__)

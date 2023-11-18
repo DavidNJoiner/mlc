@@ -104,18 +104,9 @@ void cpu_get_stats()
 /*  -------------------------------------------------------*/
 
 #ifdef CUDA_AVAILABLE
-
 void cuda_version()
 {
-    if (DEEPC_CUDA_MEMORY_CACHING)
-    {
-        int cudaVersion = CUDART_VERSION;
-        printf("[Info] CUDA version: %d.%d.\n\n", cudaVersion / 1000, (cudaVersion % 100) / 10);
-    }
-    else
-    {
-        printf("[Info] CUDA is not installed.\n\n");
-    }
+    int cudaVersion = CUDART_VERSION;
+    printf("[Info] CUDA version: %d.%d.\n\n", cudaVersion / 1000, (cudaVersion % 100) / 10);
 }
-
 #endif //CUDA_AVAILABLE

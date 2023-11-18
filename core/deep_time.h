@@ -4,7 +4,10 @@
 
 #include <stdint.h>
 #include <time.h>
+
+#ifdef DEEPC_WINDOWS
 #include <windows.h>
+#endif //DEEPC_WINDOWS 
 
 uint64_t nanos();
 char *get_time();

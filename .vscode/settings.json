@@ -19,6 +19,7 @@
         "nn.h": "c",
         "dtype.h": "c",
         "__config": "c",
-        "cuda_binary_ops.h": "c"
+        "cuda_binary_ops.h": "c",
+        "define.h": "c"
     }
 }
