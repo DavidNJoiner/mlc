@@ -43,7 +43,7 @@ void getDevices();
 //------------------------------------
 
 // Check for AVX512 support
-#if defined(__AVX512F__)
+#if defined(__AVX512F__) && defined(__AVX512VL__) && defined(__AVX512BW__) && defined(__AVX512DQ__)
 #include <immintrin.h>
 #define SIMD_INSTRUCTION_SET "AVX512"
 #define AVX512
@@ -96,11 +96,19 @@ void getDevices();
 #define SIMD_INSTRUCTION_SET "SSE"
 #define SSE
 
+// Check for AMD-specific instructions
+#elif defined(__MMX__) || defined(__3dNOW__) || defined(__3dNOW_A__)
+// Include AMD-specific headers for SIMD instructions here
+// Example:
+// #include <amd_simd_header.h>
+#define SIMD_INSTRUCTION_SET "AMD SIMD"
+
 #else
 #define SIMD_INSTRUCTION_SET "NONE"
 #warning "No SIMD instruction set support detected"
 
 #endif
+
 
 // Check for CUDA compatibility
 #ifdef CUDA_AVAILABLE

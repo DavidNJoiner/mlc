@@ -58,7 +58,6 @@ STATIC_ASSERT(sizeof(double) == 8, "Expected double to be 8 bytes.");
 #define INITIAL_POOL_BLOCKS 1
 #define MAX_POOL_INSTANCES 1
 #define DEEPC_MIN_BLOCK_SIZE sizeof(uint32_t)
-
 #define DEEPC_VOID_POINTER void*
 #define DEEPC_SIZE_OF_VOID_POINTER sizeof(DEEPC_VOID_POINTER)
 

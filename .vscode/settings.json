@@ -20,6 +20,7 @@
         "dtype.h": "c",
         "__config": "c",
         "cuda_binary_ops.h": "c",
-        "define.h": "c"
+        "define.h": "c",
+        "float16.h": "c"
     }
 }
