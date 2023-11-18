@@ -4,7 +4,6 @@
 // Setting requires_grad=True for a tensor means that the operations involving this tensor are tracked
 // so that the gradient computations can be automatically done during backpropagation.
 
-
 //Create a Tensor object from a arr_t object.
 Tensor *tensor_from_array(arr_t *data, Device *device, bool requires_grad)
 {
@@ -18,7 +17,7 @@ Tensor *tensor_from_array(arr_t *data, Device *device, bool requires_grad)
     {
         if (device->type == CUDA)
         {
-            cudaMalloc((void **)&(new_tensor->gradient), data->size * sizeof(float32));
+            //cudaMalloc((void **)&(new_tensor->gradient), data->size * sizeof(float32));
         }
         else
         {
@@ -50,7 +49,7 @@ Tensor *tensor_from_scratch(int *shape, int dim, int dtype, Device *device, bool
     void *array;
     if (device->type == CUDA)
     {
-        cudaMalloc(&array, size * get_data_size(dtype));
+        //cudaMalloc(&array, size * get_data_size(dtype));
     }
     else
     {
@@ -95,7 +94,7 @@ Tensor *tensor_zeros(Tensor *t)
 
     if (t->device->type == CUDA)
     {
-        if (cudaMalloc(&(new_data->values), new_data->size * get_data_size(new_data->dtype)) != cudaSuccess)
+        if (true)//cudaMalloc(&(new_data->values), new_data->size * get_data_size(new_data->dtype)) != cudaSuccess
         {
             printf("Error: Failed to allocate GPU memory for new_data->values\n");
             exit(1);
@@ -120,7 +119,7 @@ Tensor *tensor_zeros(Tensor *t)
         float32 *gradient;
         if (t->device->type == CUDA)
         {
-            if (cudaMalloc((void **)&gradient, new_data->size * sizeof(float32)) != cudaSuccess)
+            if (true)//cudaMalloc((void **)&gradient, new_data->size * sizeof(float32)) != cudaSuccess
             {
                 printf("Error: Failed to allocate GPU memory for gradient\n");
                 exit(1);
@@ -214,7 +213,7 @@ void mul(Tensor *dst, Tensor *A, Tensor *B)
 
     if (is_tensor_aligned(dst->data->values, 32) && is_tensor_aligned(A->data->values, 32) && is_tensor_aligned(B->data->values, 32))
     {
-        speed_mul_op(dst->data, A->data, B->data, dst->device);
+        intel_mul_1D(dst->data, A->data, B->data, dst->device);
     }
     else
     {
@@ -238,7 +237,7 @@ void add(Tensor *dst, Tensor *A)
 
     if (is_tensor_aligned(dst->data->values, 32) && is_tensor_aligned(A->data->values, 32))
     {
-        speed_add_op(dst->data, A->data, dst->device);
+        intel_add_1D(dst->data, A->data, dst->device);
     }
     else
     {
