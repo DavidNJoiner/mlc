@@ -32,17 +32,17 @@ if "%PROCESSOR_ARCHITECTURE%"=="AMD64" (
 
 :: Compile CUDA source file if NVCC is available
 if defined NVCC_FLAGS (
-    nvcc -g -c "%PROJECT_ROOT%\ops\cuda_ops.cu" -o build\cuda_ops.o %NVCC_FLAGS%
+    nvcc -g -c "%PROJECT_ROOT%\ops\cuda_binary_ops.cu" -o build\cuda_ops.o %NVCC_FLAGS%
     if errorlevel 1 (
-        echo Compilation of cuda_ops.cu failed.
+        echo Compilation of cuda_binary_ops.cu failed.
         exit /b 1
     )
 )
 
 :: Compile C source files
+%GCC% %COMPILER% -g -c "%PROJECT_ROOT%\logging\table_cmd.c" -o build\table_cmd.o %GCC_FLAGS%
 %GCC% %COMPILER% -g -c "%PROJECT_ROOT%\core\config.c" -o build\config.o %GCC_FLAGS%
 %GCC% %COMPILER% -g -c "%PROJECT_ROOT%\core\deep_time.c" -o build\deep_time.o %GCC_FLAGS%
-%GCC% %COMPILER% -g -c "%PROJECT_ROOT%\logging\table_cmd.c" -o build\table_cmd.o %GCC_FLAGS%
 %GCC% %COMPILER% -g -c "%PROJECT_ROOT%\core\types\float16.c" -o build\float16.o %GCC_FLAGS%
 %GCC% %COMPILER% -g -c "%PROJECT_ROOT%\core\types\dtype.c" -o build\dtype.o %GCC_FLAGS%
 %GCC% %COMPILER% -g -c "%PROJECT_ROOT%\core\mempool\state_manager.c" -o build\state_manager.o %GCC_FLAGS%
@@ -50,7 +50,8 @@ if defined NVCC_FLAGS (
 %GCC% %COMPILER% -g -c "%PROJECT_ROOT%\core\mempool\memblock.c" -o build\memblock.o %GCC_FLAGS%
 %GCC% %COMPILER% -g -c "%PROJECT_ROOT%\core\mempool\subblock.c" -o build\subblock.o %GCC_FLAGS%
 %GCC% %COMPILER% -g -c "%PROJECT_ROOT%\core\device.c" -o build\device.o %GCC_FLAGS%
-%GCC% %COMPILER% -g -c "%PROJECT_ROOT%\ops\intel_intrinsics.c" -o build\intel_intrinsics.o %GCC_FLAGS%
+%GCC% %COMPILER% -g -c "%PROJECT_ROOT%\ops\ops.c" -o build\ops.o %GCC_FLAGS%
+%GCC% %COMPILER% -g -c "%PROJECT_ROOT%\ops\intel_binary_ops.c" -o build\intel_intrinsics.o %GCC_FLAGS%
 %GCC% %COMPILER% -g -c "%PROJECT_ROOT%\data\arr.c" -o build\data.o %GCC_FLAGS%
 %GCC% %COMPILER% -g -c "%PROJECT_ROOT%\debug.c" -o build\debug.o %GCC_FLAGS%
 :: gcc -c function.c -o build\function.o %GCC_FLAGS%

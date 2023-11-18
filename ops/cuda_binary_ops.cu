@@ -1,7 +1,7 @@
 // std
 #include <stdio.h>
 
-#include "cuda_ops.h"
+#include "cuda_binary_ops.h"
 
 #ifdef __CUDACC__
     #include <cuda_runtime.h>

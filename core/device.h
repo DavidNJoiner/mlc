@@ -20,4 +20,4 @@ typedef struct
 Device*         device_init(DeviceType type, int deviceID);
 void            device_release(Device *device);
 
-#endif // _DEVICE_H_
+#endif //_DEVICE_H_

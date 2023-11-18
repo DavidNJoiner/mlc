@@ -8,10 +8,17 @@
         "tensor.h": "c",
         "config.h": "c",
         "ops.h": "c",
-        "intel_intrinsics.h": "c",
+        "intel_binary_ops.h": "c",
         "stdint.h": "c",
         "compare": "c",
         "cstdint": "c",
-        "format": "c"
+        "format": "c",
+        "table_cmd.h": "c",
+        "state_manager.h": "c",
+        "arr.h": "c",
+        "nn.h": "c",
+        "dtype.h": "c",
+        "__config": "c",
+        "cuda_binary_ops.h": "c"
     }
 }

@@ -1,78 +1,80 @@
 #include "ops.h"
+#include "cuda_binary_ops.h"
+#include "intel_binary_ops.h"
 
 /*  -------------------------------------------------------*/
-/*  speed_mul_op : Tensor data Fast Multiply Operation.    */
+/*  intel_mul_1D : Tensor data Fast Multiply Operation.    */
 /*  -------------------------------------------------------*/
-void speed_mul_op(arr_t* dst, arr_t* A, arr_t* B, Device* device){
+void intel_mul_1D(arr_t* dst, arr_t* A, arr_t* B, Device* device){
     int mat_size = dst->size;
     DeviceType device_type = device->type;
     switch (dst->dtype) {
         case FLOAT16: 
             if (device_type==CPU){
-                vec1_avx_mul_float16(dst->values, A->values, B->values, mat_size);
+                mul_1D_f16(dst->values, A->values, B->values, mat_size);
                 break;
             }
             if(device_type==CUDA){
-                vec1_cuda_mul_float16(dst->values, A->values, B->values, mat_size);
+                //vec1_cuda_mul_float16(dst->values, A->values, B->values, mat_size);
                 break;
             }
             break;
         case FLOAT32: 
             if (device_type==CPU){
-                vec1_avx_mul_float32(dst->values, A->values, B->values, mat_size);
+                mul_1D_f32(dst->values, A->values, B->values, mat_size);
                 break;
             }
             if(device_type==CUDA){
-                vec1_cuda_mul_float32(dst->values, A->values, B->values, mat_size);
+                //vec1_cuda_mul_float32(dst->values, A->values, B->values, mat_size);
                 break;
             }
             break;
         case FLOAT64: 
             if (device_type==CPU){
-                vec1_avx_mul_float64(dst->values, A->values, B->values, mat_size);
+                mul_1D_f64(dst->values, A->values, B->values, mat_size);
                 break;
             }
             if(device_type==CUDA){
-                vec1_cuda_mul_float64(dst->values, A->values, B->values, mat_size);
+                //vec1_cuda_mul_float64(dst->values, A->values, B->values, mat_size);
                 break;
             }
             break;
     }
 }
 /*  -------------------------------------------------------*/
-/*  speed_add_op : Tensor data Fast Add Operation.         */
+/*  intel_add_1D : Tensor data Fast Add Operation.         */
 /*  -------------------------------------------------------*/
-void speed_add_op(arr_t* dst, arr_t* A, Device* device){
+void intel_add_1D(arr_t* dst, arr_t* A, Device* device){
     int mat_size = dst->size;
     DeviceType device_type = device->type;
     switch (dst->dtype) {
         case FLOAT16:
             if (device_type==CPU){
-                vec1_avx_add_float16(dst->values, A->values, mat_size);
+                add_1D_f16(dst->values, A->values, mat_size);
                 break;
             }
             if(device_type==CUDA){
-                vec1_cuda_add_float16(dst->values, A->values, mat_size);
+                //vec1_cuda_add_float16(dst->values, A->values, mat_size);
                 break;
             }
             break;
         case FLOAT32: 
             if (device_type==CPU){
-                vec1_avx_add_float32(dst->values, A->values, mat_size);
+                add_1D_f32(dst->values, A->values, mat_size);
                 break;
             }
             if(device_type==CUDA){
-                vec1_cuda_add_float32(dst->values, A->values, mat_size);
+                //vec1_cuda_add_float32(dst->values, A->values, mat_size);
                 break;
             }
             break;
         case FLOAT64: 
             if (device_type==CPU){
-                vec1_avx_add_float64(dst->values, A->values, mat_size);
+                add_1D_f64(dst->values, A->values, mat_size);
                 break;
             }
             if(device_type==CUDA){
-                vec1_cuda_add_float64(dst->values, A->values, mat_size);
+                //vec1_cuda_add_float64(dst->values, A->values, mat_size);
                 break;
             }
             break;

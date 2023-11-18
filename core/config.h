@@ -9,7 +9,7 @@
 
 #include "device.h"
 #include "define.h"
-#include "../ops/cuda_ops.h"
+#include "../ops/cuda_binary_ops.h"
 
 // OS Specific includes
 #ifdef DEEPC_LINUX

@@ -76,9 +76,9 @@ echo "CUDA_FLAG : $CUDA_FLAG"
 
 # Compile the CUDA source file with nvcc
 if [ -n "${NVCC_FLAGS}" ]; then
-    nvcc -g -c ${PROJECT_ROOT}/ops/cuda_ops.cu -o build/cuda_ops.o ${NVCC_FLAGS}
+    nvcc -g -c ${PROJECT_ROOT}/ops/cuda_binary_ops.cu -o build/cuda_ops.o ${NVCC_FLAGS}
     if [ $? -ne 0 ]; then
-        echo "Compilation of cuda_ops.cu failed."
+        echo "Compilation of cuda_binary_ops.cu failed."
         exit 1
     fi
 fi
@@ -94,8 +94,8 @@ gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/mempool/pool.c -o build/pool.o ${GCC_
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/mempool/memblock.c -o build/memblock.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/mempool/subblock.c -o build/subblock.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/core/device.c -o build/device.o ${GCC_FLAGS}
-gcc ${COMPILER} -g -c ${PROJECT_ROOT}/ops/intel_intrinsics.c -o build/intel_intrinsics.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/ops/ops.c -o build/ops.o ${GCC_FLAGS}
+gcc ${COMPILER} -g -c ${PROJECT_ROOT}/ops/intel_binary_ops.c -o build/intel_intrinsics.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/data/arr.c -o build/arr.o ${GCC_FLAGS}
 gcc ${COMPILER} -g -c ${PROJECT_ROOT}/debug.c -o build/debug.o ${GCC_FLAGS}
 #gcc -c function.c -o build/function.o ${GCC_FLAGS}

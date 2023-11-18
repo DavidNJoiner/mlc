@@ -42,7 +42,7 @@ endif()
 # Source files
 file(GLOB_RECURSE SOURCES "*.c")
 if(CUDA_FOUND)
-    cuda_add_executable(deepc ${SOURCES} cuda_ops.cu)
+    cuda_add_executable(deepc ${SOURCES} cuda_binary_ops.cu)
     target_link_libraries(deepc ${CUDA_LIBRARIES})
 else()
     add_executable(deepc ${SOURCES})

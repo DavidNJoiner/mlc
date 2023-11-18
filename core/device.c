@@ -3,13 +3,21 @@
 Device *device_init(DeviceType type, int deviceID)
 {
     Device *device = (Device *)malloc(sizeof(Device));
-    device->type = type;
     device->deviceID = deviceID;
 
-    #ifdef CUDA_AVAILABLE
+    #if defined (CUDA_AVAILABLE) && (type != CPU)
+    device->type = GPU;
     cudaSetDevice(deviceID);
-    #endif // CUDA_AVAILABLE
+    #elif CUDA_AVAILABLE && (type == CPU)
+    device->type = CPU;
+    #endif
 
+    #ifdef AVX  
+    device->type = CPU;
+    #else
+
+    #endif // CUDA_AVAILABLE
+    
     return device;
 }
 

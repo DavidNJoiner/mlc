@@ -1,4 +1,4 @@
-#include "intel_intrinsics.h"
+#include "intel_binary_ops.h"
 
 /*  ----------------------------------------------------------------------------*/
 /*                                  AVX                                         */
@@ -73,6 +73,7 @@ void vec1_avx_mul_float32(float32 *dst, float32 *A, float32 *B, int mat_size)
         dst[i] = A[i] * B[i];
     }
 }
+
 /*  ------------------------------------------------------------------------------*/
 /*  vec1_avx_mul_float32 : Multiply two 1D float64 vector using AVX intel_intrinsics.   */
 /*  ------------------------------------------------------------------------------*/
@@ -100,6 +101,7 @@ void vec1_avx_mul_float64(float64 *dst, float64 *A, float64 *B, int mat_size)
         dst[i] = A[i] * B[i];
     }
 }
+
 /*  ------------------------------------------------------------------------------*/
 /*  vec1_avx_add_float16 : Add two 1D float16 vector using AVX intel_intrinsics.        */
 /*  ------------------------------------------------------------------------------*/
@@ -140,6 +142,7 @@ void vec1_avx_add_float16(float16 *dst, float16 *A, int mat_size)
         dst[i] = dst[i] = float16_from_float(A_uint16[i] + dst_uint16[i]);
     }
 }
+
 /*  ------------------------------------------------------------------------------*/
 /*  vec1_avx_add_float32 : Add two 1D float32 vector using AVX intel_intrinsics.        */
 /*  ------------------------------------------------------------------------------*/
@@ -167,6 +170,7 @@ void vec1_avx_add_float32(float32 *dst, float32 *A, int mat_size)
         dst[i] += A[i];
     }
 }
+
 /*  ------------------------------------------------------------------------------*/
 /*  vec1_avx_add_float64 : Add two 1D float64 vector using AVX intel_intrinsics.        */
 /*  ------------------------------------------------------------------------------*/
@@ -287,6 +291,7 @@ __m128i cvtps_ph(__m128 a)
     // Pack the result to 16-bit
     return _mm_packs_epi32(result, result);
 }
+
 /*  ------------------------------------------------------------------------------*/
 /*  vec1_sse_mul_float32 : Multiply two 1D float32 vector using AVX intel_intrinsics.   */
 /*  ------------------------------------------------------------------------------*/
@@ -318,6 +323,7 @@ void vec1_sse_mul_float32(float32 *dst, float32 *A, float32 *B, int mat_size)
         dst[i] = A[i] * B[i];
     }
 }
+
 /*  ------------------------------------------------------------------------------*/
 /*  vec1_sse_mul_float32 : Multiply two 1D float64 vector using AVX intel_intrinsics.   */
 /*  ------------------------------------------------------------------------------*/
@@ -349,6 +355,7 @@ void vec1_sse_mul_float64(float64 *dst, float64 *A, float64 *B, int mat_size)
         dst[i] = A[i] * B[i];
     }
 }
+
 /*  ------------------------------------------------------------------------------*/
 /*  vec1_sse_add_float16 : Add two 1D float16 vector using AVX intel_intrinsics.        */
 /*  ------------------------------------------------------------------------------*/
@@ -386,6 +393,7 @@ void vec1_sse_add_float16(float16 *dst, float16 *A, int mat_size)
         dst[i] = float16_add(A[i], dst[i]);
     }
 }
+
 /*  ------------------------------------------------------------------------------*/
 /*  vec1_sse_add_float32 : Add two 1D float32 vector using AVX intel_intrinsics.        */
 /*  ------------------------------------------------------------------------------*/
@@ -411,6 +419,7 @@ void vec1_sse_add_float32(float32 *dst, float32 *A, int mat_size)
         dst[i] += A[i];
     }
 }
+
 /*  ------------------------------------------------------------------------------*/
 /*  vec1_sse_add_float64 : Add two 1D float64 vector using AVX intel_intrinsics.        */
 /*  ------------------------------------------------------------------------------*/

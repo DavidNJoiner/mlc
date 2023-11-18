@@ -1,5 +1,5 @@
-#ifndef _CUDA_OPS_H_
-#define _CUDA_OPS_H_
+#ifndef CUDA_BINARY_OPS_H
+#define CUDA_BINARY_OPS_H
 
 #include "../core/types/dtype.h"
 
@@ -20,4 +20,4 @@ extern "C"
 
 #define deepc_cuda true // debug
 
-#endif // _CUDA_OPS_H_
+#endif // CUDA_BINARY_OPS_H
